@@ -17,12 +17,16 @@ Gemeinsame Grundlage für Firmware, CAD und Platinen. Maße in mm. Werte mit „
 Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt direkt auf der Rückseite, damit der Tick genau unter dem Daumen spürbar ist.
 
 **Mechanik**
-- Platine rund, **Ø 32 mm**, Dicke 1,0 mm, 2 oder 4 Lagen
+- Platine rund, **Ø 32 mm**, Dicke 1,0 mm, **4 Lagen** (auf 2 Lagen nicht sauber routbar; In1 = GND-Gitter unter dem Ring, In2 = 3V3)
 - Touch-Segmente vorne: Ring von **r = 6,5 bis r = 12,8 mm**, 8–12 Segmente
 - Mitteltaste vorne: SMD-Taster mittig, max. 4 × 4 mm, Höhe ≤ 1,5 mm
 - 3 Befestigungslöcher Ø 2,2 mm auf **r = 14,6 mm** bei 90°, 210° und 330° (0° = rechts, gegen den Uhrzeigersinn)
 - Rückseite: Bauteile max. 1,5 mm hoch, plus LRA (aufgeklebt, Lötpads für die Litzen)
 - Abdeckung vorne (gedruckt): Ø 30 mm, liegt direkt auf der Platine
+
+- Stecker J1 auf der Rückseite bei 270° (unten): x ±4,9, y −14,7 … −8,1 relativ zur Modulmitte, höher als 1,5 mm (Höhe prüfen)
+- LRA-Freifläche auf der Rückseite: x −8 … +8, y +3 … +9; LRA-Lötpads bei x ≈ −12,3
+- 12 Segmente à 30°. Zuordnung (Mittenwinkel gegen den Uhrzeigersinn ab rechts, von vorne gesehen): ELE8 15°, ELE7 45°, ELE6 75°, ELE5 105°, ELE4 135°, ELE3 165°, ELE2 195°, ELE1 225°, ELE0 255°, ELE11 285°, ELE10 315°, ELE9 345°. Firmware: Segment 0 bei 105° (Bildschirmkonvention, im Uhrzeigersinn). Am echten Rad prüfen.
 
 **Elektrik**
 - Touch-Controller: MPR121 (I²C, **Adresse 0x5B**, ADDR an VDD), damit die Rohwerte der Segmente für eine feine Winkelberechnung gelesen werden können. Alternativen erlaubt, wenn sie Rohwerte liefern.

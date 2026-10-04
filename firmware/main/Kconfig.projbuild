@@ -30,7 +30,11 @@ menu "Nano-Player"
         config NANO_WHEEL_FIRST_SEGMENT_DEG
             int "Winkel von Segment 0 in Grad (0 = rechts, im Uhrzeigersinn, -90 = oben)"
             range -180 180
-            default -90
+            default 105
+            help
+                Klickrad-Platine (hardware/pcb/klickrad): ELE0 liegt unten leicht links,
+                die Elektrodennummern steigen im Uhrzeigersinn. Daraus ergibt sich 105.
+                Beim ersten Test am echten Rad pruefen (Drehrichtung und Tippzonen).
 
         config NANO_WHEEL_CLOCKWISE
             bool "Segmentnummern steigen im Uhrzeigersinn"
