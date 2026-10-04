@@ -10,5 +10,11 @@ POS = {
  'TP1': (13.1, -2.4, 90), 'TP2': (13.1, -4.8, 90),
 }
 
-PRE_TRACKS = []
-PRE_VIAS = []
+# J1-Pin 2 (GND) wird vorab unter dem Steckerkörper nach Osten herausgeführt (sonst von den Nachbarsignalen eingeschlossen)
+PRE_TRACKS = [
+ ('GND', 'B', [(0.75, -8.95), (0.75, -10.3), (5.8, -10.3), (5.8, -8.6)], 0.2),     # J1-Pin 2 (GND) unter dem Steckerkörper nach Osten
+ ('GND', 'B', [(1.45, -1.5), (2.95, -1.5)], 0.15),                                 # U1 Pin 8 -> Via
+ ('GND', 'B', [(1.45, -2.4), (2.95, -2.4)], 0.15),                                 # U1 Pin 10 (MODE) -> Via
+ ('GND', 'F', [(2.95, -1.5), (2.95, -2.4)], 0.2),                                  # Brücke auf F.Cu im Ring zwischen Taste und Rad (Pin 9 = 3V3 liegt dazwischen)
+]
+PRE_VIAS = [('GND', 2.95, -1.5), ('GND', 2.95, -2.4)]

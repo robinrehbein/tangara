@@ -139,3 +139,99 @@ PLATZHALTER = [
     "SWITCH_H, WHEEL_PCB/Komponentenhoehen: Mitteltaster",
     "E_BATT*, E_SWITCH_H, E_USB*, E_JACK_D, E_SD*: Endgeraet-Annahmen",
 ]
+
+# ============================================ ENDGERAET v2 (Duennbau, Variante A)
+# VORLAEUFIG, aus docs/DUENNBAU.md (Stand 2026-10-04). Genaue Maße und Lagen
+# sind NICHT final; alles mit  # VORLAEUFIG  vor dem Layout/Bestellen pruefen.
+# Z von hinten (0) nach vorn. Quelle der Werte: DUENNBAU.md Abschnitt 3, 5, 7, 8.
+E2_W, E2_L, E2_R = 40.0, 90.0, 4.5          # Aussenmaß; R4,5 statt 6: Klinken-Oeffnung bei x=-12 braucht Wandmaterial vor der Ecke
+E2_T = 8.5                                  # Gesamtdicke Variante A mit Reserve
+E2_WALL = 1.2                               # Seitenwand (3 Perimeter)
+E2_RIM = 0.8                                # sichtbarer Randsteg an Front/Rueck-Falz (2 Perimeter)
+E2_FIT = 0.1                                # Spiel Platte <-> Falz je Seite
+E2_FIT_PCB = 0.3                            # Spiel Platine/Akku <-> Wand je Seite
+
+# --- Schichten (Z-Lage) -------------------------------------------------------
+E2_BACK_T = 1.0                             # Rueckwand gedruckt (Alternative FR4 0,8: E2_BACK_FR4_T)
+E2_BACK_FR4_T = 0.8
+E2_AIR_BACK = 0.2                           # Luft Rueckwand -> Rueckzone
+E2_REAR_ZONE = 3.3                          # Rueckzone: Akku 3,0 + 0,3; ESP 3,1; USB 3,18
+E2_PCB_T = 0.8                              # Hauptplatine
+E2_FRONT_T = 0.8                            # Frontplatte Acryl/Glas
+E2_GLUE = 0.1                               # Klebefilm (VHB/OCA) je Schicht
+E2_DISP_T = 2.05                            # Display-Modul mit Touch (2,06" LX)
+E2_PCB_Z0 = E2_BACK_T + E2_AIR_BACK + E2_REAR_ZONE      # 4,5 Platine Rueckseite
+E2_PCB_Z1 = E2_PCB_Z0 + E2_PCB_T                        # 5,3 Platine Vorderseite
+E2_FRONT_Z0 = E2_T - E2_FRONT_T                         # 7,7 Frontplatte Unterseite
+E2_DISP_Z1 = E2_FRONT_Z0 - E2_GLUE                      # 7,6 Display Oberseite
+E2_DISP_Z0 = E2_DISP_Z1 - E2_DISP_T                     # 5,55 Display Unterseite
+E2_LIP_H = 0.8                              # Auflagesteg der Frontplatte (Gesamthoehe: 0,4 Schraege + 0,4 senkrecht), druckbar ohne Stuetzen
+E2_LIP_INSET = 1.6                          # Auflagesteg: Abstand Innenkante von Aussen (Randsteg 0,8 + 0,8 Auflage)
+E2_LIP_CHAMFER = 0.4                        # 45-Grad-Schraege unter dem Steg (Wand 1,2 -> 1,6), darueber 0,4 senkrechte Kante
+
+# --- Hauptplatine (VORLAEUFIG, DUENNBAU 8.1) -----------------------------------
+E2_PCB = (37.0, 84.0, 4.0)                  # B x L, Eckenradius  # VORLAEUFIG
+E2_JACK = (9.1, 14.0, 5.0)                  # SJ-43504: B x Tiefe x Hoehe  (STEP, DUENNBAU 3.1)
+E2_JACK_X = -12.0                           # VORLAEUFIG (Floorplan)
+E2_JACK_Z0, E2_JACK_Z1 = E2_PCB_Z0 - 3.1, E2_PCB_Z0 + 1.9   # Pads auf B.Cu: 3,1 hinten / 1,9 vorn  # UNGEPRUEFT
+E2_JACK_NOTCH_PAD = 0.45                    # Platinenausschnitt = Footprint + Spiel
+E2_JACK_OPEN_W = 9.6                        # Wandoeffnung Breite (DUENNBAU 8.3: 9,6 x 5,2); Hoehe: von Rueckwand-Oberkante bis Klinke oben + 0,1
+E2_USB = (11.54, 7.2, 3.18)                 # GCT USB4510 B x T x H (STEP)
+E2_USB_X = 10.0                             # VORLAEUFIG
+E2_USB_OPEN_W = 9.4                         # Wandoeffnung Breite; Hoehe: von Rueckwand-Oberkante bis Platine + 0,15 (DUENNBAU: 3,4)
+E2_ESP = (25.5, 18.0, 3.1)                  # WROOM-1, um 90 Grad gedreht (X lang)  # VORLAEUFIG
+E2_ESP_X = 0.0
+E2_PCB_SLOT = (14.0, 1.2, 0.0, -3.2)        # FPC-Schlitz B, H, x, y  # PLATZHALTER
+
+# --- Akku-Fach 303450 ----------------------------------------------------------
+E2_BATT = (34.0, 50.0, 3.3)                 # Pouch inkl. Quellreserve
+E2_BATT_Y = -3.5                            # so, dass 0,5 Luft zur Klinke bleiben  # VORLAEUFIG
+E2_BATT_RIB_T = 0.8                         # Haltestege auf der Rueckwand
+E2_BATT_RIB_H = 2.0
+
+# --- Display (2,06" CO5300) -----------------------------------------------------
+E2_DISP_MOD = (34.8, 43.1)                  # Modul (LCM)
+E2_DISP_ACTIVE = (33.1, 40.5)               # aktive Flaeche
+E2_DISP_Y = 20.43                           # Modulmitte; Oberkante 42,0  # VORLAEUFIG
+E2_DISP_ACTIVE_DY = 0.0                     # Versatz aktive Flaeche zur Modulmitte  # PLATZHALTER (FPC-Seite)
+E2_WIN_MARGIN = 0.4                         # Fenster = aktive Flaeche + 2 x 0,4
+E2_WIN_R = 1.5                              # Fensterradius  # PLATZHALTER
+
+# --- Klickrad (Platine + 0,6-mm-FR4-Abdeckung) -----------------------------------
+E2_WHEEL_Y = -22.0                          # VORLAEUFIG
+E2_WHEEL_PCB_T = 0.8
+E2_WHEEL_COVER_T = 0.6                      # FR4 wie Tangara
+E2_WHEEL_COVER_D = 30.0
+E2_WHEEL_OPEN_D = 30.6                      # Ausschnitt in der Frontplatte
+E2_WHEEL_PCB_Z1 = E2_FRONT_Z0 - E2_GLUE     # 7,6 Platine Oberseite (liegt per Klebefilm unter der Front)
+E2_WHEEL_PCB_Z0 = E2_WHEEL_PCB_Z1 - E2_WHEEL_PCB_T     # 6,8
+E2_LRA = (10.0, 10.0, 1.0)                  # VLV101040J, auf die Platinenrueckseite geklebt
+E2_LRA_DY = 6.0                             # Versatz zur Radmitte  # VORLAEUFIG
+E2_WHEEL_REAR_PART_H = 0.8                  # Rueckseitenbauteile (DRV2605L, AT42QT2120)
+
+# --- Schrauben (M1,6 Senkkopf, in Rahmendome) -----------------------------------
+E2_SCREW_CLEAR_D = 1.8                      # Durchgang in der Rueckwand
+E2_SCREW_CSK_D = 3.2                        # Senkung Ø an der Aussenseite (Kopf ca. 3,0)
+E2_SCREW_PILOT_D = 1.4                      # Kernloch im Dom (selbstschneidend in ASA)  # UNGEPRUEFT
+E2_BOSS_D = 3.6
+E2_SCREWS = [(-16.0, 42.0), (16.0, 42.0), (-1.5, -42.5), (-17.8, 24.5), (17.8, -33.0)]  # VORLAEUFIG
+
+# --- Auflager der Platine (Pads an den Seitenwaenden) ---------------------------
+E2_PAD = (1.0, 8.0, 0.8)                    # Ueberstand nach innen, Laenge, Hoehe (unter der Platine)
+E2_PAD_POS = [(-1, 8.0), (1, 8.0), (-1, -8.0), (1, -8.0)]   # (Seite, y)
+
+# --- Ein/Aus-Taste (rechte Seitenwand) -------------------------------------------
+E2_PWR_Y, E2_PWR_Z = 22.5, 3.0              # VORLAEUFIG (Taster auf Platinenrueckseite)
+E2_PWR_OPEN = (5.0, 2.0)                    # Wandoeffnung (Y x Z)
+E2_PWR_SWITCH = (2.1, 2.0, 1.5)             # Seitentaster-Attrappe  X x Y x Z  # PLATZHALTER
+
+PLATZHALTER_V2 = [
+    "E2_PCB (37 x 84, R4), E2_JACK_X, E2_USB_X, E2_ESP*: Floorplan vorlaeufig (DUENNBAU 8.1)",
+    "E2_JACK_Z0/Z1: Einbaulage der Klinke (STEP-Ursprung = Pad-Ebene) UNGEPRUEFT; Variante B 9,0 mm",
+    "E2_PCB_SLOT: Display-FPC-Schlitz, Lage von der Maßzeichnung des gekauften Moduls abhaengig",
+    "E2_DISP_Y, E2_DISP_ACTIVE_DY: Lage der aktiven Flaeche im Modul (FPC-Seite) PLATZHALTER",
+    "E2_BATT (3,3 inkl. Quellung) und E2_BATT_Y: Zellendatenblatt fehlt",
+    "E2_WHEEL_Y, E2_LRA*: Lage Klickrad und LRA",
+    "E2_PWR_*: Ein/Aus-Taster (Typ offen, Attrappe 2,1 x 2,0 x 1,5)",
+    "E2_SCREWS, E2_SCREW_PILOT_D: Schraubenlage und Kernloch fuer M1,6 UNGEPRUEFT",
+]
