@@ -20,7 +20,7 @@ CLR = 0.13
 VIA_D, VIA_DR = 0.6, 0.3
 WIDTH = {'GND': 0.2, '3V3': 0.2, 'LRA_P': 0.2, 'LRA_N': 0.2}
 DEFW = 0.15
-GND_RING = (3.3, 5.5)     # GND-Fläche auf F.Cu (Zone, in finish.py)
+GND_RING = (2.8, 5.5)     # GND-Fläche auf F.Cu (Zone, in finish.py)
 F_RMIN, F_RMAX = 2.5 + 0.15, 6.3 - 0.15
 import os
 ORDER = ['3V3', 'SDA', 'K2', 'KB', 'KG', 'K1', 'K0', 'E0', 'E1', 'E2', 'EB', 'EG', 'SCL', 'CHANGE', 'EN', 'REG', 'RESET', 'LRA_P', 'LRA_N', 'GND']

@@ -1,38 +1,34 @@
-"""Layout-Konstanten, feste Positionen, Sperrzonen (Rev. 2: 37 x 84 x 0,8 mm, Duennbau-Konzept).
+"""Layout-Konstanten, feste Positionen, Sperrzonen (Rev. 3: 41 x 97 x 1,0 mm, Geraet 44 x 100 x bis 11 mm).
 Koordinaten: Mitte (0,0), x rechts, y oben, Blick von der Display-Seite (Oberseite 'T'). Unterseite 'B' = durch die Platine gesehen.
-Konzept: Oberseite nur flache Teile (Hoehe <= 1,0 mm; Display liegt 1,1 mm darueber), Rueckseite alle hohen Teile (<= 3,3 mm) neben dem Akkufach."""
+Konzept: Oberseite nur flache Teile (Hoehe <= 1,0 mm; Luft unter dem Display >= 1,1 mm), Rueckseite alle hohen Teile neben dem Akkufach, WROOM-1 gedreht (Antenne rechts) innerhalb der Kante."""
 import math
 from shapely.geometry import box, Point, Polygon
 from shapely.ops import unary_union
 from shapely import affinity
 
-BOARD_W, BOARD_H, BOARD_R = 37.0, 86.0, 4.0
-BOARD_T = 0.8
-WHEEL_Y = -25.0                       # Mitte des Klickrads (Gehaeuse-Abstimmung: Display unten bei y ca. -6, Rad Ø32 darunter)
-WHEEL_R_TOP = 16.3                    # Oberseite: Klickrad-Platine liegt ueber diesem Kreis, Luft zwischen den Platinen nur 1,2 mm
-DISPLAY = (-17.4, -6.0, 17.4, 37.1)   # Display-Modul 34,8 x 43,1 (LCM), Lage ungeprueft
-BATT = (-17.0, -29.4, 17.0, 20.6)     # Akkufach auf der Rueckseite 34 x 50 (Pouch 303450), Rueckseite dort bauteilfrei
-DOMES = []                            # keine Domes ueber der Platine: Verschraubung in den Rahmen-Seitenwaenden (DUENNBAU.md 5)
+BOARD_W, BOARD_H, BOARD_R = 41.0, 97.0, 4.0
+BOARD_T = 1.0
+WHEEL_Y = -25.0                       # Mitte des Klickrads
+WHEEL_R_TOP = 16.3                    # Oberseite: Klickrad-Platine (Rad-Rueckseite) liegt ueber diesem Kreis
+DISPLAY = (-18.5, -6.5, 18.5, 40.5)   # Display-Modul 2,06" (Annahme 37 x 47), Lage ungeprueft; darunter nur flache Teile (<= 1,0 mm)
+BATT = (-16.0, -12.0, 16.0, 26.5)     # Akkufach auf der Rueckseite 32 x 38,5, dort bauteilfrei
+LRA_C, LRA_W, LRA_H = (0.0, WHEEL_Y + 6.0), 14.0, 10.0   # Standard-Ausschnitt fuer LRA bis 3,0 mm (Mitte, Breite, Hoehe)
+DOMES = []
 
-# Befestigungsloecher M1,6 (NPTH 1,8): Positionen zur Abstimmung mit dem CAD
-HOLES = [(17.4, 41.0), (16.2, -41.0), (17.4, 22.0)]
+# Befestigungsloecher M1,6 (NPTH 1,8): Positionen zur Abstimmung mit dem CAD (auch in netlist.py H1..H3)
+HOLES = [(-18.2, 46.2), (18.2, -46.2), (-18.2, -46.2)]
+HOLE_R = 2.0
 
 # feste Bauteile: ref -> (x, y, Drehung, Seite)
 FIXED = {
-    'U5': (-3.2, -33.0, 0, 'B'),       # Rueckseiten-Teile >1,0 mm im Streifen zwischen Akkufach und USB-C/Klickrad-Stecker (handplatziert)
-    'D10': (1.4, -33.0, 0, 'B'),
-    'Q1': (6.2, -33.0, 0, 'B'),
-    'SW1': (12.8, -32.8, 0, 'B'),      # Ein/Aus-Taster rechts neben dem Akkufach, unten
-    'D4': (-12.5, 26.1, 0, 'B'),       # Streifen zwischen Akkufach, Akkuanschluss und microSD
-    'C29': (-6.9, 26.2, 0, 'B'),
-    'U16': (-9.0, 22.6, 0, 'B'),
-    'J4': (-12.1, 35.2, 270, 'B'),     # microSD, Einschubrichtung nach links (Plattenkante)
-    'U15': (6.0, 33.75, 0, 'B'),       # Modul: Antenne (obere 6 mm) ragt 5 mm ueber die Oberkante (y = 42) hinaus
-    'J1': (-7.825, -40.25, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
-    'J6': (9.0, -41.4, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
-    'BT1': (-14.6, 22.5, 0, 'B'),      # Akku-Loetpads am oberen Akkuende (Akkuanschluss oben)
-    'J20': (0.0, 3.0, 0, 'T'),         # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
-    'J21': (-2.1, -38.8, 0, 'B'),      # Klickrad-FFC auf der Rueckseite, Mundloch an der Unterkante (Kabel laeuft um die Plattenkante)
+    'SW1': (15.0, -30.0, 0, 'B'),      # Ein/Aus-Taster rechts unten (Rueckseite)
+    'BT1': (-12.5, 28.8, 0, 'B'),      # Akku-Loetpads am oberen Akkuende
+    'J4': (-13.7, 37.5, 270, 'B'),     # microSD links oben, Einschub von der linken Kante
+    'U15': (6.5, 37.5, 270, 'B'),      # WROOM-1 gedreht: Antenne (6 mm) zeigt nach rechts, liegt innerhalb der Kante
+    'J1': (-7.825, -45.75, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
+    'J6': (9.0, -46.9, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
+    'J20': (0.0, -0.5, 0, 'T'),        # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
+    'J21': (0.0, -45.8, 180, 'T'),     # Klickrad-FFC, Vorderseite, Mundloch nach oben zum Klickrad-Stecker
 }
 OVERHANG = {'U15'}
 EDGE_PREF = {}
@@ -57,15 +53,15 @@ def usb_pocket():
     r = unary_union([r, box(-4.62, -3.8, 4.62, 3.5)])
     return Polygon(_b_to_view(pos, list(r.exterior.coords)))
 
-FFC_SLOT = (-1.5, -30.2, 5.4, 1.4)    # Schlitz fuer das Klickrad-Flachkabel (Mitte x, y, Breite, Hoehe)
+def lra_cutout():
+    """Innenausschnitt fuer den LRA (14 x 10, Ecken r = 1) unter dem Klickrad."""
+    return box(LRA_C[0] - LRA_W / 2, LRA_C[1] - LRA_H / 2, LRA_C[0] + LRA_W / 2, LRA_C[1] + LRA_H / 2).buffer(-1.0, 8).buffer(1.0, 8)
 
-def ffc_slot():
-    cx, cy, w, h = FFC_SLOT
-    from shapely.geometry import LineString
-    return LineString([(cx - w / 2 + h / 2, cy), (cx + w / 2 - h / 2, cy)]).buffer(h / 2, 8)
+def edge_cutout_poly():
+    return unary_union([jack_slot(), usb_pocket()])
 
 def cutout_poly():
-    return unary_union([jack_slot(), usb_pocket()])
+    return unary_union([jack_slot(), usb_pocket(), lra_cutout()])
 
 def board_poly():
     p = box(-BOARD_W / 2, -BOARD_H / 2, BOARD_W / 2, BOARD_H / 2)
@@ -87,6 +83,7 @@ def height(p):
     if ref == 'SW1': return 1.2
     if ref == 'L20': return 1.0
     if ref in ('J20', 'J21'): return 1.0
+    if ref == 'J4': return 1.9
     if kind == 'H': return 0.0
     if kind == 'TP': return 0.0
     if 'BATT_PADS' in fp: return 0.2
@@ -106,15 +103,16 @@ def height(p):
     return 0.9    # QFN/DFN/SON/VSSOP/X2QFN
 
 TOP_MAX_H = 1.0
+TOPTALL = box(-20.5, 41.0, 20.5, 48.5)   # Vorderseite oberhalb des Displays: dort auch hoehere Teile (>1,0 mm) erlaubt
 
 # ------------------------------------------------------------------ Sperrzonen
 def forbidden_b(margin=0.6):
     """Unterseite: Akkufach, Randausschnitte, Befestigungsloecher."""
-    return unary_union([box(*BATT), cutout_poly().buffer(0.8)] + [Point(x, y).buffer(2.1) for x, y in HOLES])
+    return unary_union([box(*BATT), cutout_poly().buffer(0.8)] + [Point(x, y).buffer(HOLE_R) for x, y in HOLES])
 
 def forbidden_t(margin=0.6):
     """Oberseite: Klickrad-Kreis, Randausschnitte (Klinke ragt 1,1 mm ueber die Platine), Befestigungsloecher."""
-    return unary_union([Point(0, WHEEL_Y).buffer(WHEEL_R_TOP, 64), cutout_poly().buffer(1.0)] + [Point(x, y).buffer(2.1) for x, y in HOLES])
+    return unary_union([Point(0, WHEEL_Y).buffer(WHEEL_R_TOP, 64), cutout_poly().buffer(1.0)] + [Point(x, y).buffer(HOLE_R) for x, y in HOLES])
 
 # Zuordnung Passiv -> (Anker, Pin), wo sie sich nicht aus den Netzen ergibt
 NEAR = {
@@ -139,3 +137,27 @@ NEAR = {
     'C130': ('J20', '23'), 'C131': ('J20', '25'), 'C132': ('J20', '11'), 'C133': ('J20', '11'),
     'R122': ('U22', '5'), 'R120': ('J21', '3'), 'R121': ('J21', '4'), 'R136': ('J21', '5'),
 }
+
+# ------------------------------------------------------------------ Bereichsvorgaben (hart) fuer die Platzierung
+# Gruppen -> erlaubte Flaechen je Seite (Ansicht von oben). Analog (DAC-Kette, Quarz, Klinke) links unten, Schaltregler/Lader/USB rechts unten,
+# Digital/Funk/SD oben (Vorderseite, Vias zum Modul), Display-Anschluss in der Mitte.
+def _u(*bs): return unary_union([box(*b) for b in bs])
+_ANALOG = ['U17', 'X1', 'X2', 'FB1', 'U30', 'U31', 'U32', 'U33', 'U34', 'Q20', 'U3', 'NT1', 'NT2'] + \
+    ['C%d' % n for n in list(range(240, 263))] + ['R%d' % n for n in range(240, 250)]
+_POWER = ['U10', 'C24', 'C25', 'C27', 'R34', 'R35', 'R37', 'R38', 'R39', 'R41', 'C34', 'Q1', 'C37', 'R36', 'R43', 'U5', 'D4', 'C29', 'R7', 'R4', 'R200', 'R201', 'R202',
+          'U12', 'R110', 'R111', 'R112', 'R113', 'R114', 'R115', 'C110', 'D10', 'Q10', 'Q11', 'U20', 'L20', 'R116', 'R117', 'C111', 'C112', 'C113', 'U21', 'R118', 'R119', 'C114']
+_CORE = ['R1', 'U4', 'C35', 'U22', 'C104', 'R122', 'TP7']
+_DISP = ['R130', 'R131', 'R132', 'R134', 'R135', 'C130', 'C131', 'C132', 'C133']
+_MOD = ['R100', 'C100', 'C101', 'C102', 'C30', 'C32', 'R101', 'C103', 'R102', 'R103', 'TP10', 'TP11', 'TP12', 'TP13', 'TP14', 'TP15', 'TP16', 'TP17']
+_SD = ['U16', 'R9', 'R11', 'R12', 'R57', 'R61', 'C42', 'C23']
+_WHEEL = ['R136', 'R120', 'R121']
+GROUPS = {
+    'ANALOG': dict(refs=_ANALOG, back=_u((-20.5, -34.0, 6.0, -25.5), (-20.5, -25.5, -8.5, -13.5)), front=box(-20.5, -48.5, -3.5, -8.7)),
+    'POWER': dict(refs=_POWER, back=_u((2.0, -40.5, 20.5, -25.5), (8.5, -25.5, 20.5, -13.5)), front=box(3.0, -48.5, 20.5, -8.7)),
+    'CORE': dict(refs=_CORE, back=None, front=box(-20.5, -6.5, 20.5, 26.0)),
+    'DISP': dict(refs=_DISP, back=None, front=box(-20.5, -6.5, 20.5, 10.0)),
+    'MOD': dict(refs=_MOD, back=None, front=box(-20.5, 24.0, 20.5, 48.5)),
+    'SD': dict(refs=_SD, back=None, front=box(-20.5, 24.0, -3.0, 48.5)),
+    'WHEEL': dict(refs=_WHEEL, back=None, front=box(-20.5, -48.5, 20.5, -41.0)),
+}
+REGION_OF = {r: g for g, d in GROUPS.items() for r in d['refs']}

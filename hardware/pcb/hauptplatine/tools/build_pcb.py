@@ -25,7 +25,7 @@ F_CU, B_CU, IN1, IN2 = pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu
 if MODE != 'finish':
     board.SetCopperLayerCount(4)
     ds = board.GetDesignSettings()
-    ds.SetBoardThickness(FromMM(0.8))
+    ds.SetBoardThickness(FromMM(layout.BOARD_T))
 nets = {}
 if MODE == 'finish':
     for name, n in board.GetNetsByName().items(): nets[str(name)] = n
@@ -155,6 +155,25 @@ def outline():
                 if math.dist(a, b) > 1e-4: sline(L, (round(a[0], 4), round(a[1], 4)), (round(b[0], 4), round(b[1], 4)), 0.1)
 
 HOLES = layout.HOLES
+RING_W = float(os.environ.get('RING_W', '0.35'))
+def edge_ring():
+    """Sperrring (keine Leiterbahnen/Vias) entlang aller Kanten fuer den Router (die DSN kennt den Randabstand nicht). Pads bleiben erreichbar."""
+    from shapely.geometry import box as sb
+    bp = layout.board_poly()
+    ring = bp.difference(bp.buffer(-RING_W))
+    padgeom = []
+    for fp in placed.values():
+        for pad in fp.Pads():
+            bb = pad.GetBoundingBox()
+            padgeom.append(sb(ToMM(bb.GetLeft()) - OX - 0.1, OY - ToMM(bb.GetBottom()) - 0.1, ToMM(bb.GetRight()) - OX + 0.1, OY - ToMM(bb.GetTop()) + 0.1))
+    from shapely.ops import unary_union as uu
+    ring = ring.difference(uu(padgeom))
+    geoms = list(ring.geoms) if hasattr(ring, 'geoms') else [ring]
+    for g in geoms:
+        if g.is_empty or g.area < 1e-4: continue
+        z = zone(F_CU, list(g.exterior.coords)[:-1], None, keepout=('tracks', 'vias'), layers=[F_CU, IN1, IN2, B_CU],
+                 holes=[list(i.coords)[:-1] for i in g.interiors])
+        z.SetZoneName('edge_ring')
 def run_place():
     outline()
     pl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'placement.json')))
@@ -165,6 +184,7 @@ def run_place():
         x, y, th, side = pl[r]
         place(part, x, y, th, side)
     zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2)
+    edge_ring()
     board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
     print('platziert:', len(placed))
 

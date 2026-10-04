@@ -321,13 +321,14 @@ cap('C132', '10uF', '3V3', 'GND', 'Touch-Versorgung (Waveshare C25)', mpn='GRM15
 cap('C133', '100nF', '3V3', 'GND', 'Touch-Versorgung (Waveshare C24)')
 
 # ======================================================================================================== Klickrad-Anschluss (FFC 6 Pin 0,5 mm wie hardware/pcb/klickrad)
-add('J21', 'FH12-6S-0.5SH(55)', 'CONN', 'Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal',
+add('J21', '503480-0600', 'CONN', 'Hauptplatine:Molex_503480-0600',
     {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'WHEEL_INT', '6': None, 'MP': 'GND'}, 'neu',
     names={'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'CHANGE', '6': 'Reserve', 'MP': 'MP'},
-    mpn='FH12-6S-0.5SH(55)', mfr='Hirose', pkg='FFC 6 Pin 0,5 mm, 1,0 mm hoch',
-    desc='Klickrad-Modul v2 (AT42QT2120 0x1C + DRV2605L 0x5A), gleicher Stecker wie auf hardware/pcb/klickrad (J1); Pin 5 = CHANGE, Pin 6 = Reserve')
+    mpn='503480-0600', mfr='Molex', dk='WM1387CT-ND', pkg='FFC 6 Pin 0,5 mm, Dual Contact, 1,0 mm hoch',
+    desc='Klickrad-Stecker Molex 503480-0600 (Easy-On BackFlip, Dual Contact, 1,0 mm), gleicher Typ wie J1 auf hardware/pcb/klickrad; Pin 5 = CHANGE, Pin 6 = Reserve; Kabel FFC 6 Pin 0,5 mm Typ A oder B (Dual Contact)')
 res('R136', '10k', '3V3', 'WHEEL_INT', 'Pull-up CHANGE (open drain, aktiv low)')
-for i, (hx, hy) in enumerate(((17.4, 41.0), (16.2, -41.0), (17.4, 22.0))):
+import layout as _L
+for i, (hx, hy) in enumerate(_L.HOLES):
     add(f'H{i+1}', 'M1.6', 'H', 'Hauptplatine:MountingHole_1.8mm', {}, 'neu', nobom=True, hole_at=(hx, hy),
         desc='Gehaeuse-Befestigung M1,6 (NPTH 1,8 mm), Position zur Abstimmung mit dem CAD')
 

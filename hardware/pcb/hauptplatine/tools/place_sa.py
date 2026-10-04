@@ -111,12 +111,30 @@ for _r, _st in FIXED.items():
     _g = fpgeom(PARTS[_r]['fp']); _x0, _x1, _y0, _y1 = _g['bb']
     _pts = [to_view(_st, a, b) for a, b in ((_x0, _y0), (_x1, _y0), (_x1, _y1), (_x0, _y1))]
     _fx.append((_st[3], box(min(p[0] for p in _pts), min(p[1] for p in _pts), max(p[0] for p in _pts), max(p[1] for p in _pts))))
-ALLOW_B = BOARD_IN.difference(unary_union([FORB] + [g for sd, g in _fx if sd == 'B'])).buffer(-0.6)
-ALLOW_T = BOARD_IN.difference(unary_union([FORB_T] + [g for sd, g in _fx if sd == 'T'])).buffer(-0.6)
+RAW_B = BOARD_IN.difference(unary_union([FORB] + [g for sd, g in _fx if sd == 'B']))
+RAW_T = BOARD_IN.difference(unary_union([FORB_T] + [g for sd, g in _fx if sd == 'T']))
+ALLOW_B = RAW_B.buffer(-0.6)
+ALLOW_T = RAW_T.buffer(-0.6)
 from shapely.geometry import Point as _Pt
-def pull_cost(st):
+def allowed(ref, side, raw=False):
+    g = layout.REGION_OF.get(ref)
+    base = (RAW_B if side == 'B' else RAW_T) if raw else (ALLOW_B if side == 'B' else ALLOW_T)
+    if ref not in TOPABLE and side == 'T': base = base.intersection(layout.TOPTALL)
+    if g is None: return base
+    reg = layout.GROUPS[g]['back' if side == 'B' else 'front']
+    if reg is None: return Polygon()
+    return base.intersection(reg)
+_AL = {}
+def allowed_c(ref, side, raw=False):
+    k = (ref, side, raw)
+    if k not in _AL: _AL[k] = allowed(ref, side, raw)
+    return _AL[k]
+def sides_ok(ref):
+    return [sd for sd in ('T', 'B') if not allowed_c(ref, sd).is_empty]
+def pull_cost(st, ref=None):
     """Gradient zur erlaubten Flaeche (hilft dem Annealing, aus gesperrten Zonen herauszufinden)."""
-    pt = _Pt(st[0], st[1]); area = ALLOW_B if st[3] == 'B' else ALLOW_T
+    pt = _Pt(st[0], st[1]); area = allowed_c(ref, st[3]) if ref else (ALLOW_B if st[3] == 'B' else ALLOW_T)
+    if area.is_empty: return 200.0
     return 0.0 if area.contains(pt) else 4.0 * pt.distance(area)
 
 def tht_ok(ref, st):
@@ -124,7 +142,7 @@ def tht_ok(ref, st):
     for num, x, y, tht, w, h in g['pads']:
         if tht:
             vx, vy = to_view(st, x, y)
-            if not (vy < -0.8 or vx > 17.4 or vy > 42.6): return False
+            if not (vy < layout.DISPLAY[1] or vy > layout.DISPLAY[3] or abs(vx) > layout.DISPLAY[2]): return False
     return True
 
 def part_cost_static(ref, st):
@@ -139,10 +157,13 @@ def part_cost_static(ref, st):
         if ref != 'U15' and PFORB.intersects(r): pen += 50 + 20 * r.intersection(FORB).area
     else:
         if PFORB_T.intersects(r) and ref != 'U15': pen += 50 + 20 * r.intersection(FORB_T).area
-        if ref not in TOPABLE and ref not in FIXED: pen += 100
     if PARTS[ref].get('tht') and not tht_ok(ref, st): pen += 80
-    if ref not in FIXED and pen > 0: pen += pull_cost(st)
-    if side == 'B' and ref in TOPABLE and ref not in FIXED: pen += 12   # Rueckseite ist knapp: flache Teile moeglichst nach oben
+    if ref not in FIXED:
+        ar = allowed_c(ref, side, True)
+        if ar.is_empty: pen += 500
+        elif not ar.buffer(0.05).contains(r): pen += 50 + 20 * r.difference(ar.buffer(0.05)).area
+    if ref not in FIXED and pen > 0: pen += pull_cost(st, ref)
+    if side == 'B' and ref in TOPABLE and ref not in FIXED: pen += 3   # Rueckseite ist knapp: flache Teile moeglichst nach oben
     return pen
 
 def ncost():
@@ -227,11 +248,14 @@ if os.environ.get('DBG'):
     sys.exit()
 # Startzustand: zufaellig in der Platine
 def rand_state(ref):
+    side = random.choice(sides_ok(ref) or ['B'])
+    area = allowed_c(ref, side)
+    if area.is_empty: area = ALLOW_B
+    bx0, by0, bx1, by1 = area.bounds
     for _ in range(200):
-        x = random.uniform(-17, 17); y = random.uniform(-40, 40)
-        th = random.choice((0, 90, 180, 270))
-        side = 'T' if ref in TOPABLE else 'B'
-        return (x, y, th, side)
+        x, y = random.uniform(bx0, bx1), random.uniform(by0, by1)
+        if area.contains(_Pt(x, y)): break
+    return (x, y, random.choice((0, 90, 180, 270)), side)
 for r in allmov: state[r] = rand_state(r)
 # Teile mit Ankern starten in der Naehe
 for r in allmov:
@@ -241,7 +265,7 @@ for r in allmov:
         for num, x, y, tht, w, h in g['pads']:
             if num == a[1]:
                 ax, ay = to_view(state[a[0]], x, y)
-                state[r] = (ax + random.uniform(-2, 2), ay + random.uniform(-2, 2), random.choice((0, 90, 180, 270)), state[a[0]][3])
+                state[r] = (ax + random.uniform(-2, 2), ay + random.uniform(-2, 2), random.choice((0, 90, 180, 270)), state[a[0]][3] if not allowed_c(r, state[a[0]][3]).is_empty and (state[a[0]][3] == 'B' or r in TOPABLE) else state[r][3])
                 break
 
 def edge_cost(ref, st):
@@ -286,8 +310,9 @@ for it in range(N):
     old = state[ref]
     sig = 6.0 * (1 - it / N) + 0.3
     if random.random() < 0.05:        # Sprung in die erlaubte Flaeche (Teile ueberqueren sonst gesperrte Zonen nicht)
-        side = old[3]
-        area = ALLOW_B if side == 'B' else ALLOW_T
+        side = random.choice(sides_ok(ref)) if random.random() < 0.3 else old[3]
+        area = allowed_c(ref, side)
+        if area.is_empty: continue
         bx0, by0, bx1, by1 = area.bounds
         for _ in range(40):
             px, py = random.uniform(bx0, bx1), random.uniform(by0, by1)

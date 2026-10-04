@@ -1,5 +1,5 @@
 # ---- GND-Ring auf F.Cu zwischen Taste und Rad (Zone; Router-Vias und F.Cu-Brücken anderer Netze werden ausgespart)
-_zr = zone(F_CU, disc(5.5), 'GND', 0, hole=disc(3.3))
+_zr = zone(F_CU, disc(5.5), 'GND', 0, hole=disc(2.8))
 _zr.SetMinThickness(FromMM(0.2)); _zr.SetLocalClearance(FromMM(0.25))
 # ---- GND-Gitter auf B.Cu (Tangara: Linie 0,127 mm, Lücke 1,016 mm, 45 Grad, Glättung 2) wird erst nach dem Routing angelegt.
 # Jedes GND-Pad hat einen kurzen Leiterbahn-Stummel (route.py), der das Gitter kreuzt und es so anbindet.

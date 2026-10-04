@@ -3,6 +3,8 @@
 from shapely.geometry import box as sbox, Point as SPoint, LineString
 from shapely.ops import unary_union
 
+for z in list(board.Zones()):
+    if z.GetZoneName() == 'edge_ring': board.Remove(z)
 pl_parts = {p['ref']: p for p in netlist.parts()}
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 
@@ -87,7 +89,7 @@ for side in ('T', 'B'):
 print('Fiducials', fid_count)
 
 # Beschriftung auf Silkscreen (nur wenn Platz)
-lines = ['Hauptplatine Rev.2', 'CERN-OHL-S-2.0', 'nach Tangara (cooltech.zone)']
+lines = ['Hauptplatine Rev.3', 'CERN-OHL-S-2.0', 'nach Tangara (cooltech.zone)']
 for side in ('B', 'T'):
     spot = free_spot(side, 17.0, 3.2, [(x, y) for y in (-45.0, 43.0, -42.0, 38.0, 14.0, 30.0, 36.0) for x in (0.0, -6.0, 6.0)], gap=0.3)
     if not spot: print('Beschriftung', side, 'kein Platz'); continue

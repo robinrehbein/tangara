@@ -102,6 +102,19 @@ def hole18():
     s += ')\n'
     return s
 
+
+# ---------------------------------------------------------------- Molex 503480-0600 (FFC/FPC 0,5 mm, 6 pol., Dual Contact, 1,0 mm hoch)
+def molex6():
+    s = HEAD % ('Molex_503480-0600', 'Molex 503480-0600 Easy-On BackFlip FFC/FPC 6 pol. 0,5 mm, Dual Contact, 1,0 mm hoch. Landmuster aus dem Text der Molex-Zeichnung SD-503480-001 abgeleitet (Signalpads 0,3 x 0,7, Nagelpads 0,79 x 0,7, Rastermass 0,5); Zeichnungsbild nicht lesbar, Lage der Nagelpads UNGEPRUEFT', 'molex 503480 ffc fpc 0.5mm')
+    s += prop('Reference', 'REF**', 0, -3.2, 'F.SilkS', size=0.8) + prop('Value', 'Molex_503480-0600', 0, 3.0, 'F.Fab', size=0.8)
+    s += '\t(attr smd)\n'
+    for i in range(6): s += pad(i + 1, round(-1.25 + 0.5 * i, 3), -1.7, 0.3, 0.7, 'rect')
+    for sx in (-1, 1): s += pad('MP', sx * 2.045, -1.7, 0.79, 0.7, 'rect')
+    s += rect(-2.35, -2.3, 2.35, 1.3, 'F.Fab', 0.1) + rect(-2.75, -2.55, 2.75, 1.8, 'F.CrtYd', 0.05)
+    s += line(-2.6, -2.4, -2.6, -1.2, 'F.SilkS', 0.12) + text('1', -1.25, -3.0, 'F.SilkS', 0.7)
+    s += ')\n'
+    return s
+
 # ---------------------------------------------------------------- Klinke SJ-43504-SMT-TR (Tangara-Bibliothek, angepasst)
 def jack():
     t = open(os.path.join(ROOT, 'quellen', 'CUI_SJ-43504-SMT-TR.kicad_mod')).read()
@@ -114,7 +127,7 @@ def jack():
     t = re.sub(r'\(pad "([1-6])" smd rect \(at ([-0-9.]+) ([-0-9.]+)\) \(size 1\.75 2\)', fix, t)
     return t
 
-for name, fn in (('X2QFN-12-RWB', x2qfn), ('ESP32-S31-WROOM-1', wroom1), ('BATT_PADS_3', battpads), ('MountingHole_1.8mm', hole18), ('CUI_SJ-43504-SMT-TR', jack)):
+for name, fn in (('X2QFN-12-RWB', x2qfn), ('ESP32-S31-WROOM-1', wroom1), ('BATT_PADS_3', battpads), ('MountingHole_1.8mm', hole18), ('CUI_SJ-43504-SMT-TR', jack), ('Molex_503480-0600', molex6)):
     with open(os.path.join(OUT, name + '.kicad_mod'), 'w') as f:
         f.write(fn())
 for fn in ('GCT_USB4510-03-1-A_REVA', 'SOT65P210X110-6N'):
