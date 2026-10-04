@@ -16,6 +16,8 @@ Hobbyprojekt. Vorbild: [Tangara](https://cooltech.zone/tangara/) (Open Hardware,
 | Plattform | **A: Mikrocontroller**, B (Linux) als Rückfalloption | Akku, sofort an, volle Kontrolle über UI und Haptik |
 | SoC | **ESP32-S31** | WLAN 6 + Bluetooth Classic (A2DP) + LE Audio in einem Chip, 320 MHz RISC-V, PSRAM, 2D-Beschleuniger (PPA), Touch-Kanäle für ein Scrollrad |
 | Firmware-Basis | Fork der Tangara-Firmware (ESP-IDF, LVGL, Lua) | spart sehr viel Arbeit; GPL ist für ein Hobbyprojekt kein Problem |
+| Hauptplatine Endgerät | **ESP32-S31-WROOM-3** | Bluetooth-Kopfhörer sind Pflicht; kein XIAO mit Bluetooth Classic verfügbar. Prototyp bleibt auf dem Waveshare-ESP32-S3. |
+| Audio über Kabel | **3,5-mm-Klinke mit Hi-Res-DAC und USB-C-Audio (Host, UAC2)** | beste Qualität über Kabel; Bluetooth auf dem ESP32 nur SBC bzw. LC3 |
 | Musikquellen (Prototyp) | gekaufte, DRM-freie Dateien (z. B. Bandcamp, Qobuz) | einfach und legal |
 | Gehäuse | 3D-Druck (PETG oder Resin, steif wegen Haptik) | |
 
