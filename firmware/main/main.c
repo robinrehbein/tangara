@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #include "esp_log.h"
 #include "board.h"
 #include "display.h"

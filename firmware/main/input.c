@@ -1,4 +1,7 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #include <string.h>
+#include "sdkconfig.h"
 #include "input.h"
 #include "board.h"
 #include "board_config.h"
@@ -10,16 +13,28 @@
 #include "freertos/task.h"
 #include "haptics.h"
 #include "model.h"
+#if CONFIG_NANO_WHEEL_MPR121
 #include "mpr121.h"
+#else
+#include "at42qt2120.h"
+#endif
 #include "sdkconfig.h"
 
 static const char *TAG = "input";
 
+#if CONFIG_NANO_WHEEL_MPR121
 #define N CONFIG_NANO_WHEEL_SEGMENTS
+#else
+#define N 12  /* nur für Konstanten der Logik; die Segmente werden beim QT2120 nicht benutzt */
+#endif
 #define BTN_DEBOUNCE_US 15000
 
 static TaskHandle_t s_task;
+#if CONFIG_NANO_WHEEL_MPR121
 static mpr121_handle_t s_mpr;
+#else
+static at42qt2120_handle_t s_qt;
+#endif
 
 #if CONFIG_NANO_LATENCY_PROBE
 static int s_probe_step_level;
@@ -61,28 +76,42 @@ static void input_task(void *arg)
         .clockwise = false,
 #endif
         .detent_deg = CONFIG_NANO_WHEEL_DETENT_DEG,
+#if CONFIG_NANO_WHEEL_MPR121
         .touch_on = CONFIG_NANO_WHEEL_TOUCH_ON,
         .touch_off = CONFIG_NANO_WHEEL_TOUCH_OFF,
         .noise_floor = CONFIG_NANO_WHEEL_NOISE_FLOOR,
+#endif
         .tap_slop_deg = CONFIG_NANO_WHEEL_TAP_SLOP_DEG,
         .settle_frames = 2,
     };
     cw_t wheel;
     cw_init(&wheel, &cc);
 
+#if CONFIG_NANO_WHEEL_MPR121
     uint16_t baseline[N], filtered[N], signal[N];
     memset(baseline, 0, sizeof baseline);
     mpr121_read_baseline(s_mpr, baseline, N);
     int baseline_age = 0;
+#else
+    at42qt2120_data_t qd = {0};
+#endif
 
     bool btn_stable = true;   /* true = nicht gedrückt (aktiv low) */
     int64_t btn_change_us = 0;
     bool touching = false;
     TickType_t last = xTaskGetTickCount();
     int log_div = 0;
+    bool extra_active = false;   /* QT2120: Tastenzustand weicht noch vom entprellten Zustand ab */
 
     for (;;) {
+#if CONFIG_NANO_WHEEL_BTN_GPIO
         bool btn_raw = gpio_get_level(WHEEL_BTN_GPIO);
+#else
+        bool btn_raw = true;
+#endif
+#if !CONFIG_NANO_WHEEL_MPR121
+        if (qd.button_touched) btn_raw = false;   /* Mitteltaste = Taste 3 des QT2120 */
+#endif
         int64_t now = esp_timer_get_time();
         bool btn_pending = (btn_raw != btn_stable);
         if (btn_pending) {
@@ -99,6 +128,7 @@ static void input_task(void *arg)
             btn_change_us = 0;
         }
 
+#if CONFIG_NANO_WHEEL_MPR121
         uint16_t mask;
         if (mpr121_read_status_filtered(s_mpr, &mask, filtered, N) == ESP_OK) {
             if (++baseline_age >= 25 || !touching) {   /* Baseline ändert sich langsam */
@@ -126,7 +156,29 @@ static void input_task(void *arg)
 #endif
         }
 
-        if (touching || btn_pending) {
+#else
+        if (at42qt2120_read(s_qt, &qd) == ESP_OK) {
+            cw_output_t out;
+            cw_update_position(&wheel, qd.wheel_touched && !qd.calibrating, qd.wheel_position, &out);
+            touching = out.touching;
+            extra_active = (qd.button_touched == btn_stable);
+            if (out.steps) handle_steps(out.steps);
+            if (out.tap != CW_TAP_NONE) {
+                haptics_click();
+                model_tap(out.tap);
+            }
+#if CONFIG_NANO_WHEEL_LOG_RAW
+            if (out.touching && ++log_div >= 10) {
+                log_div = 0;
+                ESP_LOGI(TAG, "pos=%3u ang=%6.1f btn=%d", qd.wheel_position, out.angle_deg, qd.button_touched);
+            }
+#else
+            (void)log_div;
+#endif
+        }
+#endif
+
+        if (touching || btn_pending || extra_active) {
             vTaskDelayUntil(&last, pdMS_TO_TICKS(btn_pending && !touching ? 2 : CONFIG_NANO_WHEEL_POLL_MS));
         } else {
             /* Leerlauf: bis zur nächsten INT-/BTN-Flanke schlafen (oder 50 ms) */
@@ -142,11 +194,16 @@ esp_err_t input_start(void)
     gpio_config_t pg = {.pin_bit_mask = 1ULL << PROBE_STEP_GPIO, .mode = GPIO_MODE_OUTPUT};
     gpio_config(&pg);
 #endif
+#if CONFIG_NANO_WHEEL_MPR121
     mpr121_config_t mc = MPR121_CONFIG_DEFAULT();
     mc.address = WHEEL_ADDR_MPR121;
     mc.num_electrodes = N;
     esp_err_t e = mpr121_init(board_wheel_i2c(), &mc, &s_mpr);
     if (e != ESP_OK) { ESP_LOGE(TAG, "MPR121 Init: %s - Klickrad angeschlossen?", esp_err_to_name(e)); return e; }
+#else
+    esp_err_t e = at42qt2120_init(board_wheel_i2c(), &s_qt);
+    if (e != ESP_OK) { ESP_LOGE(TAG, "AT42QT2120 Init: %s - Klickrad angeschlossen?", esp_err_to_name(e)); return e; }
+#endif
     e = haptics_init(board_wheel_i2c());
     if (e != ESP_OK) ESP_LOGW(TAG, "weiter ohne Haptik");
 

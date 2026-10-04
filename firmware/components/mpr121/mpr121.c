@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #include <stdlib.h>
 #include "mpr121.h"
 #include "esp_log.h"

@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 /** Treiber für den NXP MPR121 (12-Kanal kapazitiver Touch-Controller), I2C-Master-API von ESP-IDF 5.x. */
 #include <stdint.h>

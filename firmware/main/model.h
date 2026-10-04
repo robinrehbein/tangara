@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 /**
  * Bedienlogik wie PlayerModel.kt der Emulator-App, ohne LVGL. Wird vom Input-Task verändert

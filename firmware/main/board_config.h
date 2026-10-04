@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 /**
  * Zentrale Hardware-Konfiguration: Waveshare ESP32-S3-Touch-AMOLED-1.8 + Klickrad-Modul.
@@ -54,11 +56,12 @@
 #define TCA_OUTPUT_MASK      (TCA_BIT_LCD_RST | TCA_BIT_DSI_PWR_EN | TCA_BIT_TOUCH_RST | TCA_BIT_SD_CS)
 
 /* ---- Klickrad-Modul ---- */
-#define WHEEL_ADDR_MPR121    0x5B   /* [Schnittstelle TEILE.md] ADDR an VDD */
+#define WHEEL_ADDR_MPR121    0x5B   /* Klickrad v1 [Schnittstelle TEILE.md] ADDR an VDD */
+#define WHEEL_ADDR_QT2120    0x1C   /* Klickrad v2 (Tangara-Technik), fest; Treiber-Konstante AT42QT2120_ADDR */
 #define WHEEL_ADDR_DRV2605L  0x5A   /* [Schnittstelle TEILE.md] fest */
 /* Pads auf dem Waveshare-Board: GPIO17 und GPIO18 sind laut Schaltplan reine Testpunkte (TP11/TP12)
  * ohne weitere Last und auf 1,27-mm-Pads geführt. Zuordnung INT/BTN ist ein Vorschlag [Vorschlag]. */
-#define WHEEL_INT_GPIO       GPIO_NUM_17   /* MPR121-IRQ, open drain, aktiv low (interner Pull-up an) */
+#define WHEEL_INT_GPIO       GPIO_NUM_17   /* CHANGE (QT2120) bzw. IRQ (MPR121), open drain, aktiv low (interner Pull-up an) */
 #define WHEEL_BTN_GPIO       GPIO_NUM_18   /* Mitteltaste, aktiv low (interner Pull-up an) */
 
 /* Optional: eigener I2C-Bus fürs Klickrad statt des gemeinsamen (Kconfig). Pins [prüfen]. */

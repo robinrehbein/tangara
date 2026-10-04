@@ -1,3 +1,9 @@
+/*
+ * Copyright 2023 jacqueline <me@jacqueline.id.au>, robin <robin@rhoward.id.au> (Tangara, cool tech zone)
+ * Siehe drv2605l.c.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
 #pragma once
 /**
  * Treiber für den TI DRV2605L (Haptik-Treiber) im LRA-Betrieb, I2C-Master-API von ESP-IDF 5.x.
@@ -14,6 +20,8 @@ extern "C" {
 
 #define DRV2605L_ADDR 0x5A
 
+#include "drv2605l_effects.h"
+
 typedef struct drv2605l *drv2605l_handle_t;
 
 typedef struct {
@@ -24,6 +32,9 @@ typedef struct {
     uint8_t  cal_comp;          ///< A_CAL_COMP (nur mit use_stored_cal)
     uint8_t  cal_bemf;          ///< A_CAL_BEMF (nur mit use_stored_cal)
     uint8_t  cal_bemf_gain;     ///< BEMF_GAIN (0..3, nur mit use_stored_cal)
+    bool     motor_erm;         ///< true: ERM-Motor (offener Regelkreis, Bibliothek C) statt LRA, wie Tangara
+    bool     disable_ack_check; ///< ACK-Prüfung abschalten (Tangara-Workaround: Chip NACKt manchmal)
+    bool     interrupt_running; ///< vor jedem Effekt laufenden abbrechen (GO = 0), wie Tangara
 } drv2605l_config_t;
 
 typedef struct {

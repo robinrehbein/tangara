@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #include <math.h>
 #include <string.h>
 #include "clickwheel.h"
@@ -64,17 +66,10 @@ bool cw_compute_angle(const cw_config_t *c, const uint16_t *signal, float *angle
     return true;
 }
 
-void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out)
+/* Gemeinsamer Kern: Berührungszustand und Winkel sind bekannt (egal ob aus Segmenten oder Wheel-Position). */
+static void feed(cw_t *w, bool now_touch, float angle, uint16_t strength, cw_output_t *out)
 {
-    memset(out, 0, sizeof(*out));
-    float angle = 0.f;
-    uint16_t strength = 0;
-    bool valid = cw_compute_angle(&w->cfg, signal, &angle, &strength);
     out->strength = strength;
-
-    bool now_touch = w->touching ? (strength >= w->cfg.touch_off) : (strength >= w->cfg.touch_on);
-    now_touch = now_touch && valid;
-
     if (!now_touch) {
         if (w->touching) {
             if (!w->rotating && w->settle == 0) out->tap = cw_tap_for_angle(w->start_angle);
@@ -107,4 +102,28 @@ void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out)
     out->touching = true;
     out->rotating = w->rotating;
     out->angle_deg = angle;
+}
+
+void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out)
+{
+    memset(out, 0, sizeof(*out));
+    float angle = 0.f;
+    uint16_t strength = 0;
+    bool valid = cw_compute_angle(&w->cfg, signal, &angle, &strength);
+    bool now_touch = w->touching ? (strength >= w->cfg.touch_off) : (strength >= w->cfg.touch_on);
+    feed(w, now_touch && valid, angle, strength, out);
+}
+
+float cw_position_to_angle(const cw_config_t *c, uint8_t position)
+{
+    float a = c->first_segment_deg + (c->clockwise ? 1.f : -1.f) * (float)position * (360.f / 256.f);
+    while (a > 180.f) a -= 360.f;
+    while (a <= -180.f) a += 360.f;
+    return a;
+}
+
+void cw_update_position(cw_t *w, bool touched, uint8_t position, cw_output_t *out)
+{
+    memset(out, 0, sizeof(*out));
+    feed(w, touched, cw_position_to_angle(&w->cfg, position), touched ? 255 : 0, out);
 }

@@ -1,6 +1,9 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 /**
  * Klickrad-Logik ohne Hardwarebezug (portabel, auch auf dem PC testbar).
+ * Eingang entweder Segment-Signale (MPR121, Klickrad v1) oder Wheel-Position 0..255 (AT42QT2120).
  *
  * Gleiche Logik wie ScrollWheel.kt der Emulator-App:
  *  - Winkel: 0 Grad = rechts, im Uhrzeigersinn steigend (Bildschirm-Konvention)
@@ -69,6 +72,16 @@ bool cw_compute_angle(const cw_config_t *cfg, const uint16_t *signal, float *ang
 
 /** Einen neuen Messdurchgang verarbeiten. */
 void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out);
+
+/**
+ * Variante für Controller mit fertiger Wheel-Position (AT42QT2120, Tangara-Klickrad): position 0..255
+ * läuft einmal um den Kreis. Der Winkel von Position 0 ist first_segment_deg, der Drehsinn clockwise
+ * (num_segments, touch_on/off und noise_floor werden nicht benutzt). touched kommt vom Controller.
+ */
+void cw_update_position(cw_t *w, bool touched, uint8_t position, cw_output_t *out);
+
+/** Wheel-Position 0..255 in einen Winkel (Bildschirm-Konvention, -180..180] umrechnen. */
+float cw_position_to_angle(const cw_config_t *cfg, uint8_t position);
 
 /** Winkeldifferenz auf (-180, 180] normieren. */
 float cw_angle_diff(float a, float b);

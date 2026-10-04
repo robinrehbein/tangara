@@ -1,3 +1,5 @@
+/* Copyright 2026 Nano-Player-Projekt
+ * SPDX-License-Identifier: GPL-3.0-only */
 #pragma once
 #include "esp_err.h"
 #include "driver/i2c_master.h"

@@ -1,0 +1,3316 @@
+{
+ "C30": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C32": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C33": {
+  "value": "1μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/",
+  "mpn": "GRM216R61C105KA88D",
+  "fields": {
+   "MPN": "GRM216R61C105KA88D",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U13-VDDCORE)",
+    null
+   ]
+  }
+ },
+ "C34": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C35": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C38": {
+  "value": "22μF",
+  "fp": "Capacitor_SMD:C_1206_3216Metric",
+  "sheet": "/",
+  "mpn": "GRM319R61C226KE15D",
+  "fields": {
+   "MPN": "GRM319R61C226KE15D",
+   "Footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C39": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C40": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "BAT_LEVEL",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C41": {
+  "value": "1μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/",
+  "mpn": "GRM216R61C105KA88D",
+  "fields": {
+   "MPN": "GRM216R61C105KA88D",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "ESP_EN",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "H1": {
+  "value": "MountingHole",
+  "fp": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+  "sheet": "/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "1"
+   ]
+  }
+ },
+ "H2": {
+  "value": "MountingHole",
+  "fp": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+  "sheet": "/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "1"
+   ]
+  }
+ },
+ "H3": {
+  "value": "MountingHole",
+  "fp": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+  "sheet": "/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "1"
+   ]
+  }
+ },
+ "H4": {
+  "value": "MountingHole",
+  "fp": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+  "sheet": "/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "footprints:MountingHole_2.2mm_M2_Pad_Via2",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "1"
+   ]
+  }
+ },
+ "J3": {
+  "value": "JTAG",
+  "fp": "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD",
+  "sheet": "/",
+  "mpn": "FTSH-105-01-F-DV-K",
+  "fields": {
+   "MPN": "FTSH-105-01-F-DV-K",
+   "Footprint": "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD",
+   "Datasheet": "SAM8796-ND",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    "vRef"
+   ],
+   "4": [
+    "JTAG.TCK",
+    "TCK"
+   ],
+   "8": [
+    "JTAG.TDI",
+    "TDI"
+   ],
+   "6": [
+    "JTAG.TDO",
+    "TDO"
+   ],
+   "2": [
+    "JTAG.TMS",
+    "TMS"
+   ],
+   "3": [
+    "GND",
+    "GND"
+   ],
+   "5": [
+    "GND",
+    "GND"
+   ],
+   "9": [
+    "unconnected-(J3-UART_RX-Pad9)",
+    "UART_RX"
+   ],
+   "7": [
+    "unconnected-(J3-UART_TX-Pad7)",
+    "UART_TX"
+   ],
+   "10": [
+    "unconnected-(J3-nRst-Pad10)",
+    "nRst"
+   ]
+  }
+ },
+ "J5": {
+  "value": "SWD",
+  "fp": "footprints:SAMDSWD",
+  "sheet": "/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "footprints:SAMDSWD",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    "Pin_1"
+   ],
+   "4": [
+    "SWD.RESET",
+    "Pin_4"
+   ],
+   "3": [
+    "SWD.SWCLK",
+    "Pin_3"
+   ],
+   "2": [
+    "SWD.SWDIO",
+    "Pin_2"
+   ],
+   "5": [
+    "GND",
+    "Pin_5"
+   ]
+  }
+ },
+ "R10": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "UART.ESP.RX",
+    null
+   ]
+  }
+ },
+ "R21": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "I2C.SDA",
+    null
+   ]
+  }
+ },
+ "R26": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "I2C.SCL",
+    null
+   ]
+  }
+ },
+ "R42": {
+  "value": "1kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "RC0603DR-071KL",
+  "fields": {
+   "MPN": "RC0603DR-071KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "SWD.SWCLK",
+    null
+   ]
+  }
+ },
+ "R49": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "~{SAMD_INT}",
+    null
+   ]
+  }
+ },
+ "R55": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "DISPLAY_DR",
+    null
+   ]
+  }
+ },
+ "R56": {
+  "value": "1MΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603FR-131ML ",
+  "fields": {
+   "MPN": "AC0603FR-131ML ",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "ESP_EN",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "R58": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "ESP_SPI.DISPLAY_CS",
+    null
+   ]
+  }
+ },
+ "R59": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "UART.ESP.TX",
+    null
+   ]
+  }
+ },
+ "U13": {
+  "value": "ATSAMD21E18A-AF",
+  "fp": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
+  "sheet": "/",
+  "mpn": "ATSAMD21E18A-AF",
+  "fields": {
+   "MPN": "ATSAMD21E18A-AF",
+   "Footprint": "Package_QFP:TQFP-32_7x7mm_P0.8mm",
+   "Datasheet": "http://ww1.microchip.com/downloads/en/DeviceDoc/SAM_D21_DA1_Family_Data%20Sheet_DS40001882E.pdf",
+   "Description": null
+  },
+  "pins": {
+   "30": [
+    "+3V3",
+    "VDDIN"
+   ],
+   "9": [
+    "+3V3",
+    "VDDANA"
+   ],
+   "15": [
+    "ESP_EN",
+    "PA14"
+   ],
+   "26": [
+    "SWD.RESET",
+    "~{RESET}"
+   ],
+   "31": [
+    "SWD.SWCLK",
+    "SWCLK"
+   ],
+   "32": [
+    "SWD.SWDIO",
+    "SWDIO"
+   ],
+   "5": [
+    "UART.ESP.RX",
+    "PA04(SERCOM0.0)"
+   ],
+   "6": [
+    "UART.ESP.TX",
+    "PA05(SERCOM0.1)"
+   ],
+   "16": [
+    "~{SAMD_INT}",
+    "PA15"
+   ],
+   "20": [
+    "CHG_PROG",
+    "PA19"
+   ],
+   "21": [
+    "CHG_SEL",
+    "PA22"
+   ],
+   "25": [
+    "CHG_STAT1",
+    "PA27"
+   ],
+   "27": [
+    "CHG_STAT2",
+    "PA28"
+   ],
+   "13": [
+    "DAC.BCK",
+    "PA10(I2S/SCK)"
+   ],
+   "11": [
+    "DAC.DATA",
+    "PA08(I2S/SD)"
+   ],
+   "14": [
+    "DAC.LRCK",
+    "PA11(IS2/FS)"
+   ],
+   "12": [
+    "DAC.MCK",
+    "PA09(I2S/MCK)"
+   ],
+   "10": [
+    "GND",
+    "GND"
+   ],
+   "28": [
+    "GND",
+    "GND"
+   ],
+   "18": [
+    "I2C.SCL",
+    "PA17(SERCOM3.1)"
+   ],
+   "17": [
+    "I2C.SDA",
+    "PA16(SERCOM3.0)"
+   ],
+   "29": [
+    "Net-(U13-VDDCORE)",
+    "VDDCORE"
+   ],
+   "3": [
+    "SAMD_SPI.CS",
+    "PA02"
+   ],
+   "1": [
+    "SAMD_SPI.PICO",
+    "PA00(SERCOM1.0)"
+   ],
+   "19": [
+    "SAMD_SPI.POCI",
+    "PA18(SERCOM1.2)"
+   ],
+   "2": [
+    "SAMD_SPI.SCLK",
+    "PA01(SERCOM1.1)"
+   ],
+   "4": [
+    "SYS_PWR_EN_SAMD",
+    "PA03"
+   ],
+   "23": [
+    "USB.DN",
+    "USB.DM"
+   ],
+   "24": [
+    "USB.DP",
+    "USB.DP"
+   ],
+   "8": [
+    "USB_TCC0",
+    "PA07"
+   ],
+   "7": [
+    "USB_TCC1",
+    "PA06"
+   ],
+   "22": [
+    "~{CHG_PWR_OK}",
+    "PA23"
+   ]
+  }
+ },
+ "U15": {
+  "value": "ESP32-WROVER-E",
+  "fp": "footprints:ESP32-WROVER",
+  "sheet": "/",
+  "mpn": "ESP32-WROVER-E-N16R8",
+  "fields": {
+   "MPN": "ESP32-WROVER-E-N16R8",
+   "Footprint": "footprints:ESP32-WROVER",
+   "Datasheet": "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    "VDD"
+   ],
+   "3": [
+    "ESP_EN",
+    "EN"
+   ],
+   "16": [
+    "JTAG.TCK",
+    "JTAG.TCK"
+   ],
+   "14": [
+    "JTAG.TDI",
+    "JTAG.TDI"
+   ],
+   "23": [
+    "JTAG.TDO",
+    "JTAG.TDO"
+   ],
+   "13": [
+    "JTAG.TMS",
+    "JTAG.TMS"
+   ],
+   "34": [
+    "UART.ESP.RX",
+    "UART.RX"
+   ],
+   "35": [
+    "UART.ESP.TX",
+    "UART.TX"
+   ],
+   "7": [
+    "~{SAMD_INT}",
+    "I35"
+   ],
+   "4": [
+    "BAT_LEVEL",
+    "ADC1_CH0/NOINT"
+   ],
+   "11": [
+    "DAC.BCK",
+    "I2S.BCK"
+   ],
+   "29": [
+    "DAC.DATA",
+    "I2S.DOUT"
+   ],
+   "12": [
+    "DAC.LRCK",
+    "I2S.LRCK"
+   ],
+   "25": [
+    "DAC.MCK",
+    "BOOT/I2S.SCK"
+   ],
+   "9": [
+    "DISPLAY_DR",
+    "IO33"
+   ],
+   "8": [
+    "DISPLAY_LED_EN",
+    "IO32"
+   ],
+   "36": [
+    "ESP_SPI.DISPLAY_CS",
+    "SPI.CS1"
+   ],
+   "37": [
+    "ESP_SPI.PICO",
+    "SPI.PICO"
+   ],
+   "31": [
+    "ESP_SPI.POCI",
+    "SPI.POCI"
+   ],
+   "30": [
+    "ESP_SPI.SCLK",
+    "SPI.CLK"
+   ],
+   "33": [
+    "ESP_SPI.SD_CS",
+    "SPI.CS0"
+   ],
+   "1": [
+    "GND",
+    "GND"
+   ],
+   "15": [
+    "GND",
+    "GND"
+   ],
+   "38": [
+    "GND",
+    "GND"
+   ],
+   "39": [
+    "GND",
+    "GND"
+   ],
+   "24": [
+    "I2C.SCL",
+    "I2C.SCL"
+   ],
+   "26": [
+    "I2C.SDA",
+    "I2C.SDA"
+   ],
+   "5": [
+    "unconnected-(U15-I39/NOINT-Pad5)",
+    "I39/NOINT"
+   ],
+   "27": [
+    "unconnected-(U15-IO16-Pad27)",
+    "IO16"
+   ],
+   "28": [
+    "unconnected-(U15-IO17-Pad28)",
+    "IO17"
+   ],
+   "32": [
+    "unconnected-(U15-NC-Pad32)",
+    "NC"
+   ],
+   "20": [
+    "unconnected-(U15-SCK/CLK-Pad20)",
+    "SCK/CLK"
+   ],
+   "19": [
+    "unconnected-(U15-SCS/CMD-Pad19)",
+    "SCS/CMD"
+   ],
+   "22": [
+    "unconnected-(U15-SDI/SD1-Pad22)",
+    "SDI/SD1"
+   ],
+   "21": [
+    "unconnected-(U15-SDO/SD0-Pad21)",
+    "SDO/SD0"
+   ],
+   "17": [
+    "unconnected-(U15-SHD/SD2-Pad17)",
+    "SHD/SD2"
+   ],
+   "18": [
+    "unconnected-(U15-SWP/SD3-Pad18)",
+    "SWP/SD3"
+   ],
+   "6": [
+    "~{GPIO_INT}",
+    "I34"
+   ],
+   "10": [
+    "~{TOUCH_INT}",
+    "IO25"
+   ]
+  }
+ },
+ "C1": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Power/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C24": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Power/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "C25": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Power/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(J7-Pin_3)",
+    null
+   ]
+  }
+ },
+ "C27": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Power/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "VBUS_SWITCHED",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C29": {
+  "value": "100uF",
+  "fp": "Capacitor_SMD:C_1210_3225Metric",
+  "sheet": "/Power/",
+  "mpn": "GRM32EC70J107ME15K",
+  "fields": {
+   "MPN": "GRM32EC70J107ME15K",
+   "Footprint": "Capacitor_SMD:C_1210_3225Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C37": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "VBUS",
+    null
+   ]
+  }
+ },
+ "D4": {
+  "value": "BAT54C",
+  "fp": "Package_TO_SOT_SMD:SOT-23",
+  "sheet": "/Power/",
+  "mpn": "BAT54C",
+  "fields": {
+   "MPN": "BAT54C",
+   "Footprint": "Package_TO_SOT_SMD:SOT-23",
+   "Datasheet": "http://www.diodes.com/_files/datasheets/ds11005.pdf",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "KEY_LOCK",
+    null
+   ],
+   "3": [
+    "Net-(U4-EN)",
+    null
+   ],
+   "1": [
+    "SYS_PWR_EN_SAMD",
+    null
+   ]
+  }
+ },
+ "J6": {
+  "value": "USB",
+  "fp": "footprints:GCT_USB4510-03-1-A_REVA",
+  "sheet": "/Power/",
+  "mpn": "USB4510-03-1-A",
+  "fields": {
+   "MPN": "USB4510-03-1-A",
+   "PARTREV": "A",
+   "STANDARD": "Manufacturer Recommendations",
+   "MAXIMUM_PACKAGE_HEIGHT": "2.46mm",
+   "MANUFACTURER": "GCT",
+   "Footprint": "footprints:GCT_USB4510-03-1-A_REVA",
+   "Datasheet": "https://www.usb.org/sites/default/files/documents/usb_type-c.zip",
+   "Description": null
+  },
+  "pins": {
+   "A1_B12": [
+    "GND",
+    "GND"
+   ],
+   "B1_A12": [
+    "GND",
+    "GND"
+   ],
+   "S1": [
+    "GND",
+    "SHELL_GND"
+   ],
+   "S2": [
+    "GND",
+    "SHELL_GND"
+   ],
+   "S3": [
+    "GND",
+    "SHELL_GND"
+   ],
+   "S4": [
+    "GND",
+    "SHELL_GND"
+   ],
+   "A5": [
+    "Net-(J6-CC1)",
+    "CC1"
+   ],
+   "B5": [
+    "Net-(J6-CC2)",
+    "CC2"
+   ],
+   "A7": [
+    "USB.DN",
+    "DN"
+   ],
+   "B7": [
+    "USB.DN",
+    "DN"
+   ],
+   "A6": [
+    "USB.DP",
+    "DP"
+   ],
+   "B6": [
+    "USB.DP",
+    "DP"
+   ],
+   "A4_B9": [
+    "VBUS",
+    "VBUS"
+   ],
+   "B4_A9": [
+    "VBUS",
+    "VBUS"
+   ],
+   "A8": [
+    "unconnected-(J6-SBU1-PadA8)",
+    "SBU1"
+   ],
+   "B8": [
+    "unconnected-(J6-SBU2-PadB8)",
+    "SBU2"
+   ]
+  }
+ },
+ "J7": {
+  "value": "Battery",
+  "fp": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+  "sheet": "/Power/",
+  "mpn": "S3B-PH-K-S(LF)(SN)",
+  "fields": {
+   "MPN": "S3B-PH-K-S(LF)(SN)",
+   "Footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "NTC",
+    "Pin_1"
+   ],
+   "2": [
+    "GND",
+    "Pin_2"
+   ],
+   "3": [
+    "Net-(J7-Pin_3)",
+    "Pin_3"
+   ]
+  }
+ },
+ "Q1": {
+  "value": "PMV48XPA2R",
+  "fp": "Package_TO_SOT_SMD:TSOT-23",
+  "sheet": "/Power/",
+  "mpn": "PMV48XPA2R",
+  "fields": {
+   "MPN": "PMV48XPA2R",
+   "Footprint": "Package_TO_SOT_SMD:TSOT-23",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "3": [
+    "VBUS_SWITCHED",
+    "D"
+   ],
+   "1": [
+    "Net-(Q1-G)",
+    "G"
+   ],
+   "2": [
+    "VBUS",
+    "S"
+   ]
+  }
+ },
+ "Q2": {
+  "value": "PJC138K",
+  "fp": "Package_TO_SOT_SMD:SOT-323_SC-70",
+  "sheet": "/Power/",
+  "mpn": "PJC138K_R1_00001",
+  "fields": {
+   "MPN": "PJC138K_R1_00001",
+   "Footprint": "Package_TO_SOT_SMD:SOT-323_SC-70",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    "G"
+   ],
+   "2": [
+    "BAT_LEVEL",
+    "S"
+   ],
+   "3": [
+    "Net-(Q2-D)",
+    "D"
+   ]
+  }
+ },
+ "R1": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "0.1W 5%",
+  "fields": {
+   "MPN": "0.1W 5%",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "NTC",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "R7": {
+  "value": "1MΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603FR-131ML ",
+  "fields": {
+   "MPN": "AC0603FR-131ML ",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U4-EN)",
+    null
+   ]
+  }
+ },
+ "R34": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(U10-CE)",
+    null
+   ],
+   "1": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "R35": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(U10-PROG3)",
+    null
+   ]
+  }
+ },
+ "R37": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "CHG_STAT1",
+    null
+   ]
+  }
+ },
+ "R38": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "CHG_STAT2",
+    null
+   ]
+  }
+ },
+ "R39": {
+  "value": "1kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "RC0603DR-071KL",
+  "fields": {
+   "MPN": "RC0603DR-071KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(U10-PROG1)",
+    null
+   ]
+  }
+ },
+ "R41": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "~{CHG_PWR_OK}",
+    null
+   ]
+  }
+ },
+ "R50": {
+  "value": "1MΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603FR-131ML ",
+  "fields": {
+   "MPN": "AC0603FR-131ML ",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(Q2-D)",
+    null
+   ]
+  }
+ },
+ "R51": {
+  "value": "1MΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Power/",
+  "mpn": "AC0603FR-131ML ",
+  "fields": {
+   "MPN": "AC0603FR-131ML ",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "Net-(J7-Pin_3)",
+    null
+   ],
+   "2": [
+    "Net-(Q2-D)",
+    null
+   ]
+  }
+ },
+ "TP7": {
+  "value": "BAT",
+  "fp": "TestPoint:TestPoint_Pad_D1.0mm",
+  "sheet": "/Power/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "Net-(J7-Pin_3)",
+    "1"
+   ]
+  }
+ },
+ "U4": {
+  "value": "TLV75533PDBV",
+  "fp": "Package_TO_SOT_SMD:SOT-23-5",
+  "sheet": "/Power/",
+  "mpn": "TLV75533PDBV",
+  "fields": {
+   "MPN": "TLV75533PDBV",
+   "Footprint": "Package_TO_SOT_SMD:SOT-23-5",
+   "Datasheet": "http://www.ti.com/lit/ds/symlink/tlv755p.pdf",
+   "Description": null
+  },
+  "pins": {
+   "5": [
+    "+3V3",
+    "OUT"
+   ],
+   "2": [
+    "GND",
+    "GND"
+   ],
+   "3": [
+    "Net-(U4-EN)",
+    "EN"
+   ],
+   "1": [
+    "SYS_POWER",
+    "IN"
+   ],
+   "4": [
+    "unconnected-(U4-NC-Pad4)",
+    "NC"
+   ]
+  }
+ },
+ "U5": {
+  "value": "PE1605C4A6",
+  "fp": "Package_TO_SOT_SMD:SOT-23-6",
+  "sheet": "/Power/",
+  "mpn": "PE1605C4A6",
+  "fields": {
+   "MPN": "PE1605C4A6",
+   "Footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "Datasheet": "https://www.mouser.com/datasheet/2/1057/PE1605C4A6-AU-1869026.pdf",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    "GND"
+   ],
+   "4": [
+    "Net-(J6-CC1)",
+    "IO3"
+   ],
+   "6": [
+    "Net-(J6-CC2)",
+    "IO5"
+   ],
+   "1": [
+    "USB.DN",
+    "IO1"
+   ],
+   "3": [
+    "USB.DP",
+    "IO2"
+   ],
+   "5": [
+    "VBUS",
+    "IO4"
+   ]
+  }
+ },
+ "U10": {
+  "value": "MCP73871",
+  "fp": "footprints:QFN-20-1EP_4x4mm_P0.5mm_EP2.5x2.5mm_ThermalVias2",
+  "sheet": "/Power/",
+  "mpn": "MCP73871-2CCI/ML",
+  "fields": {
+   "MPN": "MCP73871-2CCI/ML",
+   "Footprint": "footprints:QFN-20-1EP_4x4mm_P0.5mm_EP2.5x2.5mm_ThermalVias2",
+   "Datasheet": "http://www.mouser.com/ds/2/268/22090a-52174.pdf",
+   "Description": null
+  },
+  "pins": {
+   "5": [
+    "NTC",
+    "THERM"
+   ],
+   "18": [
+    "VBUS_SWITCHED",
+    "IN"
+   ],
+   "19": [
+    "VBUS_SWITCHED",
+    "IN"
+   ],
+   "2": [
+    "VBUS_SWITCHED",
+    "VPCC"
+   ],
+   "4": [
+    "CHG_PROG",
+    "PROG2"
+   ],
+   "3": [
+    "CHG_SEL",
+    "SEL"
+   ],
+   "8": [
+    "CHG_STAT1",
+    "STAT1/~{LBO}"
+   ],
+   "7": [
+    "CHG_STAT2",
+    "STAT2"
+   ],
+   "10": [
+    "GND",
+    "V_{SS}"
+   ],
+   "11": [
+    "GND",
+    "V_{SS}"
+   ],
+   "21": [
+    "GND",
+    "V_{SS}"
+   ],
+   "9": [
+    "GND",
+    "~{TE}"
+   ],
+   "14": [
+    "Net-(J7-Pin_3)",
+    "V_{BAT}"
+   ],
+   "15": [
+    "Net-(J7-Pin_3)",
+    "V_{BAT}"
+   ],
+   "16": [
+    "Net-(J7-Pin_3)",
+    "V_{BAT_SENSE}"
+   ],
+   "17": [
+    "Net-(U10-CE)",
+    "CE"
+   ],
+   "13": [
+    "Net-(U10-PROG1)",
+    "PROG1"
+   ],
+   "12": [
+    "Net-(U10-PROG3)",
+    "PROG3"
+   ],
+   "1": [
+    "SYS_POWER",
+    "OUT"
+   ],
+   "20": [
+    "SYS_POWER",
+    "OUT"
+   ],
+   "6": [
+    "~{CHG_PWR_OK}",
+    "~{PG}"
+   ]
+  }
+ },
+ "U12": {
+  "value": "BD91N01NUX",
+  "fp": "footprints:BD91N01NUX-E2",
+  "sheet": "/Power/",
+  "mpn": "BD91N01NUX",
+  "fields": {
+   "MPN": "BD91N01NUX",
+   "Footprint": "footprints:BD91N01NUX-E2",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "10": [
+    "+3V3",
+    "VDD_IO"
+   ],
+   "11": [
+    "GND",
+    "EP"
+   ],
+   "5": [
+    "GND",
+    "GND"
+   ],
+   "3": [
+    "Net-(J6-CC1)",
+    "CC1"
+   ],
+   "4": [
+    "Net-(J6-CC2)",
+    "CC2"
+   ],
+   "2": [
+    "Net-(Q1-G)",
+    "SWDRV"
+   ],
+   "7": [
+    "USB_TCC0",
+    "TCC0"
+   ],
+   "6": [
+    "USB_TCC1",
+    "TCC1"
+   ],
+   "1": [
+    "VBUS",
+    "VBUS"
+   ],
+   "8": [
+    "unconnected-(U12-ORIENT-Pad8)",
+    "ORIENT"
+   ],
+   "9": [
+    "unconnected-(U12-SWMONI-Pad9)",
+    "SWMONI"
+   ]
+  }
+ },
+ "C2": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C3": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C4": {
+  "value": "1μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM216R61C105KA88D",
+  "fields": {
+   "MPN": "GRM216R61C105KA88D",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "Net-(U17-CPCA)",
+    null
+   ],
+   "2": [
+    "Net-(U17-CPCB)",
+    null
+   ]
+  }
+ },
+ "C6": {
+  "value": "2700pF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM1885C1H272JA01J",
+  "fields": {
+   "MPN": "GRM1885C1H272JA01J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U1B-+)",
+    null
+   ]
+  }
+ },
+ "C7": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(U17-VMID)",
+    null
+   ]
+  }
+ },
+ "C9": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "C10": {
+  "value": "22μF",
+  "fp": "Capacitor_SMD:C_1206_3216Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM319R61C226KE15D",
+  "fields": {
+   "MPN": "GRM319R61C226KE15D",
+   "Footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "-5VA",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C12": {
+  "value": "1μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM216R61C105KA88D",
+  "fields": {
+   "MPN": "GRM216R61C105KA88D",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U17-CPVOUTN)",
+    null
+   ]
+  }
+ },
+ "C13": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "-5VA",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C14": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+5VA",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C15": {
+  "value": "2700pF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM1885C1H272JA01J",
+  "fields": {
+   "MPN": "GRM1885C1H272JA01J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U1A-+)",
+    null
+   ]
+  }
+ },
+ "C16": {
+  "value": "22μF",
+  "fp": "Capacitor_SMD:C_1206_3216Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM319R61C226KE15D",
+  "fields": {
+   "MPN": "GRM319R61C226KE15D",
+   "Footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+5VA",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C17": {
+  "value": "100pF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": null,
+  "fields": {
+   "MPN": null,
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(C17-Pad2)",
+    null
+   ],
+   "1": [
+    "Net-(U1A--)",
+    null
+   ]
+  }
+ },
+ "C18": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "C19": {
+  "value": "100pF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Audio/",
+  "mpn": null,
+  "fields": {
+   "MPN": null,
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(C19-Pad2)",
+    null
+   ],
+   "1": [
+    "Net-(U1B--)",
+    null
+   ]
+  }
+ },
+ "J1": {
+  "value": "SJ-3506-SMT",
+  "fp": "footprints:CUI_SJ-3506-SMT",
+  "sheet": "/Audio/",
+  "mpn": "SJ-3506-SMT-TR",
+  "fields": {
+   "MPN": "SJ-3506-SMT-TR",
+   "Footprint": "footprints:CUI_SJ-3506-SMT",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "4": [
+    "3.5mm_DETECT",
+    null
+   ],
+   "1": [
+    "GND",
+    null
+   ],
+   "5": [
+    "GND",
+    null
+   ],
+   "SH1": [
+    "GND",
+    null
+   ],
+   "SH2": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(C17-Pad2)",
+    null
+   ],
+   "3": [
+    "Net-(C19-Pad2)",
+    null
+   ],
+   "6": [
+    "unconnected-(J1-Pad6)",
+    null
+   ]
+  }
+ },
+ "L1": {
+  "value": "4.7μH",
+  "fp": "Inductor_SMD:L_1008_2520Metric",
+  "sheet": "/Audio/",
+  "mpn": "1239AS-H-4R7M=P2",
+  "fields": {
+   "MPN": "1239AS-H-4R7M=P2",
+   "Footprint": "Inductor_SMD:L_1008_2520Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U7-SWN)",
+    null
+   ]
+  }
+ },
+ "L2": {
+  "value": "4.7μH",
+  "fp": "Inductor_SMD:L_1008_2520Metric",
+  "sheet": "/Audio/",
+  "mpn": "1239AS-H-4R7M=P2",
+  "fields": {
+   "MPN": "1239AS-H-4R7M=P2",
+   "Footprint": "Inductor_SMD:L_1008_2520Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "Net-(U7-SWP)",
+    null
+   ],
+   "2": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "R3": {
+  "value": "2.2kΩ",
+  "fp": "Resistor_SMD:R_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "RR1220P-222-D",
+  "fields": {
+   "MPN": "RR1220P-222-D",
+   "Footprint": "Resistor_SMD:R_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U1A-+)",
+    null
+   ]
+  }
+ },
+ "R6": {
+  "value": "560Ω",
+  "fp": "Resistor_SMD:R_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "RR1220P-561-D",
+  "fields": {
+   "MPN": "RR1220P-561-D",
+   "Footprint": "Resistor_SMD:R_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(U1B-+)",
+    null
+   ],
+   "1": [
+    "Net-(U17-LINEVOUTR)",
+    null
+   ]
+  }
+ },
+ "R8": {
+  "value": "2.2kΩ",
+  "fp": "Resistor_SMD:R_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "RR1220P-222-D",
+  "fields": {
+   "MPN": "RR1220P-222-D",
+   "Footprint": "Resistor_SMD:R_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    null
+   ],
+   "2": [
+    "Net-(U1B-+)",
+    null
+   ]
+  }
+ },
+ "R15": {
+  "value": "560Ω",
+  "fp": "Resistor_SMD:R_0805_2012Metric",
+  "sheet": "/Audio/",
+  "mpn": "RR1220P-561-D",
+  "fields": {
+   "MPN": "RR1220P-561-D",
+   "Footprint": "Resistor_SMD:R_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(U1A-+)",
+    null
+   ],
+   "1": [
+    "Net-(U17-LINEVOUTL)",
+    null
+   ]
+  }
+ },
+ "TP3": {
+  "value": "+5V",
+  "fp": "TestPoint:TestPoint_Pad_D1.0mm",
+  "sheet": "/Audio/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+5VA",
+    "1"
+   ]
+  }
+ },
+ "TP4": {
+  "value": "-5V",
+  "fp": "TestPoint:TestPoint_Pad_D1.0mm",
+  "sheet": "/Audio/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "1"
+   ]
+  }
+ },
+ "TP5": {
+  "value": "AMP_EN",
+  "fp": "TestPoint:TestPoint_Pad_D1.0mm",
+  "sheet": "/Audio/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "AMP_EN",
+    "1"
+   ]
+  }
+ },
+ "TP6": {
+  "value": "AMP_MUTE",
+  "fp": "TestPoint:TestPoint_Pad_D1.0mm",
+  "sheet": "/Audio/",
+  "mpn": "",
+  "fields": {
+   "Footprint": "TestPoint:TestPoint_Pad_D1.0mm",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "AMP_MUTE",
+    "1"
+   ]
+  }
+ },
+ "U1": {
+  "value": "INA1620",
+  "fp": "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm_ThermalVias",
+  "sheet": "/Audio/",
+  "mpn": "INA1620RTWR",
+  "fields": {
+   "MPN": "INA1620RTWR",
+   "Footprint": "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.7x2.7mm_ThermalVias",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+5VA",
+    "V+"
+   ],
+   "25": [
+    "-5VA",
+    "EP"
+   ],
+   "5": [
+    "-5VA",
+    "V-"
+   ],
+   "16": [
+    "AMP_MUTE",
+    "EN"
+   ],
+   "12": [
+    "GND",
+    null
+   ],
+   "19": [
+    "GND",
+    null
+   ],
+   "3": [
+    "GND",
+    "GND"
+   ],
+   "17": [
+    "Net-(C17-Pad2)",
+    null
+   ],
+   "18": [
+    "Net-(C17-Pad2)",
+    null
+   ],
+   "13": [
+    "Net-(C19-Pad2)",
+    null
+   ],
+   "14": [
+    "Net-(C19-Pad2)",
+    null
+   ],
+   "22": [
+    "Net-(U1A-+)",
+    "+"
+   ],
+   "20": [
+    "Net-(U1A--)",
+    null
+   ],
+   "21": [
+    "Net-(U1A--)",
+    "-"
+   ],
+   "9": [
+    "Net-(U1B-+)",
+    "+"
+   ],
+   "10": [
+    "Net-(U1B--)",
+    "-"
+   ],
+   "11": [
+    "Net-(U1B--)",
+    null
+   ],
+   "1": [
+    "unconnected-(U1-Pad1)",
+    null
+   ],
+   "6": [
+    "unconnected-(U1-Pad6)",
+    null
+   ],
+   "7": [
+    "unconnected-(U1-Pad7)",
+    null
+   ],
+   "8": [
+    "unconnected-(U1-Pad8)",
+    null
+   ],
+   "23": [
+    "unconnected-(U1-Pad23)",
+    null
+   ],
+   "24": [
+    "unconnected-(U1-Pad24)",
+    null
+   ],
+   "4": [
+    "unconnected-(U1C-NC-Pad4)",
+    "NC"
+   ],
+   "15": [
+    "unconnected-(U1C-NC-Pad15)",
+    "NC"
+   ]
+  }
+ },
+ "U3": {
+  "value": "D5V0L2B3T-7",
+  "fp": "Package_TO_SOT_SMD:SOT-523",
+  "sheet": "/Audio/",
+  "mpn": "D5V0L2B3T-7",
+  "fields": {
+   "MPN": "D5V0L2B3T-7",
+   "Footprint": "Package_TO_SOT_SMD:SOT-523",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "3": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(C17-Pad2)",
+    null
+   ],
+   "2": [
+    "Net-(C19-Pad2)",
+    null
+   ]
+  }
+ },
+ "U7": {
+  "value": "TPS65133",
+  "fp": "footprints:SON40P300X300X80-13N",
+  "sheet": "/Audio/",
+  "mpn": "TPS65133DPDR",
+  "fields": {
+   "MPN": "TPS65133DPDR",
+   "Footprint": "footprints:SON40P300X300X80-13N",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "3": [
+    "+5VA",
+    "VPOS"
+   ],
+   "9": [
+    "-5VA",
+    "VNEG"
+   ],
+   "7": [
+    "AMP_EN",
+    "EN"
+   ],
+   "13": [
+    "GND",
+    "EXP"
+   ],
+   "2": [
+    "GND",
+    "PGND"
+   ],
+   "4": [
+    "GND",
+    "GND"
+   ],
+   "5": [
+    "GND",
+    "AGND"
+   ],
+   "6": [
+    "GND",
+    "GND"
+   ],
+   "8": [
+    "GND",
+    "GND"
+   ],
+   "10": [
+    "Net-(U7-SWN)",
+    "SWN"
+   ],
+   "1": [
+    "Net-(U7-SWP)",
+    "SWP"
+   ],
+   "11": [
+    "SYS_POWER",
+    "AVIN"
+   ],
+   "12": [
+    "SYS_POWER",
+    "PVIN"
+   ]
+  }
+ },
+ "U17": {
+  "value": "WM8523",
+  "fp": "Package_SO:SSOP-20_4.4x6.5mm_P0.65mm",
+  "sheet": "/Audio/",
+  "mpn": "WM8523GEDT/R",
+  "fields": {
+   "MPN": "WM8523GEDT/R",
+   "Footprint": "Package_SO:SSOP-20_4.4x6.5mm_P0.65mm",
+   "Datasheet": null,
+   "Description": null
+  },
+  "pins": {
+   "19": [
+    "+3V3",
+    "AVDD"
+   ],
+   "6": [
+    "+3V3",
+    "LINEVDD"
+   ],
+   "10": [
+    "DAC.BCK",
+    "BCLK"
+   ],
+   "8": [
+    "DAC.DATA",
+    "DACDAT"
+   ],
+   "9": [
+    "DAC.LRCK",
+    "LRCLK"
+   ],
+   "11": [
+    "DAC.MCK",
+    "MCLK"
+   ],
+   "12": [
+    "GND",
+    "SDOUT/DEEMPH"
+   ],
+   "15": [
+    "GND",
+    "{~CS}/{~MUTE}"
+   ],
+   "16": [
+    "GND",
+    "CIFMODE"
+   ],
+   "17": [
+    "GND",
+    "AGND"
+   ],
+   "4": [
+    "GND",
+    "LINEGND"
+   ],
+   "14": [
+    "I2C.SCL",
+    "SCLK"
+   ],
+   "13": [
+    "I2C.SDA",
+    "SDA"
+   ],
+   "5": [
+    "Net-(U17-CPCA)",
+    "CPCA"
+   ],
+   "3": [
+    "Net-(U17-CPCB)",
+    "CPCB"
+   ],
+   "2": [
+    "Net-(U17-CPVOUTN)",
+    "CPVOUTN"
+   ],
+   "1": [
+    "Net-(U17-LINEVOUTL)",
+    "LINEVOUTL"
+   ],
+   "20": [
+    "Net-(U17-LINEVOUTR)",
+    "LINEVOUTR"
+   ],
+   "18": [
+    "Net-(U17-VMID)",
+    "VMID"
+   ],
+   "7": [
+    "unconnected-(U17-ZFLAG-Pad7)",
+    "ZFLAG"
+   ]
+  }
+ },
+ "C23": {
+  "value": "1μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "GRM216R61C105KA88D",
+  "fields": {
+   "MPN": "GRM216R61C105KA88D",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C31": {
+  "value": "0.1μF",
+  "fp": "Capacitor_SMD:C_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "GCM188R71C104KA37J",
+  "fields": {
+   "MPN": "GCM188R71C104KA37J",
+   "Footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "GND",
+    null
+   ]
+  }
+ },
+ "C42": {
+  "value": "10μF",
+  "fp": "Capacitor_SMD:C_0805_2012Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "GRM21BR61C106KE15K",
+  "fields": {
+   "MPN": "GRM21BR61C106KE15K",
+   "Footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "J2": {
+  "value": "MB Connector",
+  "fp": "footprints:G-Switch GT-F0509SR15-15SMT01",
+  "sheet": "/Peripherals/",
+  "mpn": "GT-F0509SR15-15SMT01",
+  "fields": {
+   "MPN": "GT-F0509SR15-15SMT01",
+   "Footprint": "footprints:G-Switch GT-F0509SR15-15SMT01",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "13": [
+    "+3V3",
+    "Pin_13"
+   ],
+   "14": [
+    "+3V3",
+    "Pin_14"
+   ],
+   "15": [
+    "+3V3",
+    "Pin_15"
+   ],
+   "1": [
+    "GND",
+    "Pin_1"
+   ],
+   "5": [
+    "GND",
+    "Pin_5"
+   ],
+   "7": [
+    "GND",
+    "Pin_7"
+   ],
+   "9": [
+    "GND",
+    "Pin_9"
+   ],
+   "11": [
+    "DISPLAY_DR",
+    "Pin_11"
+   ],
+   "12": [
+    "DISPLAY_LED_EN",
+    "Pin_12"
+   ],
+   "10": [
+    "ESP_SPI.DISPLAY_CS",
+    "Pin_10"
+   ],
+   "6": [
+    "ESP_SPI.PICO",
+    "Pin_6"
+   ],
+   "8": [
+    "ESP_SPI.SCLK",
+    "Pin_8"
+   ],
+   "2": [
+    "I2C.SCL",
+    "Pin_2"
+   ],
+   "3": [
+    "I2C.SDA",
+    "Pin_3"
+   ],
+   "4": [
+    "~{TOUCH_INT}",
+    "Pin_4"
+   ]
+  }
+ },
+ "J4": {
+  "value": "SD_Card",
+  "fp": "Connector_Card:SD_Hirose_DM1AA_SF_PEJ82",
+  "sheet": "/Peripherals/",
+  "mpn": "DM1AA-SF-PEJ(82) ",
+  "fields": {
+   "MPN": "DM1AA-SF-PEJ(82) ",
+   "Footprint": "Connector_Card:SD_Hirose_DM1AA_SF_PEJ82",
+   "Datasheet": "http://portal.fciconnect.com/Comergent//fci/drawing/10067847.pdf",
+   "Description": null
+  },
+  "pins": {
+   "3": [
+    "GND",
+    "VSS"
+   ],
+   "6": [
+    "GND",
+    "VSS"
+   ],
+   "SH": [
+    "GND",
+    "SH"
+   ],
+   "SW": [
+    "GND",
+    "SW"
+   ],
+   "1": [
+    "Net-(J4-CD/DAT3)",
+    "CD/DAT3"
+   ],
+   "5": [
+    "Net-(J4-CLK)",
+    "CLK"
+   ],
+   "2": [
+    "Net-(J4-CMD)",
+    "CMD"
+   ],
+   "7": [
+    "Net-(J4-DAT0)",
+    "DAT0"
+   ],
+   "8": [
+    "Net-(J4-DAT1)",
+    "DAT1"
+   ],
+   "9": [
+    "Net-(J4-DAT2)",
+    "DAT2"
+   ],
+   "4": [
+    "Net-(J4-VDD)",
+    "VDD"
+   ],
+   "CP": [
+    "SD_CD",
+    "CP"
+   ]
+  }
+ },
+ "Q3": {
+  "value": "PJC138K",
+  "fp": "Package_TO_SOT_SMD:SOT-323_SC-70",
+  "sheet": "/Peripherals/",
+  "mpn": "PJC138K_R1_00001",
+  "fields": {
+   "MPN": "PJC138K_R1_00001",
+   "Footprint": "Package_TO_SOT_SMD:SOT-323_SC-70",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    "S"
+   ],
+   "3": [
+    "AMP_MUTE",
+    "D"
+   ],
+   "1": [
+    "Net-(Q3-G)",
+    "G"
+   ]
+  }
+ },
+ "R2": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    null
+   ],
+   "1": [
+    "Net-(Q3-G)",
+    null
+   ]
+  }
+ },
+ "R4": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "Net-(SW1-C)",
+    null
+   ],
+   "2": [
+    "SYS_POWER",
+    null
+   ]
+  }
+ },
+ "R5": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "AMP_MUTE",
+    null
+   ]
+  }
+ },
+ "R9": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(J4-DAT0)",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "R11": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(J4-CMD)",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "R12": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(J4-CD/DAT3)",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "R22": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "+3V3",
+    null
+   ],
+   "1": [
+    "AMP_EN",
+    null
+   ]
+  }
+ },
+ "R30": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "~{GPIO_INT}",
+    null
+   ]
+  }
+ },
+ "R31": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "Net-(U14E-~{OE})",
+    null
+   ]
+  }
+ },
+ "R32": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    null
+   ],
+   "2": [
+    "Net-(U14E-S)",
+    null
+   ]
+  }
+ },
+ "R57": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(J4-DAT1)",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "R61": {
+  "value": "10kΩ",
+  "fp": "Resistor_SMD:R_0603_1608Metric",
+  "sheet": "/Peripherals/",
+  "mpn": "AC0603JR-0710KL",
+  "fields": {
+   "MPN": "AC0603JR-0710KL",
+   "Footprint": "Resistor_SMD:R_0603_1608Metric",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "Net-(J4-DAT2)",
+    null
+   ],
+   "1": [
+    "Net-(J4-VDD)",
+    null
+   ]
+  }
+ },
+ "SW1": {
+  "value": "SW_SPDT",
+  "fp": "Button_Switch_SMD:SW_SPDT_CK-JS102011SAQN",
+  "sheet": "/Peripherals/",
+  "mpn": "JS102011SAQN",
+  "fields": {
+   "MPN": "JS102011SAQN",
+   "Footprint": "Button_Switch_SMD:SW_SPDT_CK-JS102011SAQN",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "GND",
+    "A"
+   ],
+   "2": [
+    "KEY_LOCK",
+    "B"
+   ],
+   "3": [
+    "Net-(SW1-C)",
+    "C"
+   ]
+  }
+ },
+ "SW2": {
+  "value": "SW_Push",
+  "fp": "footprints:SW_EVQ-P4HB3B",
+  "sheet": "/Peripherals/",
+  "mpn": "EVQ-P40B3M",
+  "fields": {
+   "MPN": "EVQ-P40B3M",
+   "Footprint": "footprints:SW_EVQ-P4HB3B",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    "2"
+   ],
+   "1": [
+    "KEY_VOL_UP",
+    "1"
+   ]
+  }
+ },
+ "SW3": {
+  "value": "SW_Push",
+  "fp": "footprints:SW_EVQ-P4HB3B",
+  "sheet": "/Peripherals/",
+  "mpn": "EVQ-P40B3M",
+  "fields": {
+   "MPN": "EVQ-P40B3M",
+   "Footprint": "footprints:SW_EVQ-P4HB3B",
+   "Datasheet": "~",
+   "Description": null
+  },
+  "pins": {
+   "2": [
+    "GND",
+    "2"
+   ],
+   "1": [
+    "KEY_VOL_DOWN",
+    "1"
+   ]
+  }
+ },
+ "U9": {
+  "value": "PCA8575",
+  "fp": "Package_DFN_QFN:HVQFN-24-1EP_4x4mm_P0.5mm_EP2.1x2.1mm",
+  "sheet": "/Peripherals/",
+  "mpn": "PCA8575BS,118",
+  "fields": {
+   "MPN": "PCA8575BS,118",
+   "Footprint": "Package_DFN_QFN:HVQFN-24-1EP_4x4mm_P0.5mm_EP2.1x2.1mm",
+   "Datasheet": "https://www.nxp.com/docs/en/data-sheet/PCA9555.pdf",
+   "Description": null
+  },
+  "pins": {
+   "21": [
+    "+3V3",
+    "VDD"
+   ],
+   "18": [
+    "GND",
+    "A0"
+   ],
+   "23": [
+    "GND",
+    "A1"
+   ],
+   "24": [
+    "GND",
+    "A2"
+   ],
+   "25": [
+    "GND",
+    "EP"
+   ],
+   "9": [
+    "GND",
+    "VSS"
+   ],
+   "10": [
+    "3.5mm_DETECT",
+    "IO1_0"
+   ],
+   "11": [
+    "AMP_EN",
+    "IO1_1"
+   ],
+   "19": [
+    "I2C.SCL",
+    "SCL"
+   ],
+   "20": [
+    "I2C.SDA",
+    "SDA"
+   ],
+   "5": [
+    "KEY_LOCK",
+    "IO0_4"
+   ],
+   "4": [
+    "KEY_VOL_DOWN",
+    "IO0_3"
+   ],
+   "3": [
+    "KEY_VOL_UP",
+    "IO0_2"
+   ],
+   "14": [
+    "Net-(Q3-G)",
+    "IO1_4"
+   ],
+   "1": [
+    "Net-(U14E-S)",
+    "IO0_0"
+   ],
+   "2": [
+    "Net-(U14E-~{OE})",
+    "IO0_1"
+   ],
+   "12": [
+    "SD_CD",
+    "IO1_2"
+   ],
+   "6": [
+    "unconnected-(U9-IO0_5-Pad6)",
+    "IO0_5"
+   ],
+   "7": [
+    "unconnected-(U9-IO0_6-Pad7)",
+    "IO0_6"
+   ],
+   "13": [
+    "unconnected-(U9-IO1_3-Pad13)",
+    "IO1_3"
+   ],
+   "15": [
+    "unconnected-(U9-IO1_5-Pad15)",
+    "IO1_5"
+   ],
+   "16": [
+    "unconnected-(U9-IO1_6-Pad16)",
+    "IO1_6"
+   ],
+   "17": [
+    "unconnected-(U9-IO1_7-Pad17)",
+    "IO1_7"
+   ],
+   "22": [
+    "~{GPIO_INT}",
+    "~{INT}"
+   ],
+   "8": [
+    "~{SD_VDD_EN}",
+    "IO0_7"
+   ]
+  }
+ },
+ "U14": {
+  "value": "74CBTLV3257",
+  "fp": "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+  "sheet": "/Peripherals/",
+  "mpn": "74CBTLV3257PW-Q10J",
+  "fields": {
+   "MPN": "74CBTLV3257PW-Q10J",
+   "Footprint": "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
+   "Datasheet": "http://www.ti.com/lit/ds/symlink/sn74cbtlv3257.pdf",
+   "Description": null
+  },
+  "pins": {
+   "16": [
+    "+3V3",
+    "VCC"
+   ],
+   "8": [
+    "GND",
+    "GND"
+   ],
+   "11": [
+    "ESP_SPI.PICO",
+    null
+   ],
+   "2": [
+    "ESP_SPI.POCI",
+    null
+   ],
+   "5": [
+    "ESP_SPI.SCLK",
+    null
+   ],
+   "14": [
+    "ESP_SPI.SD_CS",
+    null
+   ],
+   "12": [
+    "Net-(J4-CD/DAT3)",
+    null
+   ],
+   "7": [
+    "Net-(J4-CLK)",
+    null
+   ],
+   "9": [
+    "Net-(J4-CMD)",
+    null
+   ],
+   "4": [
+    "Net-(J4-DAT0)",
+    null
+   ],
+   "1": [
+    "Net-(U14E-S)",
+    "S"
+   ],
+   "15": [
+    "Net-(U14E-~{OE})",
+    "~{OE}"
+   ],
+   "13": [
+    "SAMD_SPI.CS",
+    null
+   ],
+   "10": [
+    "SAMD_SPI.PICO",
+    null
+   ],
+   "3": [
+    "SAMD_SPI.POCI",
+    null
+   ],
+   "6": [
+    "SAMD_SPI.SCLK",
+    null
+   ]
+  }
+ },
+ "U16": {
+  "value": "TPS22948",
+  "fp": "footprints:SOT65P210X110-6N",
+  "sheet": "/Peripherals/",
+  "mpn": "TPS22948DCKR",
+  "fields": {
+   "MPN": "TPS22948DCKR",
+   "Footprint": "footprints:SOT65P210X110-6N",
+   "Datasheet": "http://www.ti.com/lit/ds/symlink/tps22917.pdf",
+   "Description": null
+  },
+  "pins": {
+   "1": [
+    "+3V3",
+    "IN"
+   ],
+   "2": [
+    "GND",
+    "GND"
+   ],
+   "5": [
+    "GND",
+    "FLT"
+   ],
+   "6": [
+    "Net-(J4-VDD)",
+    "OUT"
+   ],
+   "4": [
+    "unconnected-(U16-NC-Pad4)",
+    "NC"
+   ],
+   "3": [
+    "~{SD_VDD_EN}",
+    "ON"
+   ]
+  }
+ }
+}
