@@ -19,7 +19,7 @@ for it in range(int(os.environ.get('ITER', '10'))):
     for f in fails:
         if f not in bad: bad.append(f)
     order = bad + [o for o in order if o not in bad]
-    if False:
+    if it % 2 == 1:
         import random
         random.seed(it); rest = order[:]; random.shuffle(rest); order = rest
 print('beste Lösung: fehlende Verbindungen', best)

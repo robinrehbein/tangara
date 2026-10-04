@@ -2,7 +2,7 @@
 PARTS = {p['ref']: p for p in netlist.parts()}
 TMP = os.environ.get('TMPDIR_PCB', '/tmp/w')
 VIAS = json.load(open(os.path.join(ROOT, 'tools', 'vias_touch.json')))
-LRA = (-8.0, 3.0, 8.0, 9.0)           # Freifläche LRA (Rückseite, nur Bauteile gesperrt)
+LRA = (-6.0, 3.0, 6.0, 9.0)           # Freifläche LRA (Rückseite, nur Bauteile gesperrt)
 if MODE == 'place':
     # ---- Entwurfsregeln (JLCPCB/PCBWay 2 Lagen, 1,0 mm)
     ds = board.GetDesignSettings()

@@ -12,9 +12,9 @@ EXTRA = {   # Wert/Footprint -> (Hersteller, MPN, LCSC, Hinweis)
  ('R', '4.7k'): ('UNI-ROYAL', '0402WGF4701TCE', 'C25900', '1 %, 0402, nur DNP-Option'),
  ('U', 'AT42QT2120'): ('Microchip', 'AT42QT2120-MMH', 'C617900', 'VQFN-20 3x3 mm, 0,45 mm; Nummer bestätigt, bei LCSC am 2026-10-04 NICHT auf Lager -> Mouser/DigiKey (ca. 5 USD)'),
  ('U', 'DRV2605LDGSR'): ('Texas Instruments', 'DRV2605LDGSR', 'C527464', 'VSSOP-10'),
- ('J', 'SM06B-SRSS-TB'): ('JST', 'SM06B-SRSS-TB(LF)(SN)', 'C160405', 'SH 1,0 mm, 6-pol., seitlich; höher als 1,5 mm (Datenblatt prüfen)'),
+ ('J', 'FH12-6S-0.5SH'): ('Hirose', 'FH12-6S-0.5SH(55)', '', 'FFC/FPC 6-pol., 0,5 mm, Flip-Lock, Kontakte oben, Bauhöhe 1,0 mm; LCSC-Nummer NICHT geprüft (Bezug DigiKey/Mouser); passende FFC-Kabel 0,5 mm, 6-pol.'),
 }
-HEIGHT = {'C_0402': '0,5', 'C_0603': '0,8', 'R_0402': '0,4', 'VQFN': '0,85', 'VSSOP': 'ca. 1,1', 'SM06B': '>1,5 (Datenblatt prüfen)'}
+HEIGHT = {'C_0402': '0,5', 'C_0603': '0,8', 'R_0402': '0,4', 'VQFN': '0,85', 'VSSOP': 'ca. 1,1', 'FH12': '1,0'}
 groups = {}
 for p in netlist.parts():
     if p.get('nobom') or p['ref'].startswith(('SW', 'TP')): continue

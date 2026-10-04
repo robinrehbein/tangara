@@ -37,8 +37,8 @@ def parts():
     add('SW1', 'BUTTON', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-button', {'1': 'EB'}, nobom=True, desc='Kapazitive Mitteltaste (Tangara SW1)')
     add('SW2', 'WHEEL', 'Connector_Generic:Conn_01x03', 'Klickrad:qtouch-wheel', {'1': 'E0', '2': 'E1', '3': 'E2'}, nobom=True, desc='Touch-Wheel, 3 Elektroden (Tangara SW2)')
     add('SW3', 'GUARD', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-guard', {'1': 'EG'}, nobom=True, desc='Guard-Kanal (Tangara SW3)')
-    add('J1', 'SM06B-SRSS-TB', 'Connector_Generic:Conn_01x06', 'Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal',
-        {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'CHANGE', '6': None}, mpn='SM06B-SRSS-TB(LF)(SN)', mfr='JST', desc='JST-SH 6-pol. seitlich; Pin 6 = Reserve (BTN)')
+    add('J1', 'FH12-6S-0.5SH', 'Connector_Generic:Conn_01x06', 'Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_1x06-1MP_P0.50mm_Horizontal',
+        {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'CHANGE', '6': None}, mpn='FH12-6S-0.5SH(55)', mfr='Hirose', desc='FFC/FPC 6-pol., 0,5 mm, Flip-Lock, Bauhöhe 1,0 mm; Pin 6 = Reserve (BTN)')
     add('TP1', 'LRA+', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_P'}, desc='Loetpad LRA Litze +', nobom=True)
     add('TP2', 'LRA-', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_N'}, desc='Loetpad LRA Litze -', nobom=True)
     return P

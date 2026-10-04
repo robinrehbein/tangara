@@ -29,7 +29,7 @@ shutil.rmtree(G)
 # ------------------------------------------------------------------ Stueckliste
 PARTS = [p for p in netlist.parts() if not p.get('nobom')]
 def thtype(p):
-    return 'THT' if p['fp'] in ('Hauptplatine:CUI_SJ-3506-SMT', 'Hauptplatine:GCT_USB4510-03-1-A_REVA') else 'SMD'
+    return 'THT' if p['fp'] in ('Hauptplatine:GCT_USB4510-03-1-A_REVA',) else 'SMD'
 groups = {}
 for p in PARTS:
     key = (p['value'], p.get('mpn', ''), p['fp'], bool(p.get('dnp')), p['src'])

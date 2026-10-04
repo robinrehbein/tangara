@@ -6,14 +6,14 @@ _z.SetHatchThickness(FromMM(0.127)); _z.SetHatchGap(FromMM(1.016)); _z.SetHatchS
 # ---- Beschriftung (Rückseite gespiegelt), LRA-Markierung
 rect(pcbnew.B_SilkS, *LRA, w=0.15)
 for a, b in (((-8, 3), (8, 9)), ((-8, 9), (8, 3))): line(pcbnew.B_Fab, a, b, 0.1)
-text(pcbnew.B_SilkS, 'LRA 6x16 aufkleben', 0, 6.0, 1.0, mirror=True)
+text(pcbnew.B_SilkS, 'LRA 6x12 aufkleben', 0, 6.0, 1.0, mirror=True)
 text(pcbnew.B_SilkS, 'KLICKRAD v2', 0, 11.8, 1.0, mirror=True)
 text(pcbnew.B_SilkS, 'OBEN', 0, 13.3, 0.9, mirror=True)
-text(pcbnew.B_SilkS, 'QT2120 0x1C  DRV 0x5A', 0, -6.0, 0.8, mirror=True)
+text(pcbnew.B_SilkS, 'QT2120 0x1C  DRV 0x5A', 0, -13.0, 0.8, mirror=True)
 for i, s in enumerate(('3V3', 'GND', 'SDA', 'SCL', 'CHG', '(6)')):
-    text(pcbnew.B_SilkS, s, 2.5 - i, -7.4, 0.9, mirror=True, rot=90)
-text(pcbnew.B_SilkS, 'LRA+', -12.3, -4.4, 0.8, mirror=True)
-text(pcbnew.B_SilkS, 'LRA-', -12.3, 1.1, 0.8, mirror=True)
+    text(pcbnew.B_SilkS, s, 1.25 - 0.5 * i, -5.6 if i % 2 == 0 else -7.0, 0.8, mirror=True, rot=90)
+text(pcbnew.B_SilkS, 'LRA+', 13.1, -0.4, 0.8, mirror=True)
+text(pcbnew.B_SilkS, 'LRA-', 13.1, -6.8, 0.8, mirror=True)
 text(pcbnew.F_Fab, '0 Grad', 11.5, 0, 0.8)
 # Referenzen auf Fab-Lagen (keine Silk-Überlappung), Werte ausblenden
 for fp in board.GetFootprints():

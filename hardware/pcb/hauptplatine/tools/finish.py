@@ -63,14 +63,14 @@ def free_spot(side, w, h, cands, gap=0.6):
 
 # Passermarken (Fiducials): je 3 pro Seite wenn Platz (PCBWay-Bestueckung braucht min. 2 pro Seite, Raster ausserhalb Bauteilen)
 fid_count = {'T': 0, 'B': 0}
-cand = [(x, y) for y in (42.0, 40.0, -40.0, -42.5, 20.0, 0.0, -10.0, 30.0, -20.0, 12.0) for x in (-16.5, 16.5, -12.0, 12.0, 0.0)]
+cand = sorted([(x, y) for y in range(-40, 41, 3) for x in (-16, -12, -8, -4, 0, 4, 8, 12, 16)], key=lambda p: -(abs(p[0]) / 18.5 + abs(p[1]) / 42))
 FID_FP = 'Fiducial:Fiducial_1mm_Mask2mm'
 fid_n = 0
 for side in ('T', 'B'):
     placed_f = []
     for (cx, cy) in cand:
         if len(placed_f) >= 3: break
-        if any(math.dist((cx, cy), q) < 12 for q in placed_f): continue
+        if any(math.dist((cx, cy), q) < 25 for q in placed_f): continue
         spot = free_spot(side, 2.0, 2.0, [(cx, cy)], gap=1.0)
         if not spot: continue
         fp = pcbnew.FootprintLoad('/usr/share/kicad/footprints/Fiducial.pretty', 'Fiducial_1mm_Mask2mm')
@@ -87,7 +87,7 @@ for side in ('T', 'B'):
 print('Fiducials', fid_count)
 
 # Beschriftung auf Silkscreen (nur wenn Platz)
-lines = ['Hauptplatine Rev.1', 'CERN-OHL-S-2.0', 'nach Tangara (cooltech.zone)']
+lines = ['Hauptplatine Rev.2', 'CERN-OHL-S-2.0', 'nach Tangara (cooltech.zone)']
 for side in ('B', 'T'):
     spot = free_spot(side, 17.0, 3.2, [(x, y) for y in (-45.0, 43.0, -42.0, 38.0, 14.0, 30.0, 36.0) for x in (0.0, -6.0, 6.0)], gap=0.3)
     if not spot: print('Beschriftung', side, 'kein Platz'); continue

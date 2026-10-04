@@ -56,7 +56,7 @@ def rect_of(spec, state):
 # ---------------------------------------------------------------- Regeln
 PARTS = {p['ref']: p for p in netlist.parts()}
 BIG = {'GND', 'AGND'}
-RAILS = {'3V3', 'SYS_POWER', 'VBAT', 'VBUS', 'VBUS_SW', 'SD_VDD', 'V5A', 'VN5A', 'V5_HOST'}
+RAILS = {'3V3', 'SYS_POWER', 'VBAT', 'VBUS', 'VBUS_SW', 'SD_VDD', 'V1P8', 'V1P8A', 'V5_HOST'}
 NETW = lambda n: 0.0 if n in BIG else (0.08 if n in RAILS else 1.0)
 
 # feste Positionen (aus Wandanschluessen); Rest wird optimiert
@@ -79,27 +79,17 @@ movable = [r for r in PARTS if r not in FIXED and PARTS[r]['kind'] != 'H']
 state = {}
 for r, st in FIXED.items(): state[r] = tuple(st)
 
-TALL_TOP = {'U15', 'J1', 'J4', 'J6', 'J7', 'J21', 'SW1', 'U17', 'X1'}   # Hoehe > 1,45 mm: nicht unter das Display
-def is_flat(ref):
-    """Bauteilhoehe <= 1,45 mm -> darf unter das Display (Display-Auflage 1,6 mm ueber der Platinenoberseite, Gehaeuse-Aenderung)."""
-    p = PARTS[ref]
-    if ref in TALL_TOP or p['kind'] == 'H': return False
-    if p['kind'] == 'C' and p.get('pkg') in ('1206', '1210'): return False
-    return True
-FLAT = {r for r in PARTS if is_flat(r)}
-# Top-Seite: nur flache Teile, nur im freien Streifen unter dem Display
-TOP_OK_PKG = ('0402', '0603', 'TP', 'IC_FLAT')
+HEIGHT = {r: layout.height(PARTS[r]) for r in PARTS}
 def top_allowed(ref):
-    return ref in FLAT or ref == 'J20'
+    return HEIGHT[ref] <= layout.TOP_MAX_H
 TOPABLE = {r for r in movable if top_allowed(r)}
 
 BOARD = layout.board_poly()
 BOARD_IN = BOARD.buffer(-0.7)
-FORB = layout.forbidden_b()            # Bauteile unten verboten (Aussparung, Naben ...)
-FORB_T = layout.forbidden_t()          # oben verboten (Display-Bereich, Aussparung ...)
-FORB_TF = layout.forbidden_t(flat=True)   # flache Teile (<= 0,6 mm) duerfen unter das Display
+FORB = layout.forbidden_b()            # Bauteile unten verboten (Akkufach, Randausschnitte, Loecher)
+FORB_T = layout.forbidden_t()          # oben verboten (Klickrad-Kreis, Randausschnitte, Loecher)
 def antenna_keepout():
-    f = pcbnew.FootprintLoad(os.path.join(ROOT, 'lib', 'Hauptplatine.pretty'), 'ESP32-S31-WROOM-3')
+    f = pcbnew.FootprintLoad(os.path.join(ROOT, 'lib', 'Hauptplatine.pretty'), 'ESP32-S31-WROOM-1')
     polys = []
     for z in f.Zones():
         o = z.Outline(); pts = []
@@ -110,13 +100,21 @@ def antenna_keepout():
     return unary_union(polys)
 ANT = antenna_keepout()
 print('Antennen-Keepout-Flaeche', round(ANT.area, 1), [round(v, 1) for v in ANT.bounds])
-FORB, FORB_T, FORB_TF = unary_union([FORB, ANT]), unary_union([FORB_T, ANT]), unary_union([FORB_TF, ANT])
-PFORB, PFORB_T, PFORB_TF = prep(FORB), prep(FORB_T), prep(FORB_TF)
-
-BATT = box(*layout.BATT)
-PBATT = prep(BATT)
-TALL = layout.TALL                     # Refs, die nicht unter den Akku duerfen
+FORB, FORB_T = unary_union([FORB, ANT]), unary_union([FORB_T, ANT])
+PFORB, PFORB_T = prep(FORB), prep(FORB_T)
 SPEC = {r: PARTS[r]['fp'] for r in PARTS}
+_fx = []
+for _r, _st in FIXED.items():
+    _g = fpgeom(PARTS[_r]['fp']); _x0, _x1, _y0, _y1 = _g['bb']
+    _pts = [to_view(_st, a, b) for a, b in ((_x0, _y0), (_x1, _y0), (_x1, _y1), (_x0, _y1))]
+    _fx.append((_st[3], box(min(p[0] for p in _pts), min(p[1] for p in _pts), max(p[0] for p in _pts), max(p[1] for p in _pts))))
+ALLOW_B = BOARD_IN.difference(unary_union([FORB] + [g for sd, g in _fx if sd == 'B'])).buffer(-0.6)
+ALLOW_T = BOARD_IN.difference(unary_union([FORB_T] + [g for sd, g in _fx if sd == 'T'])).buffer(-0.6)
+from shapely.geometry import Point as _Pt
+def pull_cost(st):
+    """Gradient zur erlaubten Flaeche (hilft dem Annealing, aus gesperrten Zonen herauszufinden)."""
+    pt = _Pt(st[0], st[1]); area = ALLOW_B if st[3] == 'B' else ALLOW_T
+    return 0.0 if area.contains(pt) else 4.0 * pt.distance(area)
 
 def tht_ok(ref, st):
     g = fpgeom(SPEC[ref])
@@ -135,14 +133,12 @@ def part_cost_static(ref, st):
         pen += 50 + 20 * r.difference(BOARD_IN).area
     side = st[3]
     if side == 'B':
-        if PFORB.intersects(r): pen += 50 + 20 * r.intersection(FORB).area
-        if ref in TALL and PBATT.intersects(r): pen += 50 + 20 * r.intersection(BATT).area
+        if ref != 'U15' and PFORB.intersects(r): pen += 50 + 20 * r.intersection(FORB).area
     else:
-        if ref in FLAT:
-            if PFORB_TF.intersects(r): pen += 50 + 20 * r.intersection(FORB_TF).area
-        elif PFORB_T.intersects(r): pen += 50 + 20 * r.intersection(FORB_T).area
+        if PFORB_T.intersects(r) and ref != 'U15': pen += 50 + 20 * r.intersection(FORB_T).area
         if ref not in TOPABLE and ref not in FIXED: pen += 100
     if PARTS[ref].get('tht') and not tht_ok(ref, st): pen += 80
+    if ref not in FIXED and pen > 0: pen += pull_cost(st)
     return pen
 
 def ncost():
@@ -223,7 +219,7 @@ if os.environ.get('DBG'):
     for r in FIXED:
         st = state[r]; x0, y0, x1, y1 = rect_of(SPEC[r], st); rr = box(x0, y0, x1, y1)
         print(r, st, 'rect', [round(v, 1) for v in (x0, y0, x1, y1)], 'ausserhalb', round(rr.difference(BOARD_IN).area, 1),
-              'forb', round(rr.intersection(FORB).area, 1) if st[3] == 'B' else round(rr.intersection(FORB_T).area, 1), 'batt', round(rr.intersection(BATT).area, 1), 'tht_ok', tht_ok(r, st))
+              'forb', round(rr.intersection(FORB).area, 1) if st[3] == 'B' else round(rr.intersection(FORB_T).area, 1), 'tht_ok', tht_ok(r, st))
     sys.exit()
 # Startzustand: zufaellig in der Platine
 def rand_state(ref):
@@ -244,10 +240,15 @@ for r in movable:
                 state[r] = (ax + random.uniform(-2, 2), ay + random.uniform(-2, 2), random.choice((0, 90, 180, 270)), state[a[0]][3])
                 break
 
+def edge_cost(ref, st):
+    w = layout.EDGE_PREF.get(ref)
+    if not w: return 0.0
+    return w * max(0.0, min(layout.BOARD_W / 2 - abs(st[0]), layout.BOARD_H / 2 - abs(st[1])) - 1.5)
+
 def local_cost(ref, st):
     old = state[ref]; state[ref] = st
     # Netzlaenge nur der betroffenen Netze
-    c = part_cost_static(ref, st) + overlap_pen(ref, st) + anchor_cost(ref)
+    c = part_cost_static(ref, st) + overlap_pen(ref, st) + anchor_cost(ref) + edge_cost(ref, st)
     # Netze
     nets = {PARTS[ref]['pins'].get(n) for n, *_ in fpgeom(SPEC[ref])['pads']}
     nets = {n for n in nets if n and n not in BIG}
@@ -280,7 +281,15 @@ for it in range(N):
     ref = random.choice(movable)
     old = state[ref]
     sig = 6.0 * (1 - it / N) + 0.3
-    if random.random() < 0.15:
+    if random.random() < 0.05:        # Sprung in die erlaubte Flaeche (Teile ueberqueren sonst gesperrte Zonen nicht)
+        side = old[3] if random.random() < 0.8 or ref not in TOPABLE else ('T' if old[3] == 'B' else 'B')
+        area = ALLOW_B if side == 'B' else ALLOW_T
+        bx0, by0, bx1, by1 = area.bounds
+        for _ in range(40):
+            px, py = random.uniform(bx0, bx1), random.uniform(by0, by1)
+            if area.contains(_Pt(px, py)): break
+        new = (px, py, random.choice((0, 90, 180, 270)), side)
+    elif random.random() < 0.15:
         a = ANCH.get(ref)
         if a and a[0] in state:
             g = fpgeom(SPEC[a[0]])

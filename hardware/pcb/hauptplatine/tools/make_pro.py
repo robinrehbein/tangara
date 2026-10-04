@@ -13,11 +13,11 @@ pro = {
  "board": {"design_settings": {
    "defaults": {"board_outline_line_width": 0.1, "copper_line_width": 0.2, "copper_text_size_h": 1.0, "copper_text_size_v": 1.0,
                 "silk_line_width": 0.15, "silk_text_size_h": 0.9, "silk_text_size_v": 0.9, "silk_text_thickness": 0.15},
-   "rules": {"min_clearance": 0.09, "min_copper_edge_clearance": 0.3, "min_hole_clearance": 0.25, "min_hole_to_hole": 0.5,
+   "rules": {"min_clearance": 0.09, "min_copper_edge_clearance": 0.2, "min_hole_clearance": 0.25, "min_hole_to_hole": 0.5,
              "min_through_hole_diameter": 0.2, "min_via_annular_width": 0.125, "min_via_diameter": 0.4, "min_track_width": 0.09,
              "min_text_height": 0.8, "min_text_thickness": 0.12, "min_microvia_diameter": 0.2, "min_microvia_drill": 0.1,
              "min_silk_clearance": 0.0, "min_connection": 0.0, "min_resolved_spokes": 2, "solder_mask_to_copper_clearance": 0.0,
-             "min_groove_width": 0.0, "min_copper_edge_clearance": 0.3},
+             "min_groove_width": 0.0, "min_copper_edge_clearance": 0.2},
    "rule_severities": {"silk_over_copper": "ignore", "silk_overlap": "ignore", "courtyards_overlap": "warning",
                        "lib_footprint_issues": "ignore", "lib_footprint_mismatch": "ignore"},
    "track_widths": [0.0, 0.127, 0.2, 0.3, 0.4], "via_dimensions": [{"diameter": 0.0, "drill": 0.0}, {"diameter": 0.45, "drill": 0.2}]}},
@@ -31,8 +31,8 @@ for p in (os.path.join(ROOT, 'tools', 'projekt_vorlage.kicad_pro'), os.path.join
 
 # Bibliothekstabellen
 SYM = ["Device", "power", "Switch", "Connector", "Connector_Generic", "Mechanical"]
-FP = ["Resistor_SMD", "Capacitor_SMD", "Package_TO_SOT_SMD", "Package_DFN_QFN", "Package_SO", "Connector_JST", "Connector_Audio", "Connector_Card",
-      "Button_Switch_SMD", "TestPoint", "Connector_Wire", "MountingHole", "Oscillator", "Inductor_SMD"]
+FP = ["Resistor_SMD", "Capacitor_SMD", "Package_TO_SOT_SMD", "Package_DFN_QFN", "Package_SO", "Package_SON", "Connector_JST", "Connector_Audio", "Connector_Card",
+      "Button_Switch_SMD", "TestPoint", "Connector_Wire", "MountingHole", "Oscillator", "Inductor_SMD", "Crystal", "Connector_FFC-FPC"]
 t = '(sym_lib_table\n  (version 7)\n  (lib (name "Hauptplatine") (type "KiCad") (uri "${KIPRJMOD}/lib/Hauptplatine.kicad_sym") (options "") (descr "Eigene Symbole Hauptplatine"))\n'
 t += ''.join('  (lib (name "%s") (type "KiCad") (uri "${KICAD9_SYMBOL_DIR}/%s.kicad_sym") (options "") (descr ""))\n' % (n, n) for n in SYM) + ')\n'
 open(os.path.join(ROOT, 'sym-lib-table'), 'w').write(t)

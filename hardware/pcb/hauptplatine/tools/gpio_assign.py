@@ -11,7 +11,7 @@ PARTS = {p['ref']: p for p in netlist.parts()}
 pl = json.load(open(os.path.join(HERE, 'placement.json')))
 LP = {'IO%d' % i for i in range(8)}
 LP_SIG = {'SYS_PWR_EN', 'KEY_LOCK_MCU', 'WHEEL_INT'}
-BAD = {'IO33', 'IO34', 'IO36', 'IO37', 'IO60', 'IO61', 'IO35'}
+BAD = set(netlist.NO_GPIO)
 name2pad = {v: k for k, v in netlist.S31.items() if v.startswith('IO') and v not in BAD}
 def padpos(ref, pad):
     p = PARTS[ref]; g = G.fpgeom(p['fp']); st = pl[ref]

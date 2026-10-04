@@ -25,7 +25,7 @@ F_CU, B_CU, IN1, IN2 = pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu
 if MODE != 'finish':
     board.SetCopperLayerCount(4)
     ds = board.GetDesignSettings()
-    ds.SetBoardThickness(FromMM(1.0))
+    ds.SetBoardThickness(FromMM(0.8))
 nets = {}
 if MODE == 'finish':
     for name, n in board.GetNetsByName().items(): nets[str(name)] = n
@@ -144,33 +144,24 @@ def board_pts(inset=0.0, n=8):
     return pts
 
 def outline():
-    W, H, R = layout.BOARD_W, layout.BOARD_H, layout.BOARD_R
-    x0, x1, y0, y1 = -W / 2, W / 2, -H / 2, H / 2
+    """Plattenkontur 37 x 84 (Ecken r = 5) mit Randausschnitten fuer Klinke, USB-C und Klickrad-Kabelschlitz (layout.board_poly)."""
+    poly = layout.board_poly()
     L = pcbnew.Edge_Cuts
-    sline(L, (x0 + R, y1), (x1 - R, y1), 0.1); sline(L, (x1, y1 - R), (x1, y0 + R), 0.1)
-    sline(L, (x1 - R, y0), (x0 + R, y0), 0.1); sline(L, (x0, y0 + R), (x0, y1 - R), 0.1)
-    k = R * (1 - math.sqrt(0.5))
-    sarc(L, (x1 - R, y1), (x1 - k, y1 - k), (x1, y1 - R)); sarc(L, (x1, y0 + R), (x1 - k, y0 + k), (x1 - R, y0))
-    sarc(L, (x0 + R, y0), (x0 + k, y0 + k), (x0, y0 + R)); sarc(L, (x0, y1 - R), (x0 + k, y1 - k), (x0 + R, y1))
-    # Klickrad-Aussparung: Kreis r = 13 um (0,-27) plus Ausbuchtung nach unten (Platz fuer Stecker J1 des Moduls)
-    cx, cy, r = 0.0, layout.WHEEL_Y, layout.CUT_R
-    a, yb, rc = layout.NOTCH_HALF, layout.NOTCH_BOTTOM, layout.NOTCH_CORNER
-    yj = cy - math.sqrt(r * r - a * a)
-    sline(L, (a, yj), (a, yb + rc), 0.1); sarc(L, (a, yb + rc), (a - rc + rc * math.sqrt(0.5), yb + rc - rc * math.sqrt(0.5)), (a - rc, yb))
-    sline(L, (a - rc, yb), (-a + rc, yb), 0.1)
-    sarc(L, (-a + rc, yb), (-a + rc - rc * math.sqrt(0.5), yb + rc - rc * math.sqrt(0.5)), (-a, yb + rc))
-    sline(L, (-a, yb + rc), (-a, yj), 0.1)
-    sarc(L, (-a, yj), (0, cy + r), (a, yj))
+    geoms = list(poly.geoms) if hasattr(poly, 'geoms') else [poly]
+    for g in geoms:
+        for ring in [g.exterior] + list(g.interiors):
+            pts = list(ring.coords)
+            for a, b in zip(pts[:-1], pts[1:]):
+                if math.dist(a, b) > 1e-4: sline(L, (round(a[0], 4), round(a[1], 4)), (round(b[0], 4), round(b[1], 4)), 0.1)
 
-
-HOLES = layout.WHEEL_HOLES
+HOLES = layout.HOLES
 def run_place():
     outline()
     pl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'placement.json')))
     for part in netlist.parts():
         r = part['ref']
-        if r in ('H1', 'H2', 'H3'):
-            hx, hy = HOLES[int(r[1]) - 1]; place(part, hx, hy, 0, 'T'); continue
+        if part['kind'] == 'H':
+            hx, hy = part['hole_at']; place(part, hx, hy, 0, 'T'); continue
         x, y, th, side = pl[r]
         place(part, x, y, th, side)
     zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2)

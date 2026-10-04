@@ -1,6 +1,48 @@
-ERC report (2026-10-04T12:09:30+0000, Encoding UTF8)
+ERC report (2026-10-04T15:25:44+0000, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 40.64 mm): Global Label 'LCD_SCK'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 45.72 mm): Global Label 'LCD_CS'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 48.26 mm): Global Label 'TP_INT'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 50.80 mm): Global Label 'LCD_D3'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 55.88 mm): Global Label 'LCD_D2'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 60.96 mm): Global Label 'LCD_D1'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(308.61 mm, 38.10 mm): Global Label 'LCD_D0'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(308.61 mm, 55.88 mm): Global Label 'LCD_TE'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(295.91 mm, 353.06 mm): Global Label 'SD_CD'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(270.51 mm, 379.73 mm): Global Label 'SD_VDD_EN'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(469.90 mm, 162.56 mm): Global Label 'I2S_BCLK'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(55.88 mm, 566.42 mm): Global Label 'KEY_LOCK_MCU'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(636.27 mm, 35.56 mm): Global Label 'I2S_LRCK'
+[global_label_dangling]: Global label not connected anywhere else in the schematic
+    ; warning
+    @(636.27 mm, 59.69 mm): Global Label 'I2S_DOUT'
 
- ** ERC messages: 0  Errors 0  Warnings 0
+ ** ERC messages: 14  Errors 0  Warnings 14

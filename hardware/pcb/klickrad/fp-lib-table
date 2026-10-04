@@ -5,6 +5,6 @@
   (lib (name "Resistor_SMD") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Resistor_SMD.pretty") (options "") (descr ""))
   (lib (name "Package_SO") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Package_SO.pretty") (options "") (descr ""))
   (lib (name "Package_DFN_QFN") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Package_DFN_QFN.pretty") (options "") (descr ""))
-  (lib (name "Connector_JST") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Connector_JST.pretty") (options "") (descr ""))
+  (lib (name "Connector_FFC-FPC") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Connector_FFC-FPC.pretty") (options "") (descr ""))
   (lib (name "Connector_Wire") (type "KiCad") (uri "${KICAD9_FOOTPRINT_DIR}/Connector_Wire.pretty") (options "") (descr ""))
 )
