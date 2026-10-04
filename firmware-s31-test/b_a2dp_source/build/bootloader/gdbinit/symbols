@@ -1,0 +1,11 @@
+echo Warning: ROM ELF is not supported yet for "esp32s31".\n
+
+
+
+# Load bootloader symbols
+set confirm off
+    # Bootloader elf was not found
+set confirm on
+
+# Load application symbols
+file /home/user/tangara/firmware-s31-test/b_a2dp_source/build/bootloader/bootloader.elf

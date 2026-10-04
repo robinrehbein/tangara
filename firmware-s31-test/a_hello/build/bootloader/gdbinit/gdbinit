@@ -1,0 +1,2 @@
+source /home/user/tangara/firmware-s31-test/a_hello/build/bootloader/gdbinit/symbols
+source /home/user/tangara/firmware-s31-test/a_hello/build/bootloader/gdbinit/connect
