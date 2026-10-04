@@ -1,69 +1,70 @@
-Item,Designator,Qty,Manufacturer,Mfg Part #,Description,Package,Type,LCSC #,DigiKey #,Herkunft,Bestueckung
-1,C23,1,Murata,GRM188R61A105KA61D,"1uF -  0603 statt 0805 (Hoehe <= 1,0 mm fuer die Oberseite)",0603,SMD,,,angepasst,ja
-2,"C24,C25,C27,C32,C35,C42",6,Murata,GRM188R61A106KE69,"10uF -  0603 statt 0805 (Hoehe <= 1,0 mm fuer die Oberseite)",0603,SMD,,,angepasst,ja
-3,C29,1,Murata,GRM32EC70J107ME15K,100uF - ,1210,SMD,,,Tangara,ja
-4,"C30,C34,C37",3,Murata,GCM188R71C104KA37J,0.1uF - ,0603,SMD,,,Tangara,ja
-5,C100,1,Samsung,CL05A105KA5NQNC,1uF - EN-Kondensator (Espressif: RC 10 k / 1 uF),0402,SMD,C52923,,Espressif,ja
-6,C101,1,Murata,GRM188R60J226MEA0,22uF - Espressif: 22 uF am Modul-3V3,0603,SMD,,,Espressif,ja
-7,"C102,C103",2,Samsung,CL05B104KO5NNNC,100nF - Espressif: 100 nF am Modul-3V3,0402,SMD,C1525,,Espressif,ja
-8,"C104,C110,C114,C131,C133,C257,C258,C259,C262",9,Samsung,CL05B104KO5NNNC,100nF - MAX17048 VDD,0402,SMD,C1525,,neu,ja
-9,"C111,C113",2,Murata,GRM188R61A106KE69,10uF - Boost Eingang,0603,SMD,,,neu,ja
-10,C112,1,Murata,GRM188R60J226MEA0,22uF - Boost Ausgang (25 V X5R),0603,SMD,,,neu,ja
-11,"C130,C132",2,Murata,GRM155R60J106ME05D,10uF - Display-Versorgung VCI/VDDIO (Waveshare C27),0402,SMD,,,neu,ja
-12,"C240,C241,C242,C253",4,Samsung,CL05B104KO5NNNC,100nF - VL,0402,SMD,C1525,,Cirrus,ja
-13,"C243,C244,C247,C248,C249,C250,C251,C252",8,Murata,GRM155R60J225ME15D,"2.2uF - VA (X5R, 6,3 V)",0402,SMD,,,Cirrus,ja
-14,"C245,C246",2,,"(15 uF X5R >= 6,3 V 0603, Typ nach Verfuegbarkeit)",15uF - FILT+ (X5R),0603,SMD,,,Cirrus,ja
-15,C254,1,Murata,GRM188R60J475KE19D,4.7uF - VP (X5R),0603,SMD,,,Cirrus,ja
-16,"C255,C256",2,Murata,GRM1555C1H100JA01D,10pF - Quarz-Lastkondensator C0G (nach Abschnitt 5.3 abstimmen),0402,SMD,,,Cirrus,ja
-17,C260,1,Samsung,CL05A105KA5NQNC,1uF - LDO Eingang,0402,SMD,C52923,,neu,ja
-18,C261,1,Murata,GRM155R60J225ME15D,2.2uF - LDO Ausgang,0402,SMD,,,neu,ja
-19,D4,1,Nexperia,BAT54C,BAT54C - ,SOT-23,SMD,,,Tangara,ja
-20,D10,1,Nexperia,BAT54C,BAT54C - Entkopplung ID -> Gate-Knoten (Totbatterie: ID ohne 3V3 hochohmig),SOT-23,SMD,,,neu,ja
-21,FB1,1,Murata,BLM15AG121SN1D,"BLM15 120R - Ferritperle: VA/VCP vom digitalen 1,8-V-Zweig trennen (Datenblatt Abschnitt 8.1: VA, VCP aus sauberer Versorgung)",0402,SMD,,,Cirrus,ja
-22,J1,1,Same Sky (CUI Devices),SJ-43504-SMT-TR,"SJ-43504-SMT-TR - Klinke 5,0 mm hoch (Tangara: SJ-3506-SMT, 6,0 mm), Mid-Mount im Randausschnitt der Platine, Pads auf der Rueckseite; Spitzenschalter -> HP_DETECT (HPDETECT_INV im DAC setzen)","3,5 mm 4-polig, 5,0 mm hoch",SMD,,,angepasst,ja
-23,J4,1,Molex,104031-0811,microSD - microSD statt Vollformat-SD (Tangara: Hirose DM1AA-SF-PEJ(82)); SDMMC 4 Bit direkt am S31 (IO35...IO40) statt SPI + Multiplexer,microSD Push-Push,SMD,,WM6357DKR-ND,angepasst,ja
-24,J6,1,GCT,USB4510-03-1-A,USB - ,GCT_USB4510-03-1-A_REVA,THT,,,Tangara,ja
-25,J20,1,Hirose,FH12-30S-0.5SH(55),"FH12-30S-0.5SH(55) - Display-FPC-Stecker, 30 Pin 0,5 mm (Waveshare 2,06""-Board J3); Typ (Kontaktseite oben/unten, FPC-Dicke) gegen das gekaufte Panel pruefen","FPC 30 Pin 0,5 mm, 1,0 mm hoch",SMD,,,neu,ja
-26,J21,1,Hirose,FH12-6S-0.5SH(55),"FH12-6S-0.5SH(55) - Klickrad-Modul v2 (AT42QT2120 0x1C + DRV2605L 0x5A), gleicher Stecker wie auf hardware/pcb/klickrad (J1); Pin 5 = CHANGE, Pin 6 = Reserve","FFC 6 Pin 0,5 mm, 1,0 mm hoch",SMD,,,neu,ja
-27,L20,1,Murata,DFE201610E-1R0M=P2,"1uH - 1 uH 2,0 x 1,6 x 1,0 mm (TPS61023 Tab. 8-2: Saettigungsstrom >= 3 A!); Typ und Landmuster (hier L_0805 als Naeherung) vor Bestellung pruefen",2016,SMD,,,neu,ja
-28,Q1,1,Nexperia,PMV48XPA2R,PMV48XPA2R - ,TSOT-23,SMD,,,Tangara,ja
-29,"Q10,Q11,Q20",3,Diodes Inc.,2N7002T-7-F,"2N7002T - zieht Q1-Gate nach GND (Sink-Betrieb); aus, wenn ID low (Host)",SOT-523,SMD,,,neu,ja
-30,R1,1,,0.1W 5%,10k - ,0603,SMD,,,Tangara,ja
-31,"R4,R43",2,Yageo,AC0603JR-0710KL,"10k - Taster-Vorwiderstand (Tangara: 100 k); bei Tastendruck KEY_LOCK ca. 0,9 x SYS_POWER",0603,SMD,,,angepasst,ja
-32,R7,1,Yageo,AC0603FR-131ML ,1M - ,0603,SMD,,,Tangara,ja
-33,"R9,R11,R12,R34,R35,R37,R38,R41,R57,R61",10,Yageo,AC0603JR-0710KL,10k - ,0603,SMD,,,Tangara,ja
-34,R36,1,Yageo,AC0603FR-07100KL,"100k - PROG2 hoch = USB-Eingangslimit 500 mA (Tangara: Pin vom SAMD21 gesteuert); hier Pull-up an 3V3, S31 kann ueberschreiben",0603,SMD,,,angepasst,ja
-35,R39,1,Yageo,RC0603DR-071KL,1k - ,0603,SMD,,,Tangara,ja
-36,"R100,R101",2,UNI-ROYAL,0402WGF1002TCE,10k - EN-Pull-up (Espressif: RC-Verzoegerung 10 k / 1 uF),0402,SMD,C25744,,Espressif,ja
-37,"R102,R103",2,UNI-ROYAL,0402WGF0000TCE,0 - USB-HS D+: Platz fuer Serienwiderstand (Anfangswert 0 Ohm),0402,SMD,C17168,,Espressif,ja
-38,R110,1,,,887k - VBUS_DET: ca. 900 k in Reihe laut Datenblatt (887 k E96; 0402),0402,SMD,,,neu,ja
-39,"R111,R115,R119,R122,R130,R131,R132,R136,R246",9,UNI-ROYAL,0402WGF1002TCE,10k - INT_N Pull-up,0402,SMD,C25744,,neu,ja
-40,"R112,R113,R114,R135,R244,R245",6,UNI-ROYAL,0402WGF1003TCE,"100k - ID Pull-up (open drain, low = Geraet angeschlossen, wir sind Quelle)",0402,SMD,C25741,,neu,ja
-41,R116,1,,,"390k - FB-Teiler: 0,595 V x (1 + 390k/51k) = 5,15 V",0402,SMD,,,neu,ja
-42,R117,1,,,51k - FB-Teiler,0402,SMD,,,neu,ja
-43,R118,1,,,"49.9k - Stromlimit ca. 520 mA (Datenblatt: IOS 490-550 mA bei 49,9 k)",0402,SMD,,,neu,ja
-44,"R120,R121",2,UNI-ROYAL,0402WGF2201TCE,2.2k - I2C Pull-up (Klickrad-Modul bestueckt keine),0402,SMD,C25879,,neu,ja
-45,"R134,R248,R249",3,UNI-ROYAL,0402WGF4701TCE,4.7k - FPC-Pin 21 (Waveshare DSI_PWR_EN) fest high,0402,SMD,C25900,,neu,ja
-46,"R200,R202",2,Yageo,AC0603FR-07100KL,100k - KEY_LOCK Pull-down (Taster offen = low),0603,SMD,,,neu,ja
-47,R201,1,Yageo,AC0603JR-0710KL,"10k - Serienwiderstand zum S31-GPIO (SYS_POWER bis 5 V, GPIO 3,3 V)",0603,SMD,,,neu,ja
-48,"R240,R241",2,UNI-ROYAL,0402WGF0000TCE,"0 - Quarz 22,5792 MHz an XTI",0402,SMD,C17168,,neu,ja
-49,"R242,R243",2,UNI-ROYAL,0402WGF0000TCE,"0 - Quarz 24,576 MHz an XTI (DNP)",0402,SMD,C17168,,neu,NICHT BESTUECKEN (DNP)
-50,R247,1,,,200k - EN-Pull-up PCA9306 (200 k laut Datenblatt),0402,SMD,,,neu,ja
-51,SW1,1,Omron,B3U-3000P,B3U-3000P - Ein/Aus-Taster statt Schiebeschalter JS102011SAQN (Tangara): drueckt SYS_POWER auf KEY_LOCK -> LDO_EN,"3,0 x 2,5 x 1,2",SMD,C963349,,angepasst,ja
-52,TP7,1,,,BAT - ,TestPoint_Pad_D1.0mm,SMD,,,Tangara,ja
-53,U3,1,Diodes Inc.,D5V0L2B3T-7,"D5V0L2B3T-7 - ESD-Schutz Kopfhoerer-Ausgaenge (Tangara 1:1, Netze angepasst)",SOT-523,SMD,,,Tangara,ja
-54,U4,1,Texas Instruments,TLV75733PDRVR,"TLV75733PDRV - 3V3-LDO 1 A (Tangara: TLV75533PDBV, 500 mA) im flachen WSON-6 (0,8 mm), Pinbelegung DRV nach Datenblatt SBVS322C; Spitzen bis ca. 375 mA S31-Senden + Display + DAC-LDO",WSON-6 2 x 2,SMD,,,angepasst,ja
-55,U5,1,ProTek Devices,PE1605C4A6,PE1605C4A6 - ,SOT-23-6,SMD,,,Tangara,ja
-56,U10,1,Microchip,MCP73871-2CCI/ML,MCP73871 - ,QFN-20-1EP_4x4mm_P0.5mm_EP2.5x2.5mm,SMD,,,Tangara,ja
-57,U12,1,Texas Instruments,TUSB320LAIRWBR,"TUSB320LAI - USB-C DRP-Controller, I2C 0x47 (ADDR=GND), ersetzt Tangara BD91N01NUX (nur Sink)","X2QFN-12 1,6 x 1,6",SMD,C132554,296-TUSB320LAIRWBRCT-ND,neu,ja
-58,U15,1,Espressif,ESP32-S31-WROOM-1-N16R16V,"ESP32-S31-WROOM-1-N16R16V - WLAN 6, Bluetooth 5.4 (Classic + LE Audio), USB 2.0 HS OTG, 16 MB Flash, 16 MB PSRAM (Datenblatt v0.5 PRELIMINARY); Tangara: ESP32-WROVER-E","Modul 18 x 25,5 x 3,1",SMD,,,neu,ja
-59,U16,1,Texas Instruments,TPS22948DCKR,TPS22948 - ,SOT65P210X110-6N,SMD,,,Tangara,ja
-60,U17,1,Cirrus Logic,CS43131-CNZR,"CS43131-CNZR - DAC mit Class-H-Kopfhoererverstaerker (125 dB DNR an 32 Ohm), I2C, I2S-Master (statt Tangara WM8523 + INA1620 + TPS65133)",QFN-40 5 x 5,SMD,,598-CS43131-CNZRCT-ND,neu,ja
-61,U20,1,Texas Instruments,TPS61023DRLR,"TPS61023DRL - Boost 5,1 V aus SYS_POWER (Schalterstrom 3,7 A)",SOT-563,SMD,C919459,296-TPS61023DRLRCT-ND,neu,ja
-62,U21,1,Texas Instruments,TPS2553DRVR,"TPS2553DRV - Lastschalter mit Strombegrenzung (49,9 k = ca. 520 mA), WSON-Gehaeuse 0,8 mm hoch (Pinbelegung nach Datenblatt SLVS...)",WSON-6 2 x 2,SMD,,,neu,ja
-63,U22,1,Analog Devices (Maxim),MAX17048G+T10,"MAX17048G+T10 - Fuel Gauge 1S LiPo, I2C 0x36 (Tangara: Spannungsteiler Q2/R50/R51 + ADC)",TDFN-8 2x2,SMD,C2682616,MAX17048G+T10CT-ND,neu,ja
-64,U30,1,Texas Instruments,PCA9306DCUR,"PCA9306DCUR - I2C-Pegelwandler 1,8 V (DAC) <-> 3,3 V (Bus); EN ueber 200 k an VREF2 (Datenblatt)","VSSOP-8 2,3 x 2,0",SMD,,,neu,ja
-65,"U31,U32,U33",3,Texas Instruments,SN74AXC1T45DRLR,"SN74AXC1T45DRL - Pegelwandler 1,8 V <-> 3,3 V, BCLK: DAC (Master) -> S31",SOT-563,SMD,,,neu,ja
-66,U34,1,Texas Instruments,TLV75518PDRVR,"TLV75518PDRV - 1,8-V-LDO fuer VL/VD/VA/VCP des CS43131 (ca. 20 mA typ., 60 mA Reserve), rauscharm, gleiche Familie wie U4 (TLV757P)",WSON-6 2 x 2,SMD,,,neu,ja
-67,X1,1,NDK,NX2016SA 22.5792M EXS00A-CS09116,"22.5792MHz - Quarz 22,5792 MHz, Last 8 pF, laut CS43131 Tab. 5-1 geeignet; Register 0x20052 = 0x02","2,0 x 1,6",SMD,,,Cirrus,ja
-68,X2,1,NDK,NX2016SA 24.576M EXS00A-CS09117,"24.576MHz - Optionaler Quarz 24,576 MHz fuer die 48-kHz-Familie (DNP); dann R241/R242 statt R240/R243 bestuecken (AUDIO.md 5.3)","2,0 x 1,6",SMD,,,neu,NICHT BESTUECKEN (DNP)
+Item,Designator,Qty,Manufacturer,Mfg Part #,Description,Package,Type,LCSC #,DigiKey #,Nummer geprueft,Herkunft,Bestueckung
+1,C23,1,Murata,GRM188R61A105KA61D,"1uF -  0603 statt 0805 (Hoehe <= 1,0 mm fuer die Oberseite)",0603,SMD,,,NEIN,angepasst,ja
+2,"C24,C25,C27,C32,C35,C42",6,Murata,GRM188R61A106KE69,"10uF -  0603 statt 0805 (Hoehe <= 1,0 mm fuer die Oberseite)",0603,SMD,,,NEIN,angepasst,ja
+3,C29,1,Murata,GRM32EC70J107ME15K,100uF - ,1210,SMD,,,NEIN,Tangara,ja
+4,"C30,C34,C37",3,Murata,GCM188R71C104KA37J,0.1uF - ,0603,SMD,,,NEIN,Tangara,ja
+5,C100,1,Samsung,CL05A105KA5NQNC,1uF - EN-Kondensator (Espressif: RC 10 k / 1 uF),0402,SMD,C52923,,NEIN,Espressif,ja
+6,C101,1,Murata,GRM188R60J226MEA0,22uF - Espressif: 22 uF am Modul-3V3,0603,SMD,,,NEIN,Espressif,ja
+7,"C102,C103",2,Samsung,CL05B104KO5NNNC,100nF - Espressif: 100 nF am Modul-3V3,0402,SMD,C1525,,NEIN,Espressif,ja
+8,"C104,C110,C114,C131,C133,C257,C258,C259,C262",9,Samsung,CL05B104KO5NNNC,100nF - MAX17048 VDD,0402,SMD,C1525,,NEIN,neu,ja
+9,"C111,C113",2,Murata,GRM188R61A106KE69,10uF - Boost Eingang,0603,SMD,,,NEIN,neu,ja
+10,C112,1,Murata,GRM188R60J226MEA0,22uF - Boost Ausgang (25 V X5R),0603,SMD,,,NEIN,neu,ja
+11,"C130,C132",2,Murata,GRM155R60J106ME05D,10uF - Display-Versorgung VCI/VDDIO (Waveshare C27),0402,SMD,,,NEIN,neu,ja
+12,"C240,C241,C242,C253",4,Samsung,CL05B104KO5NNNC,100nF - VL,0402,SMD,C1525,,NEIN,Cirrus,ja
+13,"C243,C244,C247,C248,C249,C250,C251,C252",8,Murata,GRM155R60J225ME15D,"2.2uF - VA (X5R, 6,3 V)",0402,SMD,,,NEIN,Cirrus,ja
+14,"C245,C246",2,,"(15 uF X5R >= 6,3 V 0603, Typ nach Verfuegbarkeit)",15uF - FILT+ (X5R),0603,SMD,,,NEIN,Cirrus,ja
+15,C254,1,Murata,GRM188R60J475KE19D,4.7uF - VP (X5R),0603,SMD,,,NEIN,Cirrus,ja
+16,"C255,C256",2,Murata,GRM1555C1H100JA01D,10pF - Quarz-Lastkondensator C0G (nach Abschnitt 5.3 abstimmen),0402,SMD,,,NEIN,Cirrus,ja
+17,C260,1,Samsung,CL05A105KA5NQNC,1uF - LDO Eingang,0402,SMD,C52923,,NEIN,neu,ja
+18,C261,1,Murata,GRM155R60J225ME15D,2.2uF - LDO Ausgang,0402,SMD,,,NEIN,neu,ja
+19,D4,1,Nexperia,BAT54C,BAT54C - ,SOT-23,SMD,,,NEIN,Tangara,ja
+20,D10,1,Nexperia,BAT54C,BAT54C - Entkopplung ID -> Gate-Knoten (Totbatterie: ID ohne 3V3 hochohmig),SOT-23,SMD,,,NEIN,neu,ja
+21,FB1,1,Murata,BLM15AG121SN1D,"BLM15 120R - Ferritperle: VA/VCP vom digitalen 1,8-V-Zweig trennen (Datenblatt Abschnitt 8.1: VA, VCP aus sauberer Versorgung)",0402,SMD,,,NEIN,Cirrus,ja
+22,J1,1,Same Sky (CUI Devices),SJ-43504-SMT-TR,"SJ-43504-SMT-TR - Klinke 5,0 mm hoch (Tangara: SJ-3506-SMT, 6,0 mm), Mid-Mount im Randausschnitt der Platine, Pads auf der Rueckseite; Spitzenschalter -> HP_DETECT (HPDETECT_INV im DAC setzen)","3,5 mm 4-polig, 5,0 mm hoch",SMD,,,NEIN,angepasst,ja
+23,J4,1,Molex,104031-0811,microSD - microSD statt Vollformat-SD (Tangara: Hirose DM1AA-SF-PEJ(82)); SDMMC 4 Bit direkt am S31 (IO35...IO40) statt SPI + Multiplexer,microSD Push-Push,SMD,,WM6357DKR-ND,NEIN,angepasst,ja
+24,J6,1,GCT,USB4510-03-1-A,USB - ,GCT_USB4510-03-1-A_REVA,THT,,,NEIN,Tangara,ja
+25,J20,1,Hirose,FH12-30S-0.5SH(55),"FH12-30S-0.5SH(55) - Display-FPC-Stecker, 30 Pin 0,5 mm (Waveshare 2,06""-Board J3); Typ (Kontaktseite oben/unten, FPC-Dicke) gegen das gekaufte Panel pruefen","FPC 30 Pin 0,5 mm, 1,0 mm hoch",SMD,,,NEIN,neu,ja
+26,J21,1,Molex,503480-0600,"503480-0600 - Klickrad-Stecker Molex 503480-0600 (Easy-On BackFlip, Dual Contact, 1,0 mm), gleicher Typ wie J1 auf hardware/pcb/klickrad; Pin 5 = CHANGE, Pin 6 = Reserve; Kabel FFC 6 Pin 0,5 mm Typ A ","FFC 6 Pin 0,5 mm, Dual Contact, 1,0 mm hoch",SMD,,WM1387CT-ND,ja (Digi-Key-Seite 2026-10-04),neu,ja
+27,L20,1,Murata,DFE201610E-1R0M=P2,"1uH - 1 uH 2,0 x 1,6 x 1,0 mm (TPS61023 Tab. 8-2: Saettigungsstrom >= 3 A!); Typ und Landmuster (hier L_0805 als Naeherung) vor Bestellung pruefen",2016,SMD,,,NEIN,neu,ja
+28,Q1,1,Nexperia,PMV48XPA2R,PMV48XPA2R - ,TSOT-23,SMD,,,NEIN,Tangara,ja
+29,"Q10,Q11,Q20",3,Diodes Inc.,2N7002T-7-F,"2N7002T - zieht Q1-Gate nach GND (Sink-Betrieb); aus, wenn ID low (Host)",SOT-523,SMD,,,NEIN,neu,ja
+30,R1,1,,0.1W 5%,10k - ,0603,SMD,,,NEIN,Tangara,ja
+31,"R4,R43",2,Yageo,AC0603JR-0710KL,"10k - Taster-Vorwiderstand (Tangara: 100 k); bei Tastendruck KEY_LOCK ca. 0,9 x SYS_POWER",0603,SMD,,,NEIN,angepasst,ja
+32,R7,1,Yageo,AC0603FR-131ML ,1M - ,0603,SMD,,,NEIN,Tangara,ja
+33,"R9,R11,R12,R34,R35,R37,R38,R41,R57,R61",10,Yageo,AC0603JR-0710KL,10k - ,0603,SMD,,,NEIN,Tangara,ja
+34,R36,1,Yageo,AC0603FR-07100KL,"100k - PROG2 hoch = USB-Eingangslimit 500 mA (Tangara: Pin vom SAMD21 gesteuert); hier Pull-up an 3V3, S31 kann ueberschreiben",0603,SMD,,,NEIN,angepasst,ja
+35,R39,1,Yageo,RC0603DR-071KL,1k - ,0603,SMD,,,NEIN,Tangara,ja
+36,"R100,R101",2,UNI-ROYAL,0402WGF1002TCE,10k - EN-Pull-up (Espressif: RC-Verzoegerung 10 k / 1 uF),0402,SMD,C25744,,NEIN,Espressif,ja
+37,"R102,R103",2,UNI-ROYAL,0402WGF0000TCE,0 - USB-HS D+: Platz fuer Serienwiderstand (Anfangswert 0 Ohm),0402,SMD,C17168,,NEIN,Espressif,ja
+38,R110,1,,,887k - VBUS_DET: ca. 900 k in Reihe laut Datenblatt (887 k E96; 0402),0402,SMD,,,NEIN,neu,ja
+39,"R111,R115,R119,R122,R130,R131,R132,R136,R246",9,UNI-ROYAL,0402WGF1002TCE,10k - INT_N Pull-up,0402,SMD,C25744,,NEIN,neu,ja
+40,"R112,R113,R114,R135,R244,R245",6,UNI-ROYAL,0402WGF1003TCE,"100k - ID Pull-up (open drain, low = Geraet angeschlossen, wir sind Quelle)",0402,SMD,C25741,,NEIN,neu,ja
+41,R116,1,,,"390k - FB-Teiler: 0,595 V x (1 + 390k/51k) = 5,15 V",0402,SMD,,,NEIN,neu,ja
+42,R117,1,,,51k - FB-Teiler,0402,SMD,,,NEIN,neu,ja
+43,R118,1,,,"49.9k - Stromlimit ca. 520 mA (Datenblatt: IOS 490-550 mA bei 49,9 k)",0402,SMD,,,NEIN,neu,ja
+44,"R120,R121",2,UNI-ROYAL,0402WGF2201TCE,2.2k - I2C Pull-up (Klickrad-Modul bestueckt keine),0402,SMD,C25879,,NEIN,neu,ja
+45,"R134,R248,R249",3,UNI-ROYAL,0402WGF4701TCE,4.7k - FPC-Pin 21 (Waveshare DSI_PWR_EN) fest high,0402,SMD,C25900,,NEIN,neu,ja
+46,"R200,R202",2,Yageo,AC0603FR-07100KL,100k - KEY_LOCK Pull-down (Taster offen = low),0603,SMD,,,NEIN,neu,ja
+47,R201,1,Yageo,AC0603JR-0710KL,"10k - Serienwiderstand zum S31-GPIO (SYS_POWER bis 5 V, GPIO 3,3 V)",0603,SMD,,,NEIN,neu,ja
+48,"R240,R241",2,UNI-ROYAL,0402WGF0000TCE,"0 - Quarz 22,5792 MHz an XTI",0402,SMD,C17168,,NEIN,neu,ja
+49,"R242,R243",2,UNI-ROYAL,0402WGF0000TCE,"0 - Quarz 24,576 MHz an XTI (DNP)",0402,SMD,C17168,,NEIN,neu,NICHT BESTUECKEN (DNP)
+50,R247,1,,,200k - EN-Pull-up PCA9306 (200 k laut Datenblatt),0402,SMD,,,NEIN,neu,ja
+51,SW1,1,Omron,B3U-3000P,B3U-3000P - Ein/Aus-Taster statt Schiebeschalter JS102011SAQN (Tangara): drueckt SYS_POWER auf KEY_LOCK -> LDO_EN,"3,0 x 2,5 x 1,2",SMD,C963349,,NEIN,angepasst,ja
+52,TP7,1,,,BAT - ,TestPoint_Pad_D1.0mm,SMD,,,NEIN,Tangara,ja
+53,U3,1,Diodes Inc.,D5V0L2B3T-7,"D5V0L2B3T-7 - ESD-Schutz Kopfhoerer-Ausgaenge (Tangara 1:1, Netze angepasst)",SOT-523,SMD,,,NEIN,Tangara,ja
+54,U4,1,Texas Instruments,TLV75733PDRVR,"TLV75733PDRV - 3V3-LDO 1 A (Tangara: TLV75533PDBV, 500 mA) im flachen WSON-6 (0,8 mm), Pinbelegung DRV nach Datenblatt SBVS322C; Spitzen bis ca. 375 mA S31-Senden + Display + DAC-LDO",WSON-6 2 x 2,SMD,,,NEIN,angepasst,ja
+55,U5,1,ProTek Devices,PE1605C4A6,PE1605C4A6 - ,SOT-23-6,SMD,,,NEIN,Tangara,ja
+56,U10,1,Microchip,MCP73871-2CCI/ML,MCP73871 - ,QFN-20-1EP_4x4mm_P0.5mm_EP2.5x2.5mm,SMD,,,NEIN,Tangara,ja
+57,U12,1,Texas Instruments,TUSB320LAIRWBR,"TUSB320LAI - USB-C DRP-Controller, I2C 0x47 (ADDR=GND), ersetzt Tangara BD91N01NUX (nur Sink)","X2QFN-12 1,6 x 1,6",SMD,C132554,296-TUSB320LAIRWBRCT-ND,NEIN,neu,ja
+58,U15,1,Espressif,ESP32-S31-WROOM-1-N16R16V,"ESP32-S31-WROOM-1-N16R16V - WLAN 6, Bluetooth 5.4 (Classic + LE Audio), USB 2.0 HS OTG, 16 MB Flash, 16 MB PSRAM (Datenblatt v0.5 PRELIMINARY); Tangara: ESP32-WROVER-E","Modul 18 x 25,5 x 3,1",SMD,,,NEIN,neu,ja
+59,U16,1,Texas Instruments,TPS22948DCKR,TPS22948 - ,SOT65P210X110-6N,SMD,,,NEIN,Tangara,ja
+60,U17,1,Cirrus Logic,CS43131-CNZR,"CS43131-CNZR - DAC mit Class-H-Kopfhoererverstaerker (125 dB DNR an 32 Ohm), I2C, I2S-Master (statt Tangara WM8523 + INA1620 + TPS65133)",QFN-40 5 x 5,SMD,,598-CS43131-CNZRCT-ND,NEIN,neu,ja
+61,U20,1,Texas Instruments,TPS61023DRLR,"TPS61023DRL - Boost 5,1 V aus SYS_POWER (Schalterstrom 3,7 A)",SOT-563,SMD,C919459,296-TPS61023DRLRCT-ND,NEIN,neu,ja
+62,U21,1,Texas Instruments,TPS2553DRVR,"TPS2553DRV - Lastschalter mit Strombegrenzung (49,9 k = ca. 520 mA), WSON-Gehaeuse 0,8 mm hoch (Pinbelegung nach Datenblatt SLVS...)",WSON-6 2 x 2,SMD,,,NEIN,neu,ja
+63,U22,1,Analog Devices (Maxim),MAX17048G+T10,"MAX17048G+T10 - Fuel Gauge 1S LiPo, I2C 0x36 (Tangara: Spannungsteiler Q2/R50/R51 + ADC)",TDFN-8 2x2,SMD,C2682616,MAX17048G+T10CT-ND,NEIN,neu,ja
+64,U30,1,Texas Instruments,PCA9306DCUR,"PCA9306DCUR - I2C-Pegelwandler 1,8 V (DAC) <-> 3,3 V (Bus); EN ueber 200 k an VREF2 (Datenblatt)","VSSOP-8 2,3 x 2,0",SMD,,,NEIN,neu,ja
+65,"U31,U32,U33",3,Texas Instruments,SN74AXC1T45DRLR,"SN74AXC1T45DRL - Pegelwandler 1,8 V <-> 3,3 V, BCLK: DAC (Master) -> S31",SOT-563,SMD,,,NEIN,neu,ja
+66,U34,1,Texas Instruments,TLV75518PDRVR,"TLV75518PDRV - 1,8-V-LDO fuer VL/VD/VA/VCP des CS43131 (ca. 20 mA typ., 60 mA Reserve), rauscharm, gleiche Familie wie U4 (TLV757P)",WSON-6 2 x 2,SMD,,,NEIN,neu,ja
+67,X1,1,NDK,NX2016SA 22.5792M EXS00A-CS09116,"22.5792MHz - Quarz 22,5792 MHz, Last 8 pF, laut CS43131 Tab. 5-1 geeignet; Register 0x20052 = 0x02","2,0 x 1,6",SMD,,,NEIN,Cirrus,ja
+68,X2,1,NDK,NX2016SA 24.576M EXS00A-CS09117,"24.576MHz - Optionaler Quarz 24,576 MHz fuer die 48-kHz-Familie (DNP); dann R241/R242 statt R240/R243 bestuecken (AUDIO.md 5.3)","2,0 x 1,6",SMD,,,NEIN,neu,NICHT BESTUECKEN (DNP)
+69,(Kabel zu J21),1,Molex,"0150200056 (Beispiel, Typ A/B und Laenge nicht geprueft)","FFC 6 Pin 0,5 mm, 0,3 mm dick, 15-40 mm; Stecker Dual Contact -> Typ A oder B",FFC,-,,,NEIN,neu,"NICHT BESTUECKEN (separat bestellen, Kabel zum Klickrad)"

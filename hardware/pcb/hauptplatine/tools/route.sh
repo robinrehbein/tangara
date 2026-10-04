@@ -12,6 +12,6 @@ P
 rm -f $W/r.ses
 xvfb-run -a timeout ${FR_TIMEOUT:-2400} java -jar $FR -de $W/r.dsn -do $W/r.ses -mp $MP ${FR_EXTRA} > $W/fr.log 2>&1 || true
 python3 - <<P 2>&1 | grep -v swig || true
-import pcbnew; b=pcbnew.LoadBoard("$W/r.kicad_pcb"); pcbnew.ImportSpecctraSES(b,"$W/r.ses"); b.Save("$W/routed.kicad_pcb")
+import pcbnew; b=pcbnew.LoadBoard("${NR:-$W/r.kicad_pcb}"); pcbnew.ImportSpecctraSES(b,"$W/r.ses"); b.Save("$W/routed.kicad_pcb")
 P
 echo fertig $W

@@ -105,13 +105,13 @@ def hole18():
 
 # ---------------------------------------------------------------- Molex 503480-0600 (FFC/FPC 0,5 mm, 6 pol., Dual Contact, 1,0 mm hoch)
 def molex6():
-    s = HEAD % ('Molex_503480-0600', 'Molex 503480-0600 Easy-On BackFlip FFC/FPC 6 pol. 0,5 mm, Dual Contact, 1,0 mm hoch. Landmuster aus dem Text der Molex-Zeichnung SD-503480-001 abgeleitet (Signalpads 0,3 x 0,7, Nagelpads 0,79 x 0,7, Rastermass 0,5); Zeichnungsbild nicht lesbar, Lage der Nagelpads UNGEPRUEFT', 'molex 503480 ffc fpc 0.5mm')
-    s += prop('Reference', 'REF**', 0, -3.2, 'F.SilkS', size=0.8) + prop('Value', 'Molex_503480-0600', 0, 3.0, 'F.Fab', size=0.8)
+    s = HEAD % ('Molex_503480-0600', 'Molex 503480-0600 Easy-On BackFlip FFC/FPC 6 pol. 0,5 mm, Dual Contact, 1,0 mm hoch, Koerper 4,0 mm tief. Signalpads (0,3 x 0,7) an der Kabelmuendung (+y_fp-Seite ist hinten!): Muendung zeigt nach -y_fp. Nagelpads an den hinteren Ecken. Aus Zeichnungstext SD-503480-001 und Produktfoto abgeleitet; Nagelpad-Form und -Lage UNGEPRUEFT (Zeichnungstext nennt Maskenoeffnung 1,0 x 0,3)', 'molex 503480 ffc fpc 0.5mm')
+    s += prop('Reference', 'REF**', 0, 3.2, 'F.SilkS', size=0.8) + prop('Value', 'Molex_503480-0600', 0, -3.4, 'F.Fab', size=0.8)
     s += '\t(attr smd)\n'
-    for i in range(6): s += pad(i + 1, round(-1.25 + 0.5 * i, 3), -1.7, 0.3, 0.7, 'rect')
-    for sx in (-1, 1): s += pad('MP', sx * 2.045, -1.7, 0.79, 0.7, 'rect')
-    s += rect(-2.35, -2.3, 2.35, 1.3, 'F.Fab', 0.1) + rect(-2.75, -2.55, 2.75, 1.8, 'F.CrtYd', 0.05)
-    s += line(-2.6, -2.4, -2.6, -1.2, 'F.SilkS', 0.12) + text('1', -1.25, -3.0, 'F.SilkS', 0.7)
+    for i in range(6): s += pad(i + 1, round(1.25 - 0.5 * i, 3), -2.0, 0.3, 0.7, 'rect')     # Pin 1 rechts (x = +1,25) wie J1 des Klickrad-Moduls
+    for sx in (-1, 1): s += pad('MP', sx * 2.045, 1.2, 0.8, 1.0, 'rect')
+    s += rect(-2.35, -2.3, 2.35, 1.7, 'F.Fab', 0.1) + rect(-2.75, -2.7, 2.75, 2.0, 'F.CrtYd', 0.05)
+    s += line(-2.6, -2.7, -2.6, -1.6, 'F.SilkS', 0.12) + text('1', 1.25, -3.1, 'F.SilkS', 0.8)
     s += ')\n'
     return s
 

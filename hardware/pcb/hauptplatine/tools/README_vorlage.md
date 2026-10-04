@@ -1,17 +1,13 @@
-# Hauptplatine Endgerät (Nano-Player), Rev. 2
+# Hauptplatine Endgerät (Nano-Player), Rev. 3
 
-> **STATUS: NICHT BESTELLBEREIT. Menschliche Prüfung und Entscheidung vor jeder Bestellung zwingend.**
-> - Die Platine ist **nicht fertig geroutet** (Freerouting: 34 von 408 Verbindungen offen, Ergebnis nicht verwertbar). `fertigung/NICHT_BESTELLEN_ungeroutet_gerber.zip` ist nur eine Ansicht der Platzierung. DRC: 274 unverbundene Verbindungen, dazu Silkscreen-Hinweise, 62 Abstandsfehler und 21 Randabstandsfehler (Regel 0,5 mm in der Projektdatei statt 0,2 mm, ungeklärt). ERC: 0 Meldungen.
-> - **Nach der Platzierung kamen zwei verbindliche Festlegungen**, die **nicht umgesetzt** sind: (1) Klickrad-Stecker Molex 503480-0600 statt Hirose FH12-6S (Platine hat noch FH12-6S auf der Rückseite, Footprint/LCSC-Nummer nicht verifiziert); (2) Standard-Ausschnitt für den LRA (ca. 14 × 10 mm um (0, −16), darunter keine Bauteile und kein Akku).
-> - **Rechnerische Folge von (2)** (Schätzung, nicht per CAD geprüft): Von der Unterkante (y = −43) belegen Klinke 14 mm (bis −29), der LRA-Ausschnitt −21...−11. Ein Akku 34 × 50 beginnt dann bei etwa −10,5 und endet bei +39,5; das WROOM-1 (auch gedreht 18 mm) braucht danach +39,5...+57,5. Die Platine müsste ca. **37 × 100 mm** (Gehäuse ca. 104 mm) werden, oder der Akku auf etwa 30 × 35 mm (z. B. 302535, ca. 300 mAh) schrumpfen, wenn 86 mm bleiben. Das ist eine Entscheidung (Offene Punkte in `KONZEPT.md`), keine Rateaufgabe.
-> - **Kabeltyp Klickrad:** Stecker Rückseite der Klickrad-Platine (zeigt nach unten) und Gegenstecker Vorderseite der Hauptplatine (zeigt nach oben), beide mit Kontakten unten: gerades Kabel berührt dann entgegengesetzte Kabelseiten, es braucht **Typ B** (Kontakte an den Enden auf gegenüberliegenden Seiten), Typ A nur bei Schlaufe um die Kante wie im jetzigen Entwurf. In die Stückliste aufnehmen, wenn so gebaut wird.
-> - Der Abstand zwischen den Platinen ist nur 1,5 mm (5,3 bis 6,8), beide Stecker ca. 1,0 mm: sie dürfen sich in der Draufsicht nicht überdecken.
+> **STATUS: geroutet, DRC sauber (0 Fehler, 0 unverbundene Verbindungen) – trotzdem NICHT ungeprüft bestellbar: menschlicher bzw. Opus-Review vor der Bestellung zwingend.**
+> - Platine **41 × 97 × 1,0 mm, 4 Lagen** (F.Cu / In1 GND-Fläche / In2 Signale + GND-Fläche / B.Cu), Ecken r = 4, Gerät ca. 44 × 100 × bis 10 mm. Antenne des WROOM-1 liegt **innerhalb** der Kante (Keepout 18,6 × 7,6 mm, alle vier Kupferlagen, zusätzlich als Platinen-Regelbereich `antenna_keepout_board`; per Skript geprüft: Kupferfüllung In1/In2 im Keepout 0 mm², Bahnen/Vias darin 0). 6 Lagen waren nicht nötig.
+> - **DRC (kicad-cli, mit Abgleich gegen den Schaltplan): 0 Verstöße, 0 unverbundene Pads, 0 Footprint-Hinweise.** ERC: 0 Meldungen. Regeln: Bahn/Abstand 0,127 mm, Via 0,45/0,2 mm, **Kupfer–Kante 0,3 mm** (PCBWay-Standard; nur die Pads von Klinke/USB-C/microSD dürfen per eigener Regel in `hauptplatine.kicad_dru` bis 0,2 mm = PCBWay-Minimum an den Randausschnitt), Loch–Loch 0,3 mm. Abgeschaltet und begründet: `silk_over_copper`, `silk_overlap`, `silk_edge_clearance` (PCBWay schneidet Siebdruck über Pads/Kante automatisch ab), `nonmirrored_text_on_back_layer` (betraf nur ausgeblendete Fab-Texte). Alle Referenzbezeichner sind absichtlich **nicht** im Siebdruck (PCBWay arbeitet nach CPL); der Siebdruck zeigt nur Bauteilumrisse, Pin 1 und „Antenne“.
+> - **Wie das Routing entstand (ehrlich):** Freerouting 1.9.0 (Java, `xvfb`) legte in zwei Läufen (12 Durchgänge, dann 20 Durchgänge als Fortsetzung auf dem Zwischenstand, je ca. 5–10 min) alle Verbindungen bis auf wenige (vorher waren sechs Läufe mit schlechteren Platzierungen nötig); GND-Anbindung an die Fläche In1 macht ein Skript (`tools/previa.py`, 144 gesperrte Vias vor dem Router, der Router nutzt die Plane nicht selbst), die letzten ca. 10 Verbindungen (CHG_PROG1/3, GND/3V3 am Display-Stecker J20) wurden mit einem eigenen Mini-Maze-Router (`tools/maze.py`) von Hand-Skript nachgezogen, drei GND-Vias von der Kante weggeschoben (`tools/fixup.py`). Nach einer späteren Korrektur (Klickrad-Stecker J21 auf x = 0 mit neu orientiertem Molex-Footprint, Pads an der Kabelmündung) wurden die J21-Netze und eine Bahn (CHG_STAT1) aus dem Antennen-Keepout ebenfalls mit `maze.py` neu gezogen (`tools/j21fix.py`). Der Weg ist **nicht** per Knopfdruck reproduzierbar: Zwischenstände liegen in `tools/routing/`, die Schritte stehen unter „Neuaufbau“.
+> - **Nicht geprüft / Risiken:** keine Hardware, keine Simulation; USB-HS-Paar **nicht als 90-Ω-Paar geführt**: auf der fertigen Platine gemessen USB_DP 89,1 mm (6 Vias), USB_DN 90,0 mm (4 Vias), Versatz ca. 0,9 mm, Lagenwechsel F.Cu/In2/B.Cu, überwiegend ungekoppelt (Router) – für 480 Mbit/s **ein Risiko**; Impedanz nicht berechnet, bei PCBWay anfragen; Analogführung (HPREFA/B, Ladungspumpe) vom Router, nicht nach Cirrus-Layoutregeln von Hand; Footprint des **Molex 503480-0600**: Signalpads 0,3 × 0,7 (Raster 0,5) und Körper 4,0 mm tief aus dem Zeichnungstext SD-503480-001 und dem Datenblatt-Foto, die Zeichnungsgrafik war nicht lesbar. **Nagelpads (hier 0,8 × 1,0 an den hinteren Ecken, x ±2,045) sind geschätzt; der Zeichnungstext nennt eine Maskenöffnung 1,0 × 0,3 und den Mittenversatz 0,79 – Form und Y-Lage UNGEPRÜFT, vor der Bestellung gegen die Molex-Zeichnung prüfen**; CPL-Drehungen nicht gegen PCBWay geprüft; LCSC-Nummern in der Stückliste stammen vom Vorgänger und sind **nicht verifiziert** (Spalte „Nummer geprueft“), nur Digi-Key `WM1387CT-ND` für den Molex-Stecker wurde auf der Produktseite gesehen.
+> - Die Gerber-ZIP heißt nur dann ohne „NICHT_BESTELLEN“, wenn `tools/export.py` einen sauberen DRC sieht (hier der Fall).
 
-4-Lagen-Leiterplatte **37 × 86 × 0,8 mm** (Ecken r = 4), Bestückung beidseitig, bestellfertig für PCBWay (Leiterplatte plus PCBA). KiCad 9, Schaltplan und Platine werden aus Python-Skripten erzeugt (`tools/`).
-Grundlage: `docs/DUENNBAU.md` (Dünnbau, Display), `docs/AUDIO.md` (Audio-Kette), `TEILE.md` (Chipliste, Ziel-Stack-up). Rev. 1 (WROOM-3, WM8523-Kette, 38 × 89 × 1,0) ist durch diese Revision ersetzt.
-
-> **Status: nicht in Hardware getestet. Vor der Bestellung muss ein Mensch Schaltplan, Footprints, Bestückungsdrehungen und Gehäuseänderungen prüfen.**
-> ERC und DRC laufen (Ergebnis unten), das heißt nur: keine formalen Regelverletzungen. Ob die Schaltung funktioniert, ob die Antenne funkt, ob der Klang gut ist und ob jeder Footprint zum echten Bauteil passt, ist **nicht geprüft**. Siehe „Geprüft / nicht geprüft“.
+Grundlage: `docs/AUDIO.md` (Audio-Kette), `TEILE.md` (Chipliste, Ziel-Maße). KiCad 9, Schaltplan und Platine werden aus Python-Skripten erzeugt (`tools/`). Rev. 2 (37 × 86 × 0,8) ist ersetzt, weil dort die Fläche nicht reichte und das Routing scheiterte.
 
 ## Inhalt des Ordners
 
@@ -19,14 +15,14 @@ Grundlage: `docs/DUENNBAU.md` (Dünnbau, Display), `docs/AUDIO.md` (Audio-Kette)
 |---|---|
 | `hauptplatine.kicad_pro`, `.kicad_sch`, `.kicad_pcb` | KiCad-Projekt (Schaltplan A1, eine Seite) |
 | `lib/` | eigene Symbole (`Hauptplatine.kicad_sym`) und Footprints (`Hauptplatine.pretty`: ESP32-S31-WROOM-1 selbst erzeugt, Klinke und USB-C aus Tangara, X2QFN, Akkupads, Befestigungsloch) |
-| `fertigung/hauptplatine_gerber_bohrdaten.zip` | Gerber (4 Lagen, Maske, Paste, Silkscreen, Kontur) und Bohrdaten (Excellon, PTH/NPTH getrennt) |
+| `fertigung/hauptplatine_gerber_bohrdaten.zip` | Gerber (4 Lagen, 1,0 mm, Maske, Paste, Silkscreen, Kontur) und Bohrdaten (Excellon, PTH/NPTH getrennt) |
 | `fertigung/hauptplatine_BOM_PCBWay.csv` | Stückliste im PCBWay-Format (Designator, Menge, Hersteller, MPN, Beschreibung, Gehäuseform, LCSC/Digi-Key nur wo geprüft; DNP markiert) |
 | `fertigung/hauptplatine_CPL_PCBWay.csv` | Bestückungsdatei Oberseite und Unterseite (Designator, Mid X/Y, Layer, Rotation), ohne DNP-Teile |
 | `fertigung/hauptplatine_schaltplan.pdf` | Schaltplan als PDF |
 | `vorschau/` | SVG/PNG der Ober- und Unterseite |
 | `pruefung/erc.rpt`, `pruefung/drc.rpt` | Berichte von `kicad-cli` |
 | `quellen/` | Quellen: Tangara-Netzliste (Rev. 5), Tangara-Footprints, Lizenztexte |
-| `tools/` | Generatoren (siehe „Neuaufbau“) |
+| `tools/` | Generatoren, Routing-Skripte, `routing/` (Zwischenstände des Routings) |
 | `LICENSE` | CERN-OHL-S-2.0 |
 
 ## Blockschaltbild
@@ -47,7 +43,7 @@ USB-C (J6, GCT USB4510) --CC1/CC2--> TUSB320LAI (U12, DRP) --ID/INT--> S31
   WLAN 6, BT 5.4 Classic + LE Audio, USB-HS-OTG, 16 MB Flash + 16 MB PSRAM               |
     |QSPI+I2C+INT      |I2S (Slave)         |SDMMC 4 Bit        |I2C                      |
     v                  v                    v                   v                         |
- AMOLED 2,06" (J20)   Pegelwandler U31-U33  microSD (J4)        Klickrad (J21, FFC 6)     |
+ AMOLED 2,06" (J20)   Pegelwandler U31-U33  microSD (J4)        Klickrad (J21, Molex 503480-0600)     |
  CO5300 410x502       1,8 V <-> 3,3 V       (TPS22948 U16)      AT42QT2120 + DRV2605L     |
                            |                                                              |
                   CS43131 (U17), I2S-Master, Quarz 22,5792 MHz (X1) <-- 1,8-V-LDO (U34) <-+
@@ -147,119 +143,115 @@ Alle Zuordnungen sind **ungeprüft** gegen das endgültige Datenblatt (v0.5, vor
 
 Nicht geprüft: ob der gekaufte Panel-FPC (Kontaktseite oben/unten, Dicke 0,3 mm, Pin-Reihenfolge) zu diesem Stecker passt, genaue Lage und Länge des FPC (Maßzeichnung des Moduls besorgen; DUENNBAU.md nennt 1,7 mm Zusatz an der FPC-Seite). Alternative laut DUENNBAU.md: FPC durch einen Schlitz auf die Rückseite.
 
+## Flächenbilanz (vor dem Routing, `tools/flaechenbilanz.py`)
+
+Platine 41 × 97 mm = 3681 mm² (nach Ecken und Ausschnitten). Courtyard-Fläche mit 0,25 mm Aufschlag:
+
+| Block | Bedarf |
+|---|---|
+| feste Teile: WROOM-1 496, microSD 188, Klinke 173, USB-C 113, Display-FPC 177, Taster 22, Akkupads 22, Klickrad-Stecker 27 | 1218 mm² |
+| hohe Teile (> 1,0 mm: C29, D4, D10, Q1, U5, U16) | 94 mm² |
+| flache Teile (130 Stück: DAC-Kette ca. 230, Lader/USB/Boost ca. 250, Rest) | 654 mm² |
+| **Summe** | **ca. 1966 mm²** |
+
+Nutzbar nach Abzug von Sperrzonen (Rand 0,7 mm, Akkufach 32 × 38,5 mm, Klickrad-Kreis r 16,3 vorn, LRA-Ausschnitt + 1 mm, Befestigungslöcher r 2,0, Antennen-Keepout): Rückseite 1415 mm², Vorderseite 2424 mm² (mit flachen Teilen unter dem Display). Reserve für die beweglichen Teile (748 mm²): **über 400 %** mit Vorderseite unter dem Display, **218 %** wenn unter dem Display nichts stehen darf (nur Rückseite + Vorderseite außerhalb Display: Rückseite allein 89 %). Die 15-%-Reserve ist damit weit übertroffen; eng wurde es trotzdem im Analogblock (siehe Routing), nicht wegen der Gesamtfläche, sondern wegen der Dichte um den CS43131 (QFN-40, 0,4 mm Raster).
+
+Gruppen (harte Bereiche, `layout.GROUPS`): Analog (DAC, Quarz, Pegelwandler, Klinke) links unten neben der Klinke; Lader/USB-Rollen/Boost rechts unten neben dem USB-C; Display-Anschluss und 3V3/Fuel-Gauge Mitte Vorderseite; Modul-Beschaltung und SD-Versorgung oben Vorderseite (Vias zur Rückseite). Schaltregler-Schleifen kompakt (U20/L20/C111–C113 und U10 liegen mit ihren Kondensatoren je in wenigen mm). Digital/Funk (oben) und Analog (unten) sind durch Akku (32 × 38,5 mm) getrennt.
+
 ## Klickrad-Anschluss
 
-Flacher **FFC-Stecker 6-polig, 0,5 mm, Flip-Lock, 1,0 mm hoch** (Hirose FH12-6S-0.5SH(55)): derselbe Typ wie auf dem Klickrad-Modul (`hardware/pcb/klickrad`, J1). Belegung 1 3V3, 2 GND, 3 SDA, 4 SCL, 5 CHANGE, 6 Reserve (offen). I²C-Pull-ups 2,2 k (R120/R121) und CHANGE-Pull-up 10 k (R136) auf der Hauptplatine. Der Stecker J21 sitzt auf der **Rückseite** bei @@X_J21@@ mit dem Mundloch zur Plattenunterkante: Das Flachkabel läuft vom Modulstecker nach unten, um die Kante und von hinten in J21 (Biegeradius mindestens 1 mm, Kabellänge ca. 40...50 mm). Die alte Ø-26-Aussparung entfällt (flacher LRA, `docs/DUENNBAU.md`), die drei Löcher Ø 2,2 für das Klickrad sind nicht mehr in der Hauptplatine (Modul wird nach DUENNBAU.md 8.2 geklebt oder mit M1,6 an der Front gehalten).
+**Molex 503480-0600** (Easy-On BackFlip, FFC/FPC 0,5 mm, 6-polig, **Dual Contact**, 1,0 mm hoch; Datenblatt/Zeichnung SD-503480-001 gelesen; Digi-Key `WM1387CT-ND` / Herstellernr. 5034800600 auf der Produktseite gesehen; **LCSC-Nummer nicht geprüft**). J21 sitzt auf der **Vorderseite** bei (0, −46,2), Kabelmündung nach oben (Richtung Klickrad). Weil der Stecker **Dual Contact** ist (Anm. 9 der Zeichnung), passt **Kabeltyp A oder B**; in der BOM als eigene, nicht bestückte Zeile „FFC-Kabel 6 Pin 0,5 mm“ (Kabel FFC 6 Pin 0,5 mm, 0,3 mm dick, Länge 25–40 mm; Digi-Key führt z. B. Molex 0150200056, 6 Pos., 76,2 mm – Typ nicht geprüft). Das Klickrad-Modul hat denselben Stecker auf seiner Rückseite bei (0, −35,8) (Mundloch nach unten, Pin 1 bei x = +1,25). J21 liegt genau darunter bei x = 0, Pin 1 ebenfalls bei x = +1,25; das Kabel läuft **ungedreht und gerade** von der Mündung des Moduls (y ≈ −40,7) nach unten bis zur Mündung von J21 (y ≈ −44,2): freie Länge ca. 3,5 mm + 2 × 1,6 mm Einstecktiefe, also ein enger S-Bogen von 1,5–2 mm Höhe mit 0,3-mm-FFC; ein größerer Plattenabstand (bei 10 mm Gerätedicke möglich) ist besser. R120/R121/R136 (0,35 mm hoch) liegen unter dem Kabelweg. Belegung 1 3V3, 2 GND, 3 SDA, 4 SCL, 5 CHANGE, 6 Reserve. Pull-ups R120/R121 (2,2 k), R136 (10 k) in der Nähe.
 
-## Mechanik und Änderungen an Gehäuse/CAD
+## Mechanik und Übergabe an das CAD
 
-Koordinaten: Ursprung = Plattenmitte, x nach rechts, y nach oben, Blick auf die Display-Seite (Oberseite). **Plattenmaß 37,0 × 86,0 × 0,8 mm** (DUENNBAU: ca. 37 × 84; 2 mm länger, weil Modul, Klinke, USB-C und Akku sonst nicht auf die Rückseite passen). Gehäuse nach DUENNBAU 40 × 90 × 8,5: Innenmaß 37,6 × 87,6, die Platine liegt mit 0,3 mm Spiel seitlich und 0,8 mm an den Enden.
+Koordinaten: Ursprung = Plattenmitte, x nach rechts, y nach oben, Blick auf die Display-Seite (Vorderseite). Rückseitenteile erscheinen unten gespiegelt „durchgesehen“. Platine 41,0 × 97,0 × 1,0 mm, Ecken r = 4,0.
 
-1. **Randausschnitt Klinke** (SJ-43504): Schlitz 6,8 mm breit, Achse bei x = −12,0, von der Unterkante (y = −43,0) bis y = −30,3, Entlastungsbohrungen Ø 1,3 für die Zapfen; Footprint auf der **Rückseite** (Pads auf B.Cu), Bauteilkörper 5,0 mm; er ragt laut DUENNBAU bei dieser Einbaulage 1,1 mm über die Platinenvorderseite. Sperrzone Oberseite: Schlitz + 1,0 mm; Sperrzone für die Rückseite des Klickrad-Moduls: x −16,5...−7,5, y −43...−31 (DUENNBAU 8.2). Die Einbaulage (Pad-Ebene ↔ Körper) ist ungeprüft.
-2. **USB-C** (GCT USB4510, Pads und Laschen auf der Rückseite) bei x = +9,0, Mundloch an der Unterkante; die Kontur aus dem Tangara-Footprint (Randausschnitt 9,24 × 6,0 mm) ist übernommen. Öffnung in der Unterkante des Gehäuses bei x = +9,0.
-3. **Akkufach auf der Rückseite** x −17,0...+17,0, y −29,4...+20,6 (34 × 50, Pouch 303450, 3,0 + 0,3 mm). Dort sind auf der Rückseite **keine** Bauteile. Anschluss: Lötpads BT1 (NTC, GND, BAT+) bei @@X_BT1@@ am oberen Akkuende, Akkuleitungen mit Schutzschaltung.
-4. **Modul ESP32-S31-WROOM-1** auf der Rückseite, Mitte @@X_U15@@, x −3,0...+15,0, y +21,0...+46,5. Die Antenne (obere 6 mm, kupferfrei auf allen Lagen) liegt bei y = +40,5...+46,5; die Platinenkante liegt bei y = +43,0, also ragt das Modul 3,5 mm über die Platine. **Das Gehäuse muss oben 3,0 mm länger werden** (Innenkante heute y = +43,8, nötig y ≥ +46,8): Gehäuselänge **90 → 93 mm**, nur oben verlängert. Akku, Metall und Display-Rahmen dürfen in der Antennenzone nicht liegen. Alternative: Platine 3,5 mm länger statt Überstand (dann ist das Gehäuse trotzdem länger).
-5. **microSD** (Molex 104031-0811) auf der Rückseite bei @@X_J4@@, links neben dem Modul; die Karte wird von der linken Plattenkante (x = −18,5) eingeschoben, Öffnung in der linken Gehäusewand bei y = +31,5 (Mündung ragt ca. 0,8 mm über die Platinenkante).
-6. **Ein/Aus-Taster SW1** (Omron B3U-3000P, **von oben zu drücken**, 1,2 mm hoch) auf der Rückseite bei @@X_SW1@@. Er muss von der Gehäuserückseite oder über einen Stößel erreicht werden (CAD sah einen Seitentaster bei x = 8 vor). Ungeprüft; ein rechtwinkliger Seitentaster ist die Alternative.
-7. **Display**: Oberseite nur flache Teile (≤ 1,0 mm Bauhöhe, das sind Passive, QFN/WSON, SOT-523, FPC-Stecker 1,0 mm). Die Displayunterseite muss mindestens **1,1 mm** über der Platinenoberseite liegen (DUENNBAU 5). Display-FPC-Stecker J20 bei @@X_J20@@ unter dem Display, 1,0 mm hoch (passt in die 1,1 mm). Klickrad-Kreis: Oberseite ist im Kreis r = 16,3 um (0, −25) bauteilfrei (Luft zwischen den Platinen nur 1,2 mm, LRA und Modulbauteile).
-8. **Befestigung M1,6**: Die Platine selbst wird nach DUENNBAU 5 nicht verschraubt (Verschraubung in den Rahmen-Seitenwänden). Drei Befestigungslöcher Ø 1,8 (NPTH) sind als **Vorschlag** vorgesehen bei (+17,4, +41,0), (+17,4, +22,0), (+16,2, −41,0), je mit 2,1 mm bauteilfreiem Radius; Positionen mit dem CAD (Rahmen-Domen) abstimmen. Die alten Schraubdome (±15, ±40) mit M2 entfallen.
-9. **Kupferfreie Plattenränder:** Teile halten ≥ 0,7 mm Abstand zur Kante; Stecker (Klinke, USB-C, microSD) ragen mit der Mündung bis zur Kante.
+| Element | Lage / Maß | Höhe über Platine |
+|---|---|---|
+| Klinke J1 SJ-43504-SMT-TR (Mid-Mount, Pads auf B.Cu) | Achse x = −12,0, Randausschnitt 6,8 mm breit von y = −48,5 bis y = −35,75, Körper ca. 9 × 14 mm | gesamt 5,0 mm; nach STEP-Versatz (+1,9 / −3,1 um die Pad-Ebene, Lage des STEP-Ursprungs **ungeprüft**) ca. **3,1 mm hinter die Rückseite** und **0,9 mm vor die Vorderseite** (bei 1,0 mm Platine) |
+| USB-C J6 GCT USB4510 (im Randausschnitt, Pads/Laschen B.Cu) | Achse x = +9,0, Randausschnitt 9,24 × 6,0 mm an der Unterkante | gesamt 3,18 mm, Aufteilung vorn/hinten ungeprüft |
+| WROOM-1 U15 (Rückseite, gedreht) | Mitte (+6,5, +37,5), Körper x −6,25…+19,25, y +28,5…+46,5 (25,5 × 18) | 3,1 mm |
+| Antennen-Keepout | x +12,7…+20,7, y +28,0…+47,0 (alle Lagen, Platte + Vorder-/Rückseite frei von Metall, Display-Rahmen/Akku/Metall fernhalten) | – |
+| microSD J4 (Rückseite) | Mitte (−13,7, +37,5), Karte wird von der linken Kante eingeschoben, Öffnung in der linken Wand bei y ≈ +37,5 | 1,9 mm |
+| Akkuanschluss BT1 (Rückseite) | Lötpads bei (−12,5, +28,8) | 0,2 mm |
+| Taster SW1 B3U-3000P (Rückseite) | (+15,0, −30,0), von der Rückseite zu drücken | 1,2 mm |
+| Akkufach (Rückseite, bauteilfrei) | x −16,0…+16,0, y −12,0…+26,5 (32 × 38,5 mm) | Zelle ≤ 3,7 mm bei 10 mm Gerät (s. u.) |
+| LRA-Ausschnitt (innen, r = 1) | Mitte (0, −19), 14 × 10 mm, beidseitig 1,0 mm bauteilfrei | LRA bis 3,0 mm |
+| Klickrad | Mitte (0, −25), Platine Ø 32; Vorderseite im Kreis r 16,3 bauteilfrei | – |
+| Klickrad-Stecker J21 (Vorderseite) | (0,0, −46,2), Kabelmündung (Signalpads) nach oben, Körper x ±2,35, y −48,2…−44,2 | 1,0 mm |
+| Display-FPC-Stecker J20 (Vorderseite) | (0, −0,5), FH12-30S, Mundloch nach unten, Körper x ±10,6, y −5,4…+2,5 | 1,0 mm |
+| Display-Zone | x ±18,5, y −6,5…+40,5 (Annahme für das 2,06"-Modul); darunter nur Teile ≤ 1,0 mm (flache 0402/0603, QFN, SOT-523, J20), Luft darunter ≥ 1,1 mm | ≤ 1,0 mm |
+| Befestigungslöcher (NPTH Ø 1,8, M1,6) | (−18,2, +46,2), (+18,2, −46,2), (−18,2, −46,2); je r 2,0 bauteilfrei | – |
+| Vorderseite oberhalb des Displays | y > 41,0: auch höhere Teile erlaubt (Bauhöhe ≤ 1,5 mm) | – |
 
-Stapel (DUENNBAU 5, Variante A): Rückwand 1,0, Luft 0,2, Rückzone 3,3, Platine 0,8, Vorderseite 1,1 (flache Teile + Klinke), Display 1,0 (Panel) bis 2,05 (Modul mit Touch, Luft schrumpft), Front 0,8 = 8,2 mm nominal, 8,5 mm mit Toleranz. Zusätzlich gilt hier: Bauteile auf der Rückseite höchstens 3,3 mm (Modul 3,1, USB-C 3,18, Klinke unter der Platine 3,1), SW1 1,2, microSD 1,9, Bulk-C29 2,7.
+**Bauteilhöhen > 3 mm:** nur Klinke (gesamt 5,0 mm, hinten ca. 3,1 mm), USB-C (3,18 mm) und Modul (3,1 mm); nicht vermeidbar (SJ-3506-SMT hätte 6,0 mm). C29 (100 µF) 2,7 mm, alles andere ≤ 1,5 mm. **Passung Plattendicke:** Klinke und USB-C sind Mid-Mount-Teile mit Aussparung für eine bestimmte Plattendicke; der Vorgänger plante 0,8 mm, hier sind es 1,0 mm. Ob SJ-43504 und USB4510-03 1,0 mm vertragen, ist **nicht geprüft** (Datenblätter prüfen; falls nicht, ist das der Fall „0,8 mm nur wenn nötig“).
 
-## Abgleich mit CAD v2 (params.py, Block E2_*)
+**Höhenstapel bei Gerätedicke bis 10 mm (neues Ziel):** Front 0,8 + Display 2,05 (Modul mit Touch; Panel allein 1,0) + Luft 1,1 + Platine 1,0 = 4,95 mm; Rückwand 1,0 → Rückzone **4,05 mm** (5,1 mm mit 1,0-mm-Panel). Die Klinke ragt nach STEP-Versatz ca. 3,1 mm hinter die Platine (passt in 4,05 mm), vorn 0,9 mm (sie sitzt unterhalb des Displays); der Akku hat im Mittelbereich höchstens ca. 3,7 mm (Zelle + 0,3 mm Luft) – **eine 4,0-mm-Zelle passt nur mit dem 1,0-mm-Panel (Rückzone 5,1 mm) oder bei 10,3 mm Gerätedicke**. Akkukapazität bei 32 × 38,5 × 3,7…4,0 mm: grob **ca. 450–550 mAh** (Schätzung aus typischer Energiedichte, keine Datenblattwerte) – **unter dem Ziel von 600 mAh**. Verbesserung nur durch längeren Akku: Das Modul (Antenne rechts) braucht die oberen 18,5 mm, der LRA-Ausschnitt die unteren; ein Wegfall des SD-Slots oder ein Modul über dem Display (Vorderseite, y > 41) gäbe ca. 10 mm mehr Zellenlänge.
 
-Stand: Die Platine wurde mit den Werten aus DUENNBAU/Gesamtvorgabe gebaut (37 × 86). Die CAD-v2-Randbedingungen wurden danach geliefert und **nicht alle sind erfüllbar**. Hier der Vergleich, damit die Koordination die E2_*-Werte angleichen oder die Randbedingungen lockern kann.
+Randabstände: Teile ≥ 0,7 mm von der Kante, außer Stecker mit Mündung im Randausschnitt.
 
-| Nr. | Vorgabe CAD v2 | Stand Hauptplatine | Bewertung |
-|---|---|---|---|
-| 1 | Nur 0,25 mm Luft unter dem Display, also keine Bauteile auf der Vorderseite im Displaybereich (34,8 × 43,1, Mitte y = +20,43) | Flache Teile (≤ 1,0 mm) stehen auf der Vorderseite, auch unter dem Display, Luft dort 1,1 mm nötig | **nicht erfüllt.** Flächenbilanz: Vorderseite außerhalb Display und Klickrad-Kreis nur ca. 521 mm², Rückseite außerhalb Akkufach 1127 mm², zusammen 1648 mm²; Platzbedarf der Bauteile (Courtyards) flach 781 + hoch 1043 = 1824 mm². Bei 37 × 86 ist die Platine rechnerisch zu klein, wenn die Vorderseite unter dem Display leer bleiben muss. Lösungen: (a) Luft unter dem Display mindestens 1,1 mm (Panel ohne Deckglas 1,0 mm statt Modul 2,05 mm, Gesamtdicke bleibt 8,5), (b) Platine deutlich größer (ca. +6 mm Länge, Gehäuse über 96 mm), (c) kleinerer Akku. Empfehlung (a). |
-| 2 | Rückzone ≤ 3,3 mm | Höchstes Rückseitenteil 3,18 mm (USB-C), WROOM-1 3,1 mm, Klinke 3,1 mm | erfüllt |
-| 3 | Akku 34 × 50 neben der Klinke, WROOM-1 um 90° gedreht (25,5 × 18) | Modul **nicht gedreht** (18 × 25,5, Antenne zur Oberkante, ragt 3,5 mm über die Platine, Gehäuse +3 mm). Akkufach x −17...+17, y −29,4...+20,6 | abweichend; mit gedrehtem Modul läge die Antenne an der Seitenkante, das wäre ein Neu-Layout |
-| 4 | Klinkenausschnitt = Gesamtkörper 9,1 × 14 + 0,45 je Seite; Klinke x = −12, USB-C x = +10 | Klinke x = −12 mit **Schlitz 6,8 mm** (Entlastungsbohrungen Ø 1,3); USB-C **x = +9,0** (Mundloch 9,24) | Klinke: Ausschnitt kleiner als im CAD, Körper liegt auf der Rückseite. USB-C: bitte E2_USB_X = 9,0 setzen |
-| 5 | 5 Domkeepouts M1,6 bei (−16, 42), (16, 42), (−1,5, −42,5), (−17,8, 24,5), (17,8, −33) | 3 Löcher Ø 1,8 bei (+17,4, +41,0), (+17,4, +22,0), (+16,2, −41,0) | Konflikte der CAD-Positionen: (−16, 42) mit microSD J4 und Modul; (−17,8, 24,5) mit BT1 (−14,6, +22,5); (−1,5, −42,5) mit J21 (−2,1, −38,8) und Klinke; (17,8, −33) mit SW1 (12,8, −32,8) grenzwertig. Vorschlag: CAD übernimmt meine 3 Positionen |
-| 6 | Klickrad-Mitte y = −22 (vorläufig), LRA-Aussparung optional | Kreis r = 16,3 um (0, −25) freigehalten, Aussparung für LRA **nicht** vorgesehen | Mitte y = −25 bitte eintragen. Ist der LRA höher als 1,0 mm, ist eine Aussparung ca. 13 × 7 mm mit Fräskontur nötig, **nicht** umgesetzt |
-| 7 | FPC-Schlitz Platzhalter 14 × 1,2 bei (0, −3,2) | Kein Schlitz, flacher FFC-Stecker J20 (30 Pin) bei @@X_J20@@ | E2_PCB_SLOT bitte entfernen; Schlitz wäre Neu-Layout |
-| 8 | Platine 37 × 84, Ecken R4, 4 Auflagepads 1 × 8 mm | **37 × 86**, Ecken R4,0; Auflagepads nicht vorgesehen | E2_PCB bitte auf 86; Plattenränder sind kupferfrei ≥ 0,2 mm |
+## Pin-Tabelle
 
-Endgültige Werte der Hauptplatine für die Übernahme ins CAD (Mitte = Plattenmitte):
-- E2_PCB = (37,0, 86,0, 4,0); Klinke x = −12,0, Schlitz 6,8 mm breit bis y = −30,3; USB-C x = +9,0
-- Akkufach (−17,0, −29,4) bis (+17,0, +20,6), Pouch 34 × 50
-- WROOM-1 bei @@X_U15@@, Antenne an der Oberkante, Überstand 3,5 mm (Gehäuse oben +3 mm)
-- microSD J4 bei @@X_J4@@, SW1 bei @@X_SW1@@, J21 bei @@X_J21@@, J20 bei @@X_J20@@, BT1 bei @@X_BT1@@
-- Befestigungslöcher: (+17,4, +41,0), (+17,4, +22,0), (+16,2, −41,0); Klickrad-Mitte y = −25,0
-
-Alle Aussagen sind Flächenrechnungen aus dem Platzierungsprogramm, **nicht** durch eine CAD-Kollisionsprüfung belegt. **Vor der Bestellung muss die Koordination entscheiden**, ob Punkt 1 gelockert wird.
+Siehe „GPIO-Prüfung und Belegung“ (Signale ↔ S31-GPIO ↔ Modulpad) und „Display“ (30-poliger FPC). Klickrad: J21-Pins 1 3V3, 2 GND, 3 SDA, 4 SCL, 5 CHANGE, 6 Reserve.
 
 ## Geprüft / nicht geprüft
 
-**Geprüft (automatisch, Berichte in `pruefung/`):**
-- ERC (kicad-cli): @@ERC@@. Das Schaltplansymbole der ICs sind automatisch erzeugt und haben nur passive Pins; die elektrische Typprüfung (Ausgang gegen Ausgang usw.) ist dort deshalb wirkungslos.
-- DRC (kicad-cli, mit Abgleich gegen den Schaltplan): @@DRC@@. Regeln: Bahn/Abstand 0,127 mm, Via 0,45/0,2 mm, Randabstand 0,2 mm, Bohrung ≥ 0,2 mm.
-- Routing: @@STAND_ROUTING@@
-- Netzliste des Schaltplans = Netzliste der Platine (Parität).
-- Datenblattwerte für Pinbelegungen von CS43131 (DS1155F2), ESP32-S31-WROOM-1 (v0.5), TUSB320LAI, TLV757P, TPS2553, SN74AXC1T45, PCA9306 und SJ-43504 wurden den Datenblättern entnommen (Text und Zeichnungen gelesen).
+**Geprüft (automatisch):** DRC 0 Verstöße/0 unverbunden (Bericht `pruefung/drc.rpt`), ERC 0 (`pruefung/erc.rpt`), Netzliste Schaltplan = Platine (Parität, 0 Footprint-Hinweise); Gerber/Bohrdaten mit `kicad-cli` erzeugt, Gerber-Vorschau (`vorschau/`) angesehen (Siebdruck bereinigt); Datenblattwerte der Pinbelegungen wie unter „Festgelegte Chips“.
 
-**Nicht geprüft:**
-- Funktion der Schaltung (nie aufgebaut, keine Simulation). Besonders: eigene USB-C-Rollen-/Host-Schaltung (U12, U20, U21, Q10, Q11, D10), Power-Latch, Reset-Transistor Q20, die Pegelwandler an der CS43131-Schnittstelle, Takt (Quarzstart, Lastkondensatoren).
-- Antenne: Modul mit Antenne über der Plattenkante, Keepout aus dem selbst erzeugten Footprint. Verhalten im Gehäuse, Abstand zum Akku (3,3 mm Pouch direkt daneben), Verstimmung: ungemessen.
-- Audioqualität: Layout nach Platzierungsoptimierung und Autorouter, nicht nach Cirrus-Layoutregeln von Hand. Rauschen, Übersprechen, Ladungspumpenstörungen ungemessen. Masseführung: eine durchgehende Massefläche (In1), keine getrennte Analogmasse.
-- USB-HS-Leitung: 90 Ω differenziell wurde nicht berechnet; Lagenaufbau (Prepreg-Dicke bei 0,8 mm Platine) bei PCBWay erfragen.
-- **Footprint-Genauigkeit**: ESP32-S31-WROOM-1 selbst erzeugt (Maße aus den Zeichnungen des Datenblatts gelesen, nicht aus einer Herstellerdatei); X2QFN-12 für TUSB320 nach TI-Beispiel; FH12-Stecker, VSSOP-8, WSON-6, QFN-40 aus KiCad-Standardbibliotheken (Maße nicht einzeln gegen die Hersteller geprüft); Induktivität L20 mit Näherungs-Footprint; SJ-43504 aus der Tangara-Bibliothek, Pads für 0,2 mm Randabstand auf 1,35 mm verschmälert (Datenblatt: 1,75 mm); microSD-Molex nahe, nicht identisch geprüft.
-- Bestückungsdrehungen: Die CPL-Datei nutzt die KiCad-Drehung; PCBWay braucht bei manchen Bauteilen (ICs, Stecker, Dioden) eine andere Nullstellung: Vorschau bei PCBWay prüfen.
-- Höhenstapel im Gehäuse, Bauhöhen der Teile (aus Gedächtnis/Datenblattauszug), Lieferbarkeit, Preise.
-- Die 15-µF-, 2,2-µF- und 10-µF-Kondensatortypen (MPN teils nicht verifiziert), Induktivität L20 (Sättigungsstrom ≥ 3 A prüfen).
+**Nicht geprüft:** Funktion der Schaltung (nie aufgebaut), eigene USB-C-Rollen/Host-Schaltung (U12, U20, U21, Q10, Q11, D10), Power-Latch, Reset-Transistor Q20, Pegelwandler am CS43131, Quarzstart; **Antenne** im Gehäuse (Akku 3 mm unter dem Modul, Metall in der Nähe); Audioqualität; **USB-HS 90 Ω** (nicht berechnet; PCBWay-Lagenaufbau 1,0 mm erfragen, Paar ca. 80 mm lang, vom Router geführt); Rückleitung/Masse unter dem Analogblock (In1 durchgehend, aber Vias und Spuren des Routers); Footprint-Genauigkeit (Molex 503480 s. o., WROOM-1 selbst erzeugt, X2QFN nach TI-Beispiel, L20 Näherungs-Footprint); CPL-Drehungen/Polarität bei PCBWay (Vorschau prüfen); Höhenstapel/Kollisionen im CAD; Lieferbarkeit und Preise; LCSC-Nummern; die 15-µF-Typen ohne MPN; Gehäuse-Dicke (Stapel oben).
 
-**Menschliche Prüfung vor der Bestellung ist Pflicht.** Mindestens: Schaltplan gegen Datenblätter lesen, alle Footprints gegen Zeichnungen, CPL-Vorschau bei PCBWay, Gehäusestapel und Antennenfreiraum.
+**Menschlicher bzw. Opus-Review vor der Bestellung ist Pflicht** (Schaltplan gegen Datenblätter, Footprints gegen Zeichnungen, CPL-Vorschau bei PCBWay, Antennenfreiraum, Gehäusestapel).
 
 ## PCBWay-Bestellung Schritt für Schritt
 
-1. Auf pcbway.com „PCB Assembly“ → „Quote Now“ wählen (Leiterplatte plus Bestückung).
-2. Gerber hochladen: `fertigung/hauptplatine_gerber_bohrdaten.zip`.
-3. Leiterplatte: Lagen **4**, Dicke **0,8 mm**, Maße 37 × 86 mm, FR-4 (Tg 150), Lötstopplack nach Wunsch, Silkscreen weiß, Oberfläche **ENIG**, Kupfer außen 1 oz / innen 0,5 oz, kleinste Leiterbahn/Abstand 0,127/0,127 mm (liegt im Standard 4 Lagen von PCBWay von ca. 0,1 mm, Rückfrage ob 0,8-mm-Aufbau betroffen), kleinste Bohrung 0,2 mm (Vias 0,45/0,2), Impedanzkontrolle: für USB-HS 90 Ω differenziell anfragen (Lagenaufbau von PCBWay bestätigen lassen). Konturausschnitte (Klinke, USB-C) sind gefräst, NPTH-Löcher sind in der Bohrdatei getrennt.
-4. Bestückung: **beidseitig** (Top und Bottom), @@N_PARTS@@ Bauteile in @@N_LINES@@ Positionen (@@N_TOP@@ oben, @@N_BOT@@ unten), Passermarken sind auf beiden Seiten vorhanden. Bleifreies Löten.
-5. Stückliste `fertigung/hauptplatine_BOM_PCBWay.csv` und Bestückungsdatei `fertigung/hauptplatine_CPL_PCBWay.csv` hochladen. Teile ohne Lieferantennummer (S31-Modul, mehrere Tangara-Teile, CS43131) von PCBWay beschaffen lassen oder selbst liefern (Consigned). Nicht bestückt werden: X2, R242, R243 (DNP, in der Stückliste markiert). Das S31-Modul und die Steckerlaschen der USB-Buchse (THT) brauchen im Angebot Bestätigung; der Akku wird **nicht** bestückt, die Litzen werden von Hand an BT1 gelötet.
-6. Vorschau der Bestückung bei PCBWay prüfen: Polarität/Drehung von U3, U4, U5, U10, U12, U15, U17, U20, U21, U22, U30...U34, D4, D10, Q1, Q10, Q11, Q20, X1 und aller Stecker. Fehler per Rückfrage melden, nicht stillschweigend bestätigen.
-7. Gerber-Vorschau (Kontur mit den Randausschnitten, NPTH-Bohrungen) prüfen, dann bestellen. Für den ersten Aufbau 5 Platinen, davon 2 bestückt.
+1. pcbway.com → „PCB Assembly“ → „Quote Now“ (Leiterplatte plus Bestückung).
+2. Gerber: `fertigung/hauptplatine_gerber_bohrdaten.zip`.
+3. Leiterplatte: **4 Lagen**, **1,0 mm**, 41 × 97 mm, FR-4 Tg 150, Oberfläche **ENIG**, Kupfer außen 1 oz / innen 0,5 oz, Lötstopp/Siebdruck nach Wunsch, kleinste Bahn/Abstand 0,127/0,127 mm (PCBWay-Standard 4 Lagen ca. 0,1 mm), kleinste Bohrung 0,2 mm (Vias 0,45/0,2), Kupfer–Kante 0,3 mm (Steckerpads 0,2 mm), Impedanzkontrolle für USB-HS 90 Ω anfragen. Gefräste Innen-/Randausschnitte (LRA, Klinke, USB-C), NPTH getrennt in der Bohrdatei. **Mehrpreis 6 Lagen wäre nicht nötig; 0,8 mm wird nicht gebraucht.**
+4. Bestückung beidseitig: 133 bestückte Bauteile in 68 Positionen (+ 1 Kabelzeile ohne Bestückung; CPL: 68 oben, 61 unten, DNP-Teile X2, R242, R243 ausgenommen); Passermarken auf beiden Seiten.
+5. `fertigung/hauptplatine_BOM_PCBWay.csv` und `fertigung/hauptplatine_CPL_PCBWay.csv` hochladen. Teile ohne Lieferantennummer (S31-Modul, CS43131, mehrere Tangara-Teile) von PCBWay beschaffen lassen oder liefern. Akku wird nicht bestückt (Litzen von Hand an BT1).
+6. Bestückungsvorschau prüfen: Polarität/Drehung von U3, U4, U5, U10, U12, U15, U17, U20–U22, U30–U34, D4, D10, Q1, Q10, Q11, Q20, X1 und aller Stecker (J20, J21!). Fehler melden, nicht stillschweigend bestätigen.
+7. Gerber-Vorschau prüfen, dann bestellen. Erster Aufbau: 5 Platinen, 2 bestückt.
 
 ## Kosten (grobe Schätzung, nicht geprüft)
 
-Alle Zahlen sind Schätzungen aus dem Gedächtnis (Stand 2026, keine Preisabfrage).
-
 | Posten | Schätzung |
 |---|---|
-| Bauteile je Platine (S31-Modul ca. 12...18 €, CS43131 ca. 17 €, übrige ICs ca. 14 €, Stecker ca. 8 €, Passive/Quarze ca. 8 €) | ca. 60...65 € |
-| Leiterplatte 4 Lagen, 37 × 86 mm, ENIG, 5 Stück | ca. 50...80 € |
-| Bestückung beidseitig: Rüstkosten, Schablone, Bestückung, THT-Teile (USB-C-Laschen) | ca. 100...180 € für die Serie, unabhängig von der Stückzahl |
-| Versand und Zoll | ca. 30...50 € |
-| **Summe für 5 Platinen, davon 2 bestückt** | **ca. 380...520 €, also ca. 100...130 € je bestückter Platine** |
+| Bauteile je Platine (S31-Modul 12–18 €, CS43131 ca. 17 €, übrige ICs ca. 14 €, Stecker ca. 10 €, Passive/Quarze ca. 8 €) | ca. 60–70 € |
+| Leiterplatte 4 Lagen 41 × 97 mm, ENIG, 1,0 mm, 5 Stück | ca. 60–90 € (6 Lagen: etwa +30–60 %; wird nicht gebraucht) |
+| Bestückung beidseitig: Rüstkosten, Schablone, Bestückung, THT (USB-C-Laschen) | ca. 100–180 € |
+| Versand, Zoll | ca. 30–50 € |
+| **Summe 5 Platinen, 2 bestückt** | **ca. 400–550 €, ca. 110–140 € je bestückter Platine** |
 
-Das ist mehr als das im Projekt genannte Gesamtbudget von 100...150 €. Der CS43131 (Digi-Key: 251 Stück, 18,52 USD, Lieferzeit des Herstellers 20 Wochen, Stand `docs/AUDIO.md`) ist Preis- und Lieferrisiko.
+Das liegt über dem Projektbudget von 100–150 € (CS43131: Digi-Key ca. 18 USD, Lieferzeit bis 20 Wochen).
 
 ## Offene Risiken
 
-1. **Rückseite ist voll.** Akku 34 × 50 mm, Modul, Klinke, USB-C, microSD und Taster teilen sich eine 37 × 86-mm-Rückseite; deshalb ist die Platine 2 mm länger als in DUENNBAU.md. Wird der kleinere Akku 303040 (30 × 40) gewählt, gewinnt man 10 mm Länge zurück.
-2. **Antennenüberstand** (3,5 mm) macht das Gehäuse 3,0 mm länger; Akku-Abstand zur Antenne ungemessen.
-3. **Autorouter-Ergebnis.** Das Routing stammt von Freerouting, nicht von Hand: Rückleitungsströme, Ladungspumpe des CS43131 nahe am Analogausgang und die Masseführung sind nicht optimiert. @@STAND_ROUTING@@
-4. **HPREF-Führung**: Die Net-Ties NT1/NT2 und die getrennte Leitungsführung der beiden Referenzleitungen sind im Layout nur vom Autorouter erzeugt; ob HPREFA/B wirklich kurz und getrennt am Buchsenpin ankommen, ist im Review zu prüfen.
-5. **Eigene USB-C-Rollenlogik** (U12, U20, U21, Q10, Q11, D10): nie gebaut. Mögliche Fehler: Eingangsschalter Q1 bleibt im Host-Betrieb leitend und speist 5 V zurück; Boost startet bei leerem Akku nicht; TUSB320LAI-Konfiguration (PORT offen = DRP, I²C 0x47) braucht Firmware.
-6. **ESP32-S31-WROOM-1**: Datenblatt v0.5 vorläufig, Verfügbarkeit (Mouser/Digi-Key) nicht bestätigt, Footprint selbst erzeugt, USB und viele GPIO auf den kleinen Pads im Feld (Raster 0,8 mm).
-7. **PCBWay-Prozess**: Sehr kleine Strukturen (QFN-40 mit 0,4 mm Raster, X2QFN-12, FPC 0,5 mm, Bahn 0,127 mm, Via 0,45/0,2) und Randausschnitte mit Kupfer 0,2 mm von der Kante; bei Rückfrage 0,15 mm Bahn und Via 0,6/0,3 verlangen und neu routen.
-8. **Display**: Panel-FPC (Kontaktseite, Pin-Reihenfolge, Dicke) und die Lage des FPC ungeprüft; 2,06"-Panel als nacktes Modul schwer beschaffbar (widersprüchliches Listing).
-9. **Taster SW1** ist von oben zu drücken (Rückseite), Stößelkonstruktion offen.
-10. **Takt**: Quarz-Lastkondensatoren und Register 0x20052 müssen am Aufbau abgestimmt werden; Verhalten der PLL für die 48-kHz-Familie ungemessen.
+1. **Antenne**: Modul innerhalb der Kante, Keepout eingehalten, aber Akku 3 mm unter dem Modul und rechter Display-Rahmen daneben: Reichweite ungemessen.
+2. **Akkukapazität** unter dem Ziel (s. o.) und Rückzone nur 4,05 mm bei 10 mm Gerät.
+3. **Analog-Block** vom Router geführt; HPREFA/B einzeln zur Buchse, aber nicht von Hand optimiert. USB-HS lang (≈ 80 mm).
+4. **Molex-Footprint** nicht gegen das Zeichnungsbild geprüft.
+5. **Eigene USB-C-Rollenlogik** (U12, U20, U21, Q10, Q11, D10) ungebaut; Q1 bleibt im Host-Betrieb ggf. leitend; Boost-Start bei leerem Akku.
+6. **ESP32-S31-WROOM-1**: Datenblatt v0.5 vorläufig; Footprint selbst erzeugt; USB und viele GPIO auf den kleinen Pads im Feld (0,8 mm Raster).
+7. **3V3-Regler** TLV75733 (1 A, WSON) statt Tangaras TLV75533 (500 mA) bewusst beibehalten (WLAN-Spitzen).
+8. **Display**: Panel-FPC (Kontaktseite, Reihenfolge) ungeprüft; Display-Zone mit Teilen unter dem Panel verlangt ≥ 1,1 mm Luft (CAD-Stand 0,25 mm muss angepasst werden), sonst J20 nur lokal.
+9. **Taster SW1** auf der Rückseite, Stößel/Seitentaster im CAD klären.
+10. **Takt**: Quarz-Lastkondensatoren und Register 0x20052 abstimmen.
 
 ## Neuaufbau
 
-Voraussetzungen: KiCad 9 (Python `pcbnew`, `kicad-cli`), Python-Pakete `shapely`, `numpy`, `scipy`; Java und `freerouting-2.1.0.jar` für das Routing; `rsvg-convert` für PNG.
+Voraussetzungen: KiCad 9 (`pcbnew`, `kicad-cli`), Python: `shapely`, `numpy`, `scipy`, `Pillow`; Java + `xvfb` + Freerouting **1.9.0** (`freerouting-1.9.0.jar`, 2.1.0 ist unbrauchbar); `rsvg-convert`.
 
 ```
-tools/make.sh                 # nutzt gespeicherte Platzierung und GPIO-Zuordnung
-PLACE=1 tools/make.sh         # Platzierung (Simulated Annealing, ca. 10 min) und GPIO-Zuordnung neu
-SKIPROUTE=1 tools/make.sh     # vorhandenes Routing (tools/routed_freerouting.kicad_pcb) verwenden
+tools/make_lib.py ; tools/make_pro.py                     # Footprints, Projekt, Regeln
+GAP=0.7 SEED=2 ITER=150000 OUT=p.json tools/place_sa.py   # Platzierung (4 Seeds parallel, ca. 5 min), Ergebnis nach tools/placement.json kopieren
+tools/gpio_assign.py ; MODE=place tools/build_pcb.py      # GPIO-Zuordnung, Platine + GND-Vias (previa.py) -> /tmp/hp/pre.kicad_pcb, pre_nr.kicad_pcb
+tools/route.sh <ordner> <pre.kicad_pcb> <durchgaenge>      # DSN -> Freerouting 1.9.0 -> SES; mehrfach auf dem Zwischenstand fortsetzen
+BASE=<pre_nr.kicad_pcb> tools/post.sh <ordner>             # SES importieren, Zonen fuellen, DRC, GND-Nachbesserung
+tools/maze.py / fixup.py / cleanup.py / polish.py          # Restverbindungen, Kantenvias, Bahnreste, Beschriftung
+tools/gen_sch.py ; tools/export.py ; tools/gen_readme.py   # Schaltplan, Gerber/BOM/CPL/Vorschau/DRC, README
 ```
 
-Reihenfolge: `netlist.py` (alle Bauteile und Netze, einzige Quelle) → `make_lib.py` (Footprints) → `place_sa.py` (Platzierung, `placement.json`) → `gpio_assign.py` (`gpio_map.json`) → `build_pcb.py` (Platine) → Freerouting → `finish.py` (Zonen, Passermarken, Beschriftung) → `gen_sch.py` (Schaltplan) → `export.py` (Gerber, Stückliste, Bestückung, Berichte) → `gen_readme.py`.
+`tools/make.sh` ist veraltet (Freerouting 2.1.0, ein Lauf) und wird nicht mehr benutzt. Die Zwischenstände dieser Platine (SES, Platine vor dem Routing) liegen in `tools/routing/`; die Handschritte nach dem Router waren: `maze.py` für CHG_PROG3 (R35.1→U10.12), CHG_PROG1 (R39.1→U10.13), GND (J20.26→J20.24, J20.28→J20.26) und 3V3 (J20.29→J20.30, J20.25→J20.29, J20.23→J20.25, C131.1→J20.29 und → Bahnende bei (5,85; 4,48)), nach `rip.py` im Bereich um J20; `fixup.py`; `cleanup.py`; `polish.py`.
 
 ## Herkunft und Lizenz
 

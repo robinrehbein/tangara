@@ -14,13 +14,21 @@ def run(*a):
     if r.returncode not in (0,): print('WARN', a[:4], r.stdout[-300:], r.stderr[-300:])
     return r
 
+# ------------------------------------------------------------------ DRC zuerst (entscheidet ueber den Dateinamen)
+run('kicad-cli', 'pcb', 'drc', '--severity-all', '--schematic-parity', '-o', os.path.join(PRUEF, 'drc.rpt'), PCB)
+_t = open(os.path.join(PRUEF, 'drc.rpt')).read()
+_err = len(re.findall(r'; error\n', _t)); _unc = len(re.findall(r'^\[unconnected_items\]', _t, re.M))
+CLEAN = (_err == 0 and _unc == 0)
+print('DRC: Fehler', _err, 'unverbunden', _unc, '-> sauber' if CLEAN else '-> NICHT sauber')
+for _old in glob.glob(os.path.join(FERT, '*gerber*.zip')): os.remove(_old)
+
 # ------------------------------------------------------------------ Gerber + Bohrdaten
 G = os.path.join(FERT, '_gerber'); shutil.rmtree(G, ignore_errors=True); os.makedirs(G)
 layers = 'F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts'
 run('kicad-cli', 'pcb', 'export', 'gerbers', '--layers', layers, '--no-protel-ext', '--subtract-soldermask', '--use-drill-file-origin', '-o', G + '/', PCB)
 run('kicad-cli', 'pcb', 'export', 'drill', '--format', 'excellon', '--drill-origin', 'plot', '--excellon-units', 'mm', '--excellon-separate-th',
     '--generate-map', '--map-format', 'gerberx2', '-o', G + '/', PCB)
-zp = os.path.join(FERT, 'hauptplatine_gerber_bohrdaten.zip')
+zp = os.path.join(FERT, 'hauptplatine_gerber_bohrdaten.zip' if CLEAN else 'NICHT_BESTELLEN_hauptplatine_gerber_bohrdaten.zip')
 with zipfile.ZipFile(zp, 'w', zipfile.ZIP_DEFLATED) as z:
     for f in sorted(glob.glob(G + '/*')): z.write(f, os.path.basename(f))
 print('ZIP:', zp, sorted(os.listdir(G)))
@@ -41,9 +49,12 @@ for i, (key, ps) in enumerate(sorted(groups.items(), key=lambda kv: refkey(sorte
     ps = sorted(ps, key=lambda q: refkey(q['ref'])); p = ps[0]
     rows.append({'Item': i, 'Designator': ','.join(q['ref'] for q in ps), 'Qty': len(ps), 'Manufacturer': p.get('mfr', ''), 'Mfg Part #': p.get('mpn', ''),
                  'Description': (p['value'] + ' - ' + p.get('desc', ''))[:200], 'Package': p.get('pkg') or p['fp'].split(':')[-1], 'Type': thtype(p),
-                 'LCSC #': p.get('lcsc', ''), 'DigiKey #': p.get('dk', ''), 'Herkunft': p['src'],
+                 'LCSC #': p.get('lcsc', ''), 'DigiKey #': p.get('dk', ''), 'Nummer geprueft': 'ja (Digi-Key-Seite 2026-10-04)' if p['ref'] == 'J21' else 'NEIN', 'Herkunft': p['src'],
                  'Bestueckung': 'NICHT BESTUECKEN (DNP)' if p.get('dnp') else 'ja'})
-cols = ['Item', 'Designator', 'Qty', 'Manufacturer', 'Mfg Part #', 'Description', 'Package', 'Type', 'LCSC #', 'DigiKey #', 'Herkunft', 'Bestueckung']
+rows.append({'Item': len(rows) + 1, 'Designator': '(Kabel zu J21)', 'Qty': 1, 'Manufacturer': 'Molex', 'Mfg Part #': '0150200056 (Beispiel, Typ A/B und Laenge nicht geprueft)',
+             'Description': 'FFC 6 Pin 0,5 mm, 0,3 mm dick, 15-40 mm; Stecker Dual Contact -> Typ A oder B', 'Package': 'FFC', 'Type': '-', 'LCSC #': '', 'DigiKey #': '', 'Nummer geprueft': 'NEIN',
+             'Herkunft': 'neu', 'Bestueckung': 'NICHT BESTUECKEN (separat bestellen, Kabel zum Klickrad)'})
+cols = ['Item', 'Designator', 'Qty', 'Manufacturer', 'Mfg Part #', 'Description', 'Package', 'Type', 'LCSC #', 'DigiKey #', 'Nummer geprueft', 'Herkunft', 'Bestueckung']
 with open(os.path.join(FERT, 'hauptplatine_BOM_PCBWay.csv'), 'w', newline='', encoding='utf-8') as f:
     wr = csv.DictWriter(f, cols); wr.writeheader(); wr.writerows(rows)
 print('BOM:', len(rows), 'Positionen,', sum(r['Qty'] for r in rows), 'Bauteile')
@@ -66,5 +77,16 @@ print('CPL:', len(out), 'Bauteile (', sum(1 for o in out if o['Layer'] == 'Top')
 # ------------------------------------------------------------------ Schaltplan-PDF, Pruefberichte
 run('kicad-cli', 'sch', 'export', 'pdf', '-o', os.path.join(FERT, 'hauptplatine_schaltplan.pdf'), SCH)
 run('kicad-cli', 'sch', 'erc', '--severity-all', '-o', os.path.join(PRUEF, 'erc.rpt'), SCH)
-run('kicad-cli', 'pcb', 'drc', '--severity-all', '--schematic-parity', '-o', os.path.join(PRUEF, 'drc.rpt'), PCB)
 print('Berichte geschrieben')
+
+# ------------------------------------------------------------------ Vorschaubilder (2D SVG/PNG und 3D)
+def _r(*a):
+    r = subprocess.run(a, capture_output=True, text=True, env=env)
+    if r.returncode: print('WARN', a[:5], r.stderr[-200:])
+run('kicad-cli', 'pcb', 'export', 'svg', '--layers', 'F.Cu,In1.Cu,F.SilkS,F.Mask,Edge.Cuts', '--page-size-mode', '2', '--exclude-drawing-sheet', '-o', os.path.join(VOR, 'oberseite_2d.svg'), PCB)
+run('kicad-cli', 'pcb', 'export', 'svg', '--layers', 'B.Cu,B.SilkS,B.Mask,Edge.Cuts', '--mirror', '--page-size-mode', '2', '--exclude-drawing-sheet', '-o', os.path.join(VOR, 'unterseite_2d.svg'), PCB)
+for n in ('oberseite_2d', 'unterseite_2d'):
+    if shutil.which('rsvg-convert'): _r('rsvg-convert', '-h', '1800', '-b', 'white', os.path.join(VOR, n + '.svg'), '-o', os.path.join(VOR, n + '.png'))
+for side in ('top', 'bottom'):
+    _r('kicad-cli', 'pcb', 'render', '--side', side, '--width', '1200', '--height', '2400', '--quality', 'basic', '-o', os.path.join(VOR, ('oberseite' if side == 'top' else 'unterseite') + '_3d.png'), PCB)
+print('Vorschau geschrieben')

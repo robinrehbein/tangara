@@ -24,6 +24,7 @@ board = pcbnew.LoadBoard(os.environ['LOADFROM']) if MODE == 'finish' else pcbnew
 F_CU, B_CU, IN1, IN2 = pcbnew.F_Cu, pcbnew.B_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu
 if MODE != 'finish':
     board.SetCopperLayerCount(4)
+    board.SetLayerType(pcbnew.In1_Cu, pcbnew.LT_POWER)
     ds = board.GetDesignSettings()
     ds.SetBoardThickness(FromMM(layout.BOARD_T))
 nets = {}
@@ -47,6 +48,7 @@ def rot(a, b, deg):
     return a * c - b * s, a * s + b * c
 
 placed = {}
+NC = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'nc_nets.json')))
 def place(part, x, y, theta, side):
     """theta: Drehung der Ansicht (CCW, Blick von oben). Unterseite: Bauteil wird erst gespiegelt (Blick von unten wie Oberseite), dann gedreht."""
     fp = loadfp(part['fp'])
@@ -184,6 +186,9 @@ def run_place():
         x, y, th, side = layout.FIXED.get(r) or pl[r]
         place(part, x, y, th, side)
     zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2)
+    from previa import previa
+    previa(board, OX, OY, layout.board_poly().buffer(-0.45))
+    board.Save(os.path.join(TMP, 'pre_nr.kicad_pcb'))
     edge_ring()
     board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
     print('platziert:', len(placed))

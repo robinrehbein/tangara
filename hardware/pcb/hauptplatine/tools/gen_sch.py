@@ -55,7 +55,7 @@ def auto_symbol(p):
         key = (net, nm) if net not in (None,) else (None, nm)
         if net in ('GND', '3V3', 'SYS_POWER', 'VBAT', 'VBUS', 'VBUS_SW', 'V1P8', 'V1P8A') or net is None:
             key = (net, None if net is None else None)
-            key = (net, 'NC' if net is None else net) if net is None or net in ('GND',) else (net, nm)
+            key = (net, 'NC_' + num if net is None else net) if net is None or net in ('GND',) else (net, nm)
         groups.setdefault(key, []).append(num)
     glist = []
     for key, nums in groups.items():

@@ -3,8 +3,6 @@
 from shapely.geometry import box as sbox, Point as SPoint, LineString
 from shapely.ops import unary_union
 
-for z in list(board.Zones()):
-    if z.GetZoneName() == 'edge_ring': board.Remove(z)
 pl_parts = {p['ref']: p for p in netlist.parts()}
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 
@@ -13,18 +11,27 @@ for ref, f in fps.items():
     p = pl_parts.get(ref)
     if p is None: continue
     if p.get('dnp'): f.SetDNP(True)
-    if p.get('dnp') or p.get('nobom'):
-        f.SetExcludedFromBOM(True)
+    f.SetExcludedFromBOM(bool(p.get('nobom')))
     if p.get('nobom') or ref.startswith('H'): f.SetExcludedFromPosFiles(True)
     f.Value().SetVisible(False)
     r = f.Reference()
     r.SetTextSize(VECTOR2I(FromMM(0.6), FromMM(0.6))); r.SetTextThickness(FromMM(0.1))
     if p['kind'] in ('R', 'C', 'TP', 'H') or p.get('pkg') in ('0402',):
         r.SetVisible(False)
+        r.SetVisible(False)
+    for fld in (f.Reference(), f.Value()):
+        fld.SetTextSize(VECTOR2I(FromMM(0.8), FromMM(0.8))); fld.SetTextThickness(FromMM(0.15))
+        fld.SetMirrored(f.GetLayer() == pcbnew.B_Cu)
+    for g in f.GraphicalItems():
+        if g.GetClass() in ('PCB_TEXT', 'FP_TEXT'):
+            if g.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+                g.SetTextSize(VECTOR2I(FromMM(0.8), FromMM(0.8))); g.SetTextThickness(FromMM(0.15))
+                g.SetMirrored(g.GetLayer() == pcbnew.B_SilkS)
+    for fld in f.GetFields(): fld.SetVisible(False)
     # Eigenschaften fuer Stueckliste/Nachvollziehbarkeit
     for k, nm in (('mpn', 'MPN'), ('mfr', 'Manufacturer'), ('src', 'Herkunft')):
         if p.get(k):
-            try: f.SetField(nm, str(p[k]))
+            try: f.SetField(nm, str(p[k])); f.GetFieldByName(nm).SetVisible(False)
             except Exception: pass
 
 # ---------------------------------------------------------------- freie Flaechen ermitteln
@@ -51,6 +58,16 @@ def silk_sides():
     return {'T': occupied('T'), 'B': occupied('B')}
 
 occ = silk_sides()
+_keep = []
+for _f in board.GetFootprints():
+    bb = _f.GetBoundingBox(False)
+    _keep.append(sbox(ToMM(bb.GetLeft()) - OX, OY - ToMM(bb.GetBottom()), ToMM(bb.GetRight()) - OX, OY - ToMM(bb.GetTop())).buffer(0.6))
+    for _z in _f.Zones():
+        _o = _z.Outline(); _ch = _o.Outline(0)
+        from shapely.geometry import Polygon as _Pg
+        _keep.append(_Pg([P(_ch.CPoint(k)) for k in range(_ch.PointCount())]).buffer(0.5))
+KEEP_ALL = unary_union(_keep)
+occ = {s: unary_union([occ[s], KEEP_ALL]) for s in occ}
 # Rahmen-/Holes-Bereiche, in denen Silkscreen/Fiducials nicht liegen duerfen
 holes_poly = unary_union([SPoint(x, y).buffer(2.5) for x, y in HOLES])
 
@@ -82,7 +99,7 @@ for side in ('T', 'B'):
         board.Add(fp)
         if side == 'B': fp.Flip(V(0, 0), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
         fp.SetPosition(V(*spot))
-        fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True)
+        fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True); fp.SetBoardOnly(True)
         fp.Reference().SetVisible(False); fp.Value().SetVisible(False)
         placed_f.append(spot)
     fid_count[side] = len(placed_f)
@@ -100,10 +117,9 @@ for side in ('B', 'T'):
 
 # ---------------------------------------------------------------- Kupferflaechen
 pts = board_pts(0.3)
-zone(F_CU, pts, 'GND', prio=0, clearance=0.2, thermal=True)
-zone(B_CU, pts, 'GND', prio=0, clearance=0.2, thermal=True)
+# Aussenlagen ohne GND-Flaeche (Router verbindet GND per Via mit In1; Flaechen ergaeben unverbundene Inseln um die Pads)
 # Innenlage 2 (Signal/3V3-Reserve): GND-Auffuellung ohne Prioritaet, hilft der Rueckleitung
-zone(IN2, pts, 'GND', prio=0, clearance=0.2, thermal=True)
+zone(IN2, pts, 'GND', prio=0, clearance=0.2, thermal=False)
 filler = pcbnew.ZONE_FILLER(board)
 filler.Fill(board.Zones())
 

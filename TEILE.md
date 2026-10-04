@@ -118,3 +118,7 @@ Fertig in `hardware/pcb/klickrad/` (ERC 0, DRC 0 Fehler, nichts gebaut oder geme
 - Rückseitenbauteile bis 1,1 mm (U2 DRV2605L VSSOP-10), Stecker 1,0 mm; damit über der 0,8-mm-Vorgabe
 - Abdeckung: eigenes Projekt `abdeckung/`, 0,6 mm FR4, Ø 30
 - Ein 10 × 10 × 1,0-LRA passt in dieser Revision nicht
+
+## Hauptplatine Endgerät: Stand 2026-10-04 (maßgeblich, aus `hardware/pcb/hauptplatine/README.md`)
+
+41 × 97 × 1,0 mm, 4 Lagen, Ecken r = 4, DRC/ERC 0. Maße für das Gehäuse (Platinenmitte = 0, Blick von vorn): Klickrad-Mitte (0, −25); LRA-Ausschnitt 14 × 10 mm um (0, −19); Klinke SJ-43504 x = −12 (Randschlitz 6,8 mm); USB-C x = +9 (Ausschnitt 9,24 × 6 mm); WROOM-1 Rückseite Mitte (6,5; 37,5), Antennen-Keepout x 12,9…20,5, y 28,2…46,8; microSD Mitte (−13,7; 37,5), Einschub von links; Klickrad-Stecker J21 (0; −46,2); Display-Stecker J20 (0; −0,5); SW1 Rückseite (15; −30); Akku-Anschluss (−12,5; 28,8); Befestigungslöcher Ø 1,8 bei (−18,2; 46,2), (18,2; −46,2), (−18,2; −46,2); Akkufach Rückseite x −16…16, y −12…26,5. Rückzone bei 10 mm Gerätedicke 4,05 mm (Zelle höchstens ca. 3,7 mm). Teile über 3 mm: nur Klinke, USB-C, Modul.

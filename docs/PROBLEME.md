@@ -6,7 +6,7 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 
 | Nr | Problem | Status | Prüfung am Ende |
 |---|---|---|---|
-| A1 | Hauptplatine nicht geroutet (DRC 955 Meldungen, 34 von 408 Verbindungen offen); `NICHT_BESTELLEN_ungeroutet_gerber.zip` liegt im Repo | in Arbeit (Agent, neues Layout ca. 41 × 97 mm) | DRC 0 Fehler, 0 offene Verbindungen, Zip umbenannt/ersetzt |
+| A1 | Hauptplatine war nicht geroutet | erledigt: 41 × 97 mm, 4 Lagen, DRC/ERC 0, 0 offene Verbindungen; nicht bestellbereit bis A2 | Alte Datei `NICHT_BESTELLEN_ungeroutet_gerber.zip` entfernt? |
 | A2 | Kein Opus-Design-Review der Hauptplatine (Schaltplan gegen Datenblatt-Pins, Einschaltreihenfolge, ungetestete S31-Teile) | offen | Review-Bericht in `docs/`, Befunde abgearbeitet |
 | A3 | Klickrad-Platine v2 (AT42QT2120, 0,8 mm, Molex-FFC) | erledigt (ERC/DRC 0 Fehler, Gerber/BOM vorhanden); Restpunkte siehe A7–A10 | v1 nur noch in der Git-Historie |
 | A4 | Nichts davon wurde je auf Hardware getestet (Firmware, Platinen, Haptik) | offen | Messprotokoll nach Phase 1 |
@@ -18,6 +18,13 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 | A10 | Klickrad: SCL von Hand gezogen, Pin 6 offen, Exposed Pad von U1 auf GND (Tangara lässt es offen), C5 und 10-µF am DRV2605L entfallen | offen | Review gegen Datenblatt (Teil von A2) |
 | A11 | Klickrad-Stecker: FFC-Pin 1 auf Pin 1 ungeprüft (Kurzschlussgefahr), vor Einschalten durchklingeln | offen | Durchgangsprüfung am Kabel |
 | A12 | `TEILE.md` hatte Klickrad-Widersprüche (4 Lagen/MPR121-Angaben); jetzt Abschnitt „Klickrad v2 (Stand)“, Rest oben noch v1-Text; CAD und Firmware-Wheel-Konvention müssen angepasst werden | offen | Angaben bereinigt, CAD/Firmware angepasst |
+| A13 | Hauptplatine: Molex-Footprint ungeprüft (Nagelpads geschätzt 0,8 × 1,0 gegen 1,0 × 0,3 im Zeichnungstext) | offen | Gegen Molex-Zeichnung geprüft (gleich wie A7) |
+| A14 | Hauptplatine 1,0 mm: Passen SJ-43504 und USB4510 bei 1,0 statt 0,8 mm? | offen | Datenblatt geprüft |
+| A15 | USB-HS nicht als 90-Ω-Paar geführt (DP 89,1 mm/6 Vias, DN 90,0 mm/4 Vias); Risiko bei 480 Mbit/s | offen | Impedanz bei PCBWay anfragen oder Paar neu routen; USB-Test |
+| A16 | Akku nur ca. 450–550 mAh (32 × 38,5 mm), Ziel 600 mAh; bei 10 mm Gerätedicke Zelle höchstens ca. 3,7 mm | offen | Zelle gewählt, Kapazität bestätigt |
+| A17 | Display-Zone: Vorderseitenteile ≤ 1,0 mm unter dem Display brauchen ≥ 1,1 mm Luft; CAD-Stand 0,25 mm | offen | CAD angepasst |
+| A18 | Hauptplatine: Schaltungsfunktion, CPL-Drehungen und LCSC-Nummern nicht verifiziert; Routing nicht per Knopfdruck reproduzierbar (Skripte, Mini-Router, Zwischenstände in `tools/routing/`) | offen | Opus-Review (A2), Vorschau bei Fertiger |
+| A19 | Kosten Hauptplatine grob 400–550 € für 5 Platinen, 2 bestückt (110–140 € je bestückter Platine), über Projektbudget; Schätzung aus dem Gedächtnis | offen | Echtes PCBWay-Angebot, `docs/KOSTEN.md` angepasst |
 
 ## B. Technische Risiken
 

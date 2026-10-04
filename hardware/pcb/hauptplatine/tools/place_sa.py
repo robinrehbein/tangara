@@ -201,7 +201,7 @@ def anchor_cost(ref):
     return 0.0
 
 ANCH = {r: anchor_of(r) for r in movable if anchor_of(r)}
-GAP = 0.25
+GAP = float(os.environ.get('GAP', '0.25'))
 def _tht_rects(ref, st):
     out = []
     for num, x, y, tht, w, h in fpgeom(SPEC[ref])['pads']:

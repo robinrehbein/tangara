@@ -25,10 +25,11 @@ FIXED = {
     'BT1': (-12.5, 28.8, 0, 'B'),      # Akku-Loetpads am oberen Akkuende
     'J4': (-13.7, 37.5, 270, 'B'),     # microSD links oben, Einschub von der linken Kante
     'U15': (6.5, 37.5, 270, 'B'),      # WROOM-1 gedreht: Antenne (6 mm) zeigt nach rechts, liegt innerhalb der Kante
+    'U17': (-12.0, -27.5, 0, 'B'),     # DAC mittig im Analogbereich, rundum Platz fuer Entkopplung
     'J1': (-7.825, -45.75, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
     'J6': (9.0, -46.9, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
     'J20': (0.0, -0.5, 0, 'T'),        # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
-    'J21': (-1.5, -45.8, 180, 'T'),     # Klickrad-FFC, Vorderseite, Mundloch nach oben zum Klickrad-Stecker
+    'J21': (0.0, -46.2, 0, 'T'),       # Klickrad-FFC, Vorderseite, Muendung (Pads) oben, genau unter dem Klickrad-Stecker (x = 0)
 }
 OVERHANG = {'U15'}
 EDGE_PREF = {}
