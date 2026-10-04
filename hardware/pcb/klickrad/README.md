@@ -1,148 +1,220 @@
-# Klickrad-Modul (KiCad 9)
+# Klickrad-Modul v2 (KiCad 9)
 
-Runde Platine (Ø 32 mm, 1,0 mm, **4 Lagen**) mit Touch-Ring, Mitteltaste, Haptik-Treiber und Lötpads für den aufgeklebten LRA. Schnittstelle und Maße folgen `TEILE.md`, Abschnitt „Klickrad-Modul“.
+Runde Platine (Ø 32 mm, 1,0 mm, **2 Lagen**) mit Touch-Rad, kapazitiver Mitteltaste, Guard-Kanal, Haptik-Treiber und Lötpads für den aufgeklebten LRA. Touch-Controller **AT42QT2120** (I²C 0x1C, Wheel-Modus), Haptik **DRV2605L** (0x5A): Schaltung, Elektrodenform und Firmware-Belegung stammen so weit wie möglich von der **Tangara-Faceplate** (cool tech zone). Schnittstelle und Maße folgen `TEILE.md`, Abschnitt „Klickrad-Modul“, mit den unten genannten Abweichungen.
 
-Stand: 2026-10-04, Revision 1. Erstellt und geprüft mit KiCad 9.0.9 (`kicad-cli`) im Container. **Nichts davon wurde an echter Hardware getestet.**
+Stand: 2026-10-04, Revision 2 (v1 mit MPR121 bleibt in der git-Historie). Erstellt und geprüft mit KiCad 9.0.9 (`kicad-cli`) im Container. **Nichts davon wurde an echter Hardware getestet.**
+
+## Lizenz und Herkunft
+
+Dieses Modul übernimmt Schaltung, Elektrodengeometrie (als Algorithmus), Symbol und Pinbelegung aus der Tangara-Faceplate (`tangara-hw/tangara-faceplate`, `tangara-hw/touchwheel-cover`) von **cool tech zone** (https://cooltech.zone/tangara/), lizenziert unter **CERN-OHL-S-2.0**. Das Modul ist deshalb ebenfalls **CERN-OHL-S-2.0** (Lizenztext: `LICENSE` in diesem Ordner, Kopie aus dem Tangara-Repository; Quellenangabe und Änderungen sind hier und im Schaltplan-Titelblock vermerkt, alle Quelldateien liegen im Repository). Die Firmware-Treiber von Tangara (`touchwheel.cpp`, `haptics.cpp`) sind GPL-3.0 und nicht Teil dieses Ordners.
+
+Quellen: Blogartikel „A Deep Dive Into the Design of Tangara's Touchwheel“ (https://cooltech.zone/tangara/blog/2024-02-07-touchwheel/), „Interpolated Electrode SVG Tool“ (https://cooltech.zone/tangara/labs/touchwheel-electrode-tool/, der Quelltext steht in der Seite), AT42QT2120-Datenblatt (Atmel 9634E–AT42–06/12), Microchip „Capacitive Touch Sensor Design Guide“ DS00002934.
+
+## Übernommen von Tangara / angepasst / neu
+
+| Teil | Status | Tangara-Faceplate | Klickrad v2 |
+|---|---|---|---|
+| Touch-Controller | **übernommen** | AT42QT2120, VQFN-20 (`VQFN-20-1EP_3x3mm_P0.45mm_EP1.55x1.55mm`), Comms-Modus (MODE an GND), I²C 0x1C, Exposed Pad unbeschaltet | gleich (Symbol aus `faceplate-symbols.kicad_sym`, nur Footprint-/Datenblattfeld ergänzt) |
+| Tastenbelegung | **übernommen** | KEY0–2 = Wheel, KEY3 = Mitteltaste, KEY4 = Guard, KEY5–11 unbenutzt | gleich (Firmware-Treiber `touchwheel.cpp` läuft unverändert) |
+| Serienwiderstände | **übernommen** (Bauform angepasst) | 10 kΩ 0603 in jeder Elektrodenleitung (R1–R3 Wheel, R5 Taste, R6 Guard) | 10 kΩ **0402** (R1–R3 Wheel, R4 Taste, R5 Guard); Datenblatt 3.1: 4,7 … 20 kΩ |
+| Cs-Kondensatoren | **entfällt wie bei Tangara** | keine | keine (Datenblatt: „no external Cs required“) |
+| RESET | **übernommen** | R7 10 kΩ nach 3V3 | R6 10 kΩ nach 3V3 |
+| CHANGE | **übernommen** | direkt an Stecker, Pull-up in der MCU | direkt an J1 Pin 5 (kein Pull-up auf dem Modul) |
+| Entkopplung QT2120 | **übernommen** | 0,1 µF + 1 µF an VDD | C1 0,1 µF + C2 1 µF (0402) |
+| DRV2605L | **übernommen** | VSSOP-10, VDD 1 µF, REG 1 µF, IN/TRIG an GND, EN über 10 kΩ nach 3V3, OUT± auf Lötpads | gleich (U2, C3, C4, R7, Lötpads TP1/TP2); EN jetzt wie bei Tangara über 10 kΩ statt fest an 3V3 |
+| Wheel-Elektroden | **übernommen, skaliert** | 3 verschachtelte Elektroden (3 Ringe), r = 7,9 … 19,9 mm, Abstand 0,29 mm, Deadzone 2 mm | gleicher Algorithmus (SVG-Tool), r = 6,3 … 12,3 mm (Ringbreite 12 → 6 mm), Abstand 0,25 mm, Deadzone 1,5 mm, Spitzen < 0,2 mm abgerundet |
+| Mitteltaste | **übernommen** | kapazitive Scheibe r = 2,5 mm (`qtouch-button`) | kapazitive Scheibe, **r = 3,5 mm** (größer, weil die Abdeckungsmarke Ø 11,6 mm hat) |
+| Guard | **übernommen, angepasst** | Ring r = 22,2 mm, Linie 1 mm, 2,35 mm vom Rad entfernt, über 10 kΩ an KEY4 | drei Kreisbogen-Flächen r = 13,5 … 15,4 mm (1,2 mm Abstand zum Rad), wegen der drei Befestigungslöcher geteilt, alle an KEY4 |
+| GND unter dem Rad | **übernommen** | GND-Gitter auf B.Cu (Linie 0,127 mm, Lücke 1,016 mm, 45°), Vorderseite unter dem Rad ohne Kupferfüllung | gleich (Gitter), Vorderseite ohne Füllung |
+| Lagenzahl | **übernommen** | 2 Lagen | 2 Lagen, 1,0 mm statt 1,6 mm |
+| Wheel-Position 0 / Drehsinn | **übernommen** | 0 oben, steigend gegen den Uhrzeigersinn | gleich, siehe Abschnitt „Wheel-Position“ |
+| Abdeckung | **übernommen** | 0,6 mm FR4 mit Siebdruck (`touchwheel-cover`) | KiCad-Projekt `abdeckung/` (Ø 30), Beschriftung MENU / ◄◄ / ►► / ►II |
+| I²C-Pull-ups | neu | auf der Hauptplatine | R8/R9 4,7 kΩ, **DNP** |
+| 10 µF am DRV2605L | neu | – | C5 10 µF 0603 (LRA-Stromspitzen aus dem 3V3 des Waveshare-Boards) |
+| Stecker | neu | FFC 15-polig | JST-SH 6-polig seitlich, Pin 6 = Reserve |
+| Rundform, Löcher, LRA-Fläche | neu | Rechteck mit Display | Ø 32, 3 Löcher, LRA-Freifläche wie v1 |
+| Display, LCD-Treiber, Backlight | entfällt | JD-T1800, Q1 … | nicht vorhanden |
+
+## Änderungen gegenüber v1
+
+| | v1 | v2 |
+|---|---|---|
+| Touch-Controller | MPR121 (0x5B), 12 Segmente à 30° | AT42QT2120 (0x1C), 3 Wheel-Elektroden + Taste + Guard |
+| Auswertung | Rohwerte → Winkelberechnung in der Firmware | Wheel-Position 0 … 255 direkt vom Chip (Tangara-Treiber) |
+| Mitteltaste | SMD-Taster (Omron B3U-1000P) auf J1 Pin 6 | kapazitiv (KEY3, wie Tangara); **J1 Pin 6 ist Reserve und nicht beschaltet** |
+| Lagen | 4 (In1 GND-Gitter, In2 3V3) | **2** (GND-Gitter auf B.Cu) |
+| Touch-Ring | r = 6,5 … 12,8 mm | r = 6,3 … 12,3 mm; zusätzlich Guard r = 13,5 … 15,4 mm |
+| Haptik EN | fest an 3V3 | über 10 kΩ an 3V3 (wie Tangara) |
+| Pull-ups | R2/R3 4,7 kΩ (DNP) | R8/R9 4,7 kΩ (DNP); CHANGE-Pull-up entfällt (MCU-intern, wie Tangara) |
+| Router | Freerouting | eigener Gitter-Router `tools/route.py` (Freerouting fand keine vollständige Lösung) |
+| Abdeckung | nur gedruckt (Ø 30 / Ø 11,6, 1,95 mm) | zusätzlich FR4-Abdeckung 0,6 mm, siehe unten |
 
 ## Funktion
 
 | Block | Bauteil | Beschaltung |
 |---|---|---|
-| Touch-Controller | U1 MPR121QR2 (QFN-20, I²C **0x5B**) | ADDR an VDD, REXT 75 kΩ (R1), VREG 0,1 µF (C2), VDD 0,1 µF (C1) + 1 µF (C3), IRQ → J1 Pin 5 |
-| Touch-Ring | 12 Kupfersegmente vorn, r = 6,5 … 12,8 mm | je 30°, 0,4 mm Spalt, Lötstopplack bleibt **geschlossen**, Anschluss von innen über F.Cu-Leitungen |
-| Haptik-Treiber | U2 DRV2605LDGS (MSOP-10, I²C **0x5A**) | EN und VDD/NC an 3V3, IN/TRIG an GND, VDD 1 µF (C4) + 10 µF (C6), REG 1 µF (C5), OUT+/OUT− → Lötpads TP1/TP2 |
-| Mitteltaste | SW1 Omron B3U-1000P (3,0 × 2,5 × 1,2 mm) | nach GND und J1 Pin 6, Pull-up auf der MCU-Seite |
-| Stecker | J1 JST-SH 1,0 mm, 6-polig (SM06B-SRSS-TB, seitlich) | siehe unten |
-| Pull-ups | R2/R3 4,7 kΩ an SDA/SCL | **DNP** (das Waveshare-Board hat 2,2 kΩ auf dem Bus) |
+| Touch-Controller | U1 AT42QT2120 (VQFN-20) | MODE (Pin 10) und VSS an GND, VDD 0,1 µF (C1) + 1 µF (C2), RESET über 10 kΩ (R6) an 3V3, KEY0–2 über je 10 kΩ an die drei Wheel-Elektroden, KEY3 über 10 kΩ an die Mitteltaste, KEY4 über 10 kΩ an den Guard, KEY5–11 offen, CHANGE → J1 Pin 5 |
+| Haptik-Treiber | U2 DRV2605LDGSR (VSSOP-10) | VDD (Pin 6, 10) an 3V3 mit 1 µF (C3) + 10 µF (C5), REG 1 µF (C4), IN/TRIG an GND, EN über 10 kΩ (R7) an 3V3, OUT+/OUT− → Lötpads TP1/TP2 |
+| Stecker | J1 JST-SH 1,0 mm, 6-polig (SM06B-SRSS-TB), Rückseite | siehe unten |
+| Pull-ups | R8 (SDA), R9 (SCL) 4,7 kΩ | **DNP**, nur für den Einzeltest des Moduls (Waveshare-Board hat 2,2 kΩ) |
 
 ### Pinbelegung J1
 
 | Pin | Signal | Hinweis |
 |---|---|---|
-| 1 | 3V3 | versorgt MPR121 und DRV2605L |
+| 1 | 3V3 | versorgt AT42QT2120 und DRV2605L |
 | 2 | GND | |
 | 3 | SDA | |
 | 4 | SCL | |
-| 5 | INT | MPR121 IRQ, open drain, aktiv low (kein Pull-up auf dem Modul) |
-| 6 | BTN | Mitteltaste, aktiv low (kein Pull-up auf dem Modul) |
+| 5 | CHANGE | AT42QT2120, open drain, aktiv low, **kein Pull-up auf dem Modul** (MCU-interner Pull-up wie bei Tangara, GPIO17 am Waveshare-Board) |
+| 6 | (BTN) Reserve | nicht beschaltet. Die Mitteltaste ist kapazitiv (KEY3 des QT2120). Pin bleibt belegt/frei, falls später ein mechanischer Taster nach GND ergänzt wird; KEY3 bleibt dann trotzdem für die Berührung frei. |
 
-### Segmente und MPR121-Elektroden
+### Firmware-Hinweise (aus `tangara-fw/src/drivers/touchwheel.cpp` und `haptics.cpp`)
 
-Winkel in der Draufsicht von vorn, 0° = rechts, gegen den Uhrzeigersinn (wie in `TEILE.md`). Segmentmitte = angegebener Winkel.
+- Adresse 0x1C. Registerfolge wie Tangara: `RESET` schreiben, 300 ms warten; `SLIDER_OPTIONS = 0xC0` (Wheel an, Keys 0–2); Key-Control KEY0–2 = `0b100` (AKS-Gruppe 1), KEY3 = `0` (Mitteltaste ohne AKS, Software-Entkopplung), KEY4 = `0b10100` (Guard, AKS-Gruppe 1), KEY5–11 = `1` (aus); `RECALIBRATION_DELAY = 0` (Finger nicht wegkalibrieren); `CHARGE_TIME = 0x10`. Status: Bit 7 Kalibrierung, Bit 1 Wheel erkannt (Register `SLIDER_POSITION`), Bit 0 Taste; `KEY_STATUS_A` Bit 3 = Mitteltaste, Bits 0–2 = Wheel berührt.
+- Die Mitteltaste liefert **Berührung**, keinen Klick. Der Haptik-Klick (DRV2605L „Strong Click“/„Sharp Click“) wird von der Firmware ausgelöst, wie bei Tangara.
+- DRV2605L LRA: Nennspannung `0x46`, Overdrive `0x7B`, Treiberzeit für 235-Hz-LRAs `0b10010000`, geschlossene Regelung, einmalig Auto-Kalibrierung und Ergebnis speichern. Der DRV2605L läuft hier mit EN über 10 kΩ an 3V3, Standby per Register 0x01.
 
-| Segment | Winkel | MPR121 | | Segment | Winkel | MPR121 |
-|---|---|---|---|---|---|---|
-| SEG1 | 15° | ELE8 | | SEG7 | 195° | ELE2 |
-| SEG2 | 45° | ELE7 | | SEG8 | 225° | ELE1 |
-| SEG3 | 75° | ELE6 | | SEG9 | 255° | ELE0 |
-| SEG4 | 105° | ELE5 | | SEG10 | 285° | ELE11 |
-| SEG5 | 135° | ELE4 | | SEG11 | 315° | ELE10 |
-| SEG6 | 165° | ELE3 | | SEG12 | 345° | ELE9 |
+### Wheel-Position (Abstimmung mit der Firmware)
 
-Die Elektrodennummer **steigt im Uhrzeigersinn** (Winkel sinkt um 30° je Schritt). Alle zwölf Eingänge ELE0 … ELE11 sind Touch-Elektroden, ELE11 ist deshalb nicht als GPIO nutzbar (Elektrodenzahl im ECR-Register auf 12 setzen). Die Zuordnung steht in `tools/seg_map.json`; wer sie ändern will, muss das Layout neu erzeugen.
+Tangara-Konvention, hier übernommen: **Position 0 = oben, steigend gegen den Uhrzeigersinn**, in Draufsicht auf das Modul (von vorn). „Oben“ ist die Seite gegenüber dem Stecker. Der Stecker J1 liegt bei 270° (unten).
 
-### Firmware-Hinweise (DRV2605L)
+| Position | 0 | 64 | 128 | 192 |
+|---|---|---|---|---|
+| Richtung (Tangara: up / left / down / right) | oben (90°) | links (180°) | **unten, Stecker-Seite (270°)** | rechts (0°) |
 
-- LRA-Modus: Bit `N_ERM_LRA` in Register 0x1A (Feedback Control) auf 1, LRA-Effektbibliothek wählen (Library 6), Auto-Kalibrierung (Modus 7) einmal je LRA-Typ durchführen und die Ergebnisse speichern.
-- Der gewählte Haptik-Effekt „Click“ entspricht den Effekten 1 („Strong Click 100 %“) bzw. 4 („Sharp Click 100 %“) der internen Bibliothek.
-- EN ist fest auf 3V3. Standby also nur per I²C (Register 0x01, Bit STANDBY).
+Lage der Elektroden (Maxima der Antwort bei einem Finger auf dem mittleren Radius, Winkel gegen den Uhrzeigersinn ab rechts, von vorn):
+
+| Taste | Elektrode (Pad in `qtouch-wheel`) | Maximum bei |
+|---|---|---|
+| KEY0 | 1 | 206° (unten links) |
+| KEY1 | 2 | 326° (unten rechts) |
+| KEY2 | 3 | 86° (oben) |
+
+Herleitung: Die Elektrodenform ist um 120° drehsymmetrisch. Die drei Maxima wurden so gedreht, dass sie an denselben Stellen liegen wie bei der Tangara-Faceplate nach deren Einbaudrehung von −148° (dort Maxima bei 206,3° / 326,3° / 86,3° für KEY0/1/2); damit sind Zuordnung und Drehsinn der Tangara-Firmware (`up = 0`, `left = 64`, `down = 128`, `right = 192` in `input_touch_wheel.cpp`) gültig. **Ungeprüft:** Das ist aus den Footprint-Daten gerechnet (Modell: Überdeckung Finger–Elektrode), nicht gemessen. Falls die Position am echten Rad um einen festen Winkel versetzt ist, in der Firmware einen Offset setzen.
+
+## Elektroden-Geometrie (skaliert von Tangara)
+
+Erzeugt durch `tools/wheel_geometry.py` (Port des Tangara-SVG-Werkzeugs). Parameter von Tangara aus dem Footprint `qtouch-wheel` zurückgerechnet (Flächen 3 × 295 mm², kleinster Abstand 0,29 mm, r = 7,9 … 19,86 mm: innen 8, Breite 12, 3 Ringe, Abstand ≈ 0,3, Deadzone 2).
+
+| Größe | Tangara | Klickrad v2 |
+|---|---|---|
+| Radius innen / außen | 7,9 / 19,9 mm | 6,3 / 12,3 mm |
+| Elektrodenzahl, Ringe | 3, 3 | 3, 3 |
+| Abstand zwischen Elektroden | 0,29 mm | 0,25 mm |
+| Deadzone | 2 mm | 1,5 mm |
+| Fläche je Elektrode | 295 mm² | 87,6 mm² |
+| Mitteltaste | r 2,5 mm (19,6 mm²) | r 3,5 mm (38,5 mm²) |
+| Guard | Ring r 22,2 mm, 1 mm breit (≈ 140 mm²) | 3 Bögen r 13,5 … 15,4 mm, zusammen 148,5 mm² (größer als eine Wheel-Elektrode, wie im Datenblatt gefordert) |
+| Abstand Rad – Guard | 2,35 mm | 1,2 mm |
+| Abstand Rad – Taste | 5,4 mm | 2,8 mm |
+| Kleinste Struktur | 0,29 mm | 0,25 mm Abstand, ≥ 0,2 mm Breite |
+
+Das Datenblatt nennt für Wheels „typisch 30 … 50 mm Durchmesser, Segmentbreite typisch 12 mm“. Unser Rad hat 24,6 mm Durchmesser und 6 mm Breite und liegt damit **unter dem typischen Bereich**; ein Modell (Finger als Scheibe, Vektorsumme der drei Elektroden) ergibt für die Winkelauflösung ähnliche Werte wie die Tangara-Geometrie (maximale Abweichung ≈ 12° gegenüber ≈ 14° bei Tangara). **Das ersetzt keinen Test am Rad.**
 
 ## Mechanik
 
-- Umriss Ø 32,0 mm, Dicke 1,0 mm. Drei Löcher Ø 2,2 mm (NPTH) auf r = 14,6 mm bei 90°, 210°, 330°.
-- Touch-Ring r = 6,5 … 12,8 mm. Die gedruckte Abdeckung (Ø 30 / Ø 11,6) deckt ihn ab. Im Innenkreis r < 5,8 mm sitzt vorn nur der Taster (Höhe 1,2 mm); darunter liegen auf der Vorderseite dünne Leiterbahnen unter Lötstopplack.
-- **Stecker J1** sitzt am Rand bei 270° (6-Uhr-Richtung, gegenüber dem Loch bei 90°). Der Steckerkörper belegt auf der Rückseite x = −4,9 … +4,9 mm, y = −14,7 … −8,1 mm. Das Kabel verlässt die Platine nach unten. Der Stecker ist **höher als 1,5 mm** (seitlich steckender SH-Header, Höhe laut Datenblatt prüfen) und damit das einzige Rückseitenbauteil über der Vorgabe. Bei Bedarf stattdessen die Top-Entry-Variante BM06B-SRSS-TB prüfen, sie hat andere Maße.
-- **LRA-Freifläche** (Rückseite, nur Bauteile gesperrt, auf der Platine als Rechteck mit Kreuz in der Silkscreen markiert): x = −8 … +8 mm, y = +3 … +9 mm (16 × 6 mm, oberer Platinenbereich). Darunter liegen nur die Masse-Gitterlage und wenige Leiterbahnen unter Lack.
-- Lötpads für die LRA-Litzen: TP1 (LRA+, bei x = −12,3 / y = −3,0 mm) und TP2 (LRA−, y = −0,4 mm), links außen auf der Rückseite, 1 × 2 mm.
-- Alle übrigen Rückseitenbauteile: 0402-Widerstände/-Kondensatoren (0,5 mm), C6 in 0603 (0,8 mm), U1 ca. 0,8 mm, U2 ca. 1,1 mm (Höhen aus dem Gedächtnis, vor Bestellung im Datenblatt prüfen).
+- Umriss Ø 32,0 mm, Dicke 1,0 mm. Drei Löcher Ø 2,2 mm (NPTH) auf r = 14,6 mm bei 90°, 210°, 330° (wie v1).
+- **Stecker J1** unverändert bei 270° (6-Uhr-Richtung): Körper auf der Rückseite x = −4,9 … +4,9 mm, y = −14,7 … −8,1 mm, Kabel verlässt die Platine nach unten. Höher als 1,5 mm (Datenblatt prüfen).
+- **LRA-Freifläche** (Rückseite, nur Bauteile gesperrt): x = −8 … +8 mm, y = +3 … +9 mm. Lötpads TP1 (LRA+) und TP2 (LRA−) bei x = −12,3 mm, y = −3,0 / −0,4 mm wie v1. Unter dem LRA liegen nur das GND-Gitter, Leiterbahnen und einzelne Vias unter Lötstopplack.
+- Alle Bauteile auf der Rückseite, höchstens 0,85 mm (U1) bzw. ca. 1,1 mm (U2); J1 ist das einzige Teil über 1,5 mm. Vorderseite: nur Kupferflächen unter Lötstopplack, keine Bauteile (der SMD-Taster entfällt, die Platine ist vorn glatt).
 - Bauteilpositionen für CAD: `fertigung/bauteilpositionen.csv` (Bezug Platinenmitte, mm, y nach oben in der Ansicht von vorn).
+- **Guard und Schrauben:** Die Guard-Bögen halten 2,2 mm Abstand zur Lochmitte (Schraubenkopf Ø 3,5, Abdeckungstasche Ø 4,0), sie reichen bis r = 15,4 mm, also 0,4 mm über den Rand der Abdeckung (Ø 30) hinaus.
+- **Änderungsbedarf in `TEILE.md` / CAD** (nicht Teil dieses Auftrags, deshalb hier gemeldet): 2 statt 4 Lagen; Touch-Ring r = 6,3 … 12,3 mm plus Guard r = 13,5 … 15,4 mm; Mitteltaste kapazitiv statt SMD-Taster (Höhenvorgabe ≤ 1,5 mm entfällt, die Mitteltaste-Kappe Ø 11,0 und das Loch Ø 11,6 in der Abdeckung entfallen); Stecker Pin 5 = CHANGE, Pin 6 = Reserve; I²C-Adresse 0x1C; Wheel-Positions-Konvention.
 
-## Lagenaufbau und Masse unter dem Touch-Ring (Entscheidung)
+### Abdeckung: gedruckt (1,95 mm) oder FR4 (0,6 mm)?
 
-Die Platine ist **4-lagig**, nicht 2-lagig. Gründe: Die Pinreihenfolge des MPR121 (IRQ, SCL, SDA) ist gegenüber dem Stecker (SDA, SCL, INT) umgekehrt, die zwölf Elektrodenleitungen müssen aus dem Innenkreis zu den Segmenten, und der DRV2605L braucht saubere 3V3-/GND-Zuführung. Eine 2-lagige Variante ließ sich mit Autorouter und Handverdrahtung nicht sauber schließen (Masse-Inseln, Pull-ups). Mit Innenlagen entfällt das.
+Tangara deckt das Rad mit einer 0,6 mm dicken FR4-Platte ab (`touchwheel-cover`: nur Umriss und Siebdruck, kein Kupfer).
+
+- **Gedruckte Abdeckung 1,95 mm passt formal:** Das Datenblatt erlaubt für Wheels/Slider „bis 3 mm Kunststoff“. Sie ist aber mehr als dreimal so dick wie Tangaras 0,6 mm, und unser Rad ist nur halb so breit. Das Signal wird kleiner und weicher. Zusätzlich darf zwischen Platine und Abdeckung **keine Luft** liegen (dünnes doppelseitiges Klebeband 0,05 … 0,1 mm vollflächig; gedruckt mit 100 % Füllung, glatte Seite zur Platine). Mit Druckabdeckung die Schwellen (DTHR-Register 16 … 27) senken und `CHARGE_TIME` prüfen.
+- **Empfehlung: FR4-Abdeckung mitbestellen** (`abdeckung/`, wenige Euro, gleiche Platinenfertiger), als erste Wahl für den Prototyp, die gedruckte Abdeckung als Rückfall. Die FR4-Abdeckung ist eben, gleichmäßig dick, hat Siebdruck-Beschriftung und entspricht dem bei Tangara erprobten Aufbau. Aufkleben mit demselben dünnen Klebeband.
+- Folge für die Mechanik: Die Oberfläche liegt mit 0,6 mm um **1,35 mm tiefer** als mit der gedruckten Abdeckung. Der Distanzring bzw. die Frontöffnung im CAD (Parameter `E_COVER_T`, `COVER_T`) muss angepasst werden, sonst sitzt das Rad zu tief.
+
+`abdeckung/klickrad-abdeckung.kicad_pcb`: Ø 30 mm, ohne Mittenloch, drei Aussparungen r = 2,1 mm um die Schraubenköpfe der Platine (r = 14,6 mm bei 90°/210°/330°). Siebdruck (F.SilkS): Kreis Ø 11,6 mm (Mitteltaste), Kreis r = 12,4 mm (Außenkante des Rads), „MENU“ oben, ◄◄ links, ►► rechts, ►II unten (Konvention des iPod nano), „v2“. Bestellung: 2 Lagen, **0,6 mm**, ohne Kupfer (beide Lagen leer), Lötstopplack und Siebdruck nach Wunsch (z. B. schwarz/weiß), `abdeckung/fertigung/klickrad_abdeckung_gerber.zip`. Orientierung: oben = Seite gegenüber dem Stecker.
+
+## Lagenaufbau (2 Lagen, Begründung)
+
+Die Tangara-Faceplate ist 2-lagig (1,6 mm, F.Cu und B.Cu, geprüft in `tangara-faceplate.kicad_pcb`), obwohl sie ein 40-mm-Rad trägt. Das gleiche Prinzip genügt hier:
 
 | Lage | Inhalt |
 |---|---|
-| F.Cu | 12 Touch-Segmente, Taster, Elektrodenleitungen im Innenkreis (r < 6 mm), kurze F.Cu-Brücken |
-| In1.Cu | **GND, gerastert (hatched)** über die ganze Platine: 0,3 mm Stege, 0,7 mm Lücken, 45° (ca. 35 % Deckung) |
-| In2.Cu | 3V3, massiv |
-| B.Cu | Bauteile, Signalleitungen, **keine** Massefläche |
+| F.Cu | Wheel (3 Elektroden), Mitteltaste, Guard (3 Bögen); sonst nur wenige kurze Leiterbahnen im Innenring r = 3,65 … 6,15 mm zwischen Taste und Rad (Prüfskript `tools/pruefe_vorderseite.py`) |
+| B.Cu | alle Bauteile, Leiterbahnen, **GND-Gitter** (Linie 0,127 mm, Lücke 1,016 mm, 45°, Glättung 2, wie bei Tangara) |
 
-Die Masse liegt damit wie gefordert unter den Segmenten und ist dort als Gitter ausgeführt, damit die Grundkapazität der Segmente klein bleibt. Die massive 3V3-Lage liegt dahinter, vom Gitter abgeschirmt.
+Gründe für 2 statt 4 Lagen: (1) Es gibt nur 6 Durchkontaktierungen zur Vorderseite (3 Wheel, Taste, Guard 3 Bögen = 7 Vias); die Verdrahtung der 20 Netze passt auf die Rückseite, weil der AT42QT2120 nur 5 Tasten verdrahtet und keine Referenzwiderstände braucht (MPR121 v1: REXT, VREG, 12 Elektroden). (2) Die Touch-Flächen brauchen unten eine möglichst unbelegte Masse, das Gitter bei Tangara ist erprobt. (3) Zwei Lagen sind billiger und überall bestellbar.
 
-**Ungeprüft:** Der Abstand F.Cu zu In1.Cu hängt vom Lagenaufbau des Herstellers ab (bei JLCPCB 4 Lagen / 1,0 mm vor der Bestellung im Lagenaufbau-Dialog nachsehen). Je dünner, desto mehr Grundkapazität und desto weniger Empfindlichkeit. Falls der Ring im Test zu unempfindlich ist, In1 unter dem Ring ausschneiden (Kreisring r = 6,0 … 13,3 mm aussparen) und im MPR121 die Ladeströme höher einstellen. Die Auswirkung auf die Empfindlichkeit wurde nicht gemessen.
+**Ungeprüft:** Abstand zwischen Elektroden und GND-Gitter ist bei 1,0 mm Dicke kleiner als bei Tangaras 1,6 mm (Grundkapazität höher, Empfindlichkeit etwas geringer). Die Wirkung wurde nicht gemessen. Notfalls das Gitter unter dem Rad ausdünnen (größere Lücke) oder die Schwellen senken.
 
 ## Bestückung (Handlötung)
 
-Reihenfolge: erst Rückseite, zuletzt Taster.
+1. Platine mit der Vorderseite auf die Heizplatte oder vorheizen (100 … 120 °C), Rückseite oben.
+2. **U1 AT42QT2120 (VQFN-20, 0,45 mm, Exposed Pad 1,55 mm, bleibt unbeschaltet):** Paste dünn auftragen (Schablone aus dem Paste-Layer oder Spritze), Pin 1 nach der Silkscreen-Marke, Heißluft ca. 240 … 250 °C. Danach Brücken mit Flussmittel entfernen. Flussmittel-Reste anschließend gründlich reinigen (Datenblatt 3.3: Rückstände stören die Touch-Messung).
+3. **U2 DRV2605L (VSSOP-10):** Pin 1 nach der Dreiecksmarke, Schlepplöten oder wie U1.
+4. 0402-Teile und C5 (0603) mit Paste. R8/R9 **nicht** bestücken (DNP).
+5. J1 zuletzt, wenig Hitze; die Montagefüße (MP) gut anlöten.
+6. Messen: 3V3 gegen GND auf Kurzschluss prüfen, 3V3 anlegen, per I²C auf 0x1C und 0x5A antworten lassen.
+7. LRA mit doppelseitigem Klebeband in die markierte Freifläche kleben, Litzen an TP1/TP2 löten.
+8. Abdeckung aufkleben (siehe oben).
 
-1. Platine mit der Vorderseite auf die Heizplatte (oder Platte vorheizen, ca. 100–120 °C), Rückseite liegt oben. Mit Heizplatte und Heißluft ist U1 deutlich leichter als mit dem Kolben.
-2. **U1 MPR121 (QFN-20, Raster 0,4 mm, kein Exposed Pad)**: Lötpaste dünn auf die 20 Pads (Schablone aus dem Paste-Layer oder aus Spritze), U1 mit Pin 1 nach der Silkscreen-Marke (Dreieck an der Ecke) ausrichten, Heißluft ca. 240–250 °C bis die Paste fließt. Danach Brücken mit Flussmittel und Entlötlitze entfernen. Das Footprint ist aus dem KiCad-Footprint für QFN-20 3 × 3 mm / 0,4 mm abgeleitet, **ohne** Exposed Pad; Maße vor der Bestellung mit der NXP-Gehäusezeichnung (MPR121 Datenblatt, QFN-20) vergleichen.
-3. **U2 DRV2605L (MSOP-10)**: Pin 1 nach der Dreiecksmarke. Mit Kolben und Flussmittel (Drag-Soldering) oder wie U1.
-4. 0402-Teile (C1–C5, R1) und C6 (0603) mit Paste und Pinzette, danach R2/R3 **nicht** bestücken (DNP).
-5. J1 zuletzt, mit wenig Hitze (Kunststoff). Die Metall-Montagefüße (MP) gut anlöten, sie nehmen die Steckkräfte auf.
-6. Vorderseite: Taster SW1 mit dem Kolben (2 große Pads, Taster vorher mit Pinzette halten).
-7. Messen: GND gegen 3V3 auf Kurzschluss prüfen, danach 3V3 anlegen und per I²C auf 0x5A und 0x5B antworten lassen.
-8. Zuletzt den LRA mit doppelseitigem Klebeband in die markierte Freifläche kleben und die Litzen an TP1/TP2 löten.
+## Bestellung
 
-## Bestellung bei JLCPCB
-
-Datei: `fertigung/klickrad_gerber_jlcpcb.zip` (Gerber X2 mit Bohrdaten PTH/NPTH, enthält auch Paste-Lagen für eine Schablone und die `.gbrjob`).
+`fertigung/klickrad_v2_gerber_jlcpcb.zip` (für JLCPCB) und `fertigung/klickrad_v2_gerber_pcbway.zip` (für PCBWay, identischer Inhalt): Gerber X2 (Protel-Endungen) mit Bohrdaten PTH/NPTH, Paste-Lagen für eine Schablone und `.gbrjob`. Alle Daten, Gerber, Bohrungen und Bestückungsdatei, haben den Ursprung in der Platinenmitte.
 
 | Einstellung | Wert |
 |---|---|
-| Lagen | 4 |
+| Lagen | 2 |
 | Dicke | **1,0 mm** |
 | Maße | rund, Ø 32 mm (Umriss ist ein Kreis auf Edge.Cuts) |
-| Kupfer | außen 1 oz, innen Standard |
-| Oberfläche | ENIG empfohlen (ebene Pads für das 0,4-mm-QFN), bleifreies HASL geht auch |
-| Via-Abdeckung | Tenting (Standard), kleinste Bohrung 0,3 mm |
-| Impedanz | keine Kontrolle nötig |
-| Lötstopplack | Farbe frei; Segmente sind absichtlich **ohne Öffnung** |
+| Kupfer | 1 oz |
+| Oberfläche | ENIG empfohlen (ebene Pads für das 0,45-mm-VQFN), bleifreies HASL geht auch |
+| Via | 0,6 / 0,3 mm, Tenting (Standard) |
+| Lötstopplack | Farbe frei; die Touch-Flächen sind absichtlich **ohne Öffnung** |
 | Platinen | 5 Stück Mindestmenge |
 
-Kleinste Strukturen: Leiterbahn 0,15 mm, Abstand 0,15 mm, Via 0,6/0,3 mm, Randabstand Kupfer 0,3 mm (DRC-Einstellung in `klickrad.kicad_pro`). Silkscreen-Schrift 0,9 – 1,0 mm hoch, 0,15 mm Strich; die Pinbeschriftung am Stecker (0,9 mm) ist die kleinste.
+Kleinste Strukturen: Leiterbahn 0,15 mm, Abstand 0,15 mm (DRC-Mindestwert 0,127 mm), Elektrodenabstand 0,25 mm, GND-Gitter 0,127 mm, Bohrung 0,3 mm, Randabstand Kupfer 0,3 mm.
 
-Bestückung durch JLCPCB ist nicht vorgesehen. Stückliste mit Hersteller- und LCSC-Nummern: `klickrad_bom.csv` (LCSC-Nummern nur dort, wo sie am 2026-10-04 über lcsc.com bestätigt wurden; bei R1 leer).
+Bestückung durch den Hersteller ist nicht vorgesehen. Stückliste: `klickrad_bom.csv` (alle Spalten), `fertigung/klickrad_v2_bom_jlcpcb.csv` (JLCPCB-Format), `fertigung/klickrad_v2_cpl_jlcpcb.csv` (Bestückungsdatei, **Drehwinkel der Gehäuse nicht gegen den JLCPCB-Bibliothekswinkel geprüft**). LCSC-Nummern wurden am 2026-10-04 auf lcsc.com bestätigt; **AT42QT2120-MMH (C617900) war dort nicht auf Lager**, Alternativen: Mouser/DigiKey (ca. 5 USD).
 
 ## Was geprüft ist und was nicht
 
 Geprüft (mit `kicad-cli` 9.0.9):
 
-- ERC des Schaltplans: 0 Fehler, 0 Warnungen (`pruefung/erc.rpt`).
-- DRC der Platine mit Abgleich gegen den Schaltplan (Parität): 0 Fehler, 0 nicht verbundene Netze, 0 Paritätsabweichungen. Zwei Warnungen „Courtyards overlap“ (C4/C5 liegen im Hüllbereich von U2, bewusst nah am IC wegen der Entkopplung) (`pruefung/drc.rpt`).
-- Netzliste aus dem Schaltplan stimmt mit den Pads der Platine überein (Parität), Pinbelegung J1 laut `TEILE.md`, MPR121-Pins und DRV2605L-Pins laut KiCad-Symbolen, die aus den Herstellerdatenblättern stammen. Beschaltung des MPR121 (REXT 75 kΩ 1 % nach VSS, 0,1 µF an VREG und VDD, ADDR an VDD = 0x5B, Pinbelegung QFN-20) gegen das MPR121-Datenblatt (Rev. 5, Resurgent-Kopie des NXP-Datenblatts) und die Beschaltung des DRV2605L (1 µF an VDD und REG, IN/TRIG an GND, VDD/NC an VDD) gegen das TI-Datenblatt (SLOS854D) geprüft.
-- Gerber und Bohrdaten werden ohne Fehler erzeugt. In der Vorderseiten-Lötstopplage gibt es nur Öffnungen für die zwei Tasterpads und die drei Montagelöcher, die Segmente sind abgedeckt.
+@@PRUEFUNG@@
 
 Nicht geprüft:
 
-- **Keine Hardware gebaut oder gemessen.** Touch-Empfindlichkeit, Winkelauflösung, Störungen durch den LRA, Haptik-Kalibrierung: offen.
-- Footprints der Standardbibliothek (B3U-1000P, SM06B-SRSS-TB, MSOP-10, 0402/0603) und das eigene QFN-Footprint wurden nicht gegen die Herstellerzeichnungen vermessen.
-- Lagenaufbau und Abstand F.Cu–In1.Cu beim Hersteller; Höhen von U1/U2/J1.
-- Stromaufnahme: Der LRA wird aus der 3V3-Schiene des Waveshare-Boards versorgt, deren Belastbarkeit ungeprüft ist. Deshalb VDD des DRV2605L mit 1 µF + 10 µF abgeblockt. Beim Einschalten der Auto-Kalibrierung kann kurz ein deutlicher Strom fließen; Spannungseinbruch am 3V3 des Hauptboards beobachten.
-- Die Position und Ausrichtung des Steckers (6-Uhr-Seite) ist eine Annahme und muss zum Gehäuse und zur Kabelführung passen. Die Montagelöcher sind gleichmäßig verteilt, die Platine lässt sich deshalb in 120°-Schritten anders ins Gehäuse setzen, der Stecker bleibt aber an seiner Stelle auf der Platine.
-- LCSC-Verfügbarkeit und Preise.
+- **Keine Hardware gebaut oder gemessen.** Touch-Empfindlichkeit, Winkelauflösung, Wheel-Nullpunkt und Drehsinn, Störungen durch den LRA, Haptik-Kalibrierung, Verhalten mit gedruckter Abdeckung: offen.
+- Das Rad liegt unter der typischen Größe des Datenblatts (24,6 mm statt 30 … 50 mm, Ringbreite 6 mm statt 12 mm).
+- Footprints der Standardbibliothek (SM06B-SRSS-TB, VSSOP-10, VQFN-20, 0402/0603) wurden nicht gegen die Herstellerzeichnungen vermessen. Das Exposed Pad von U1 bleibt wie bei Tangara unbeschaltet; das Datenblatt sagt dazu nichts.
+- Höhen von U1/U2/J1 aus dem Datenblatt bzw. aus dem Gedächtnis.
+- Der Router (`tools/route.py`) ist eigener Code; die Leiterbahnen wurden nur über DRC und Bildansicht geprüft, nicht von Hand nachgezogen. Einige Bahnen laufen länger als nötig. Die Guard-Verbindung läuft als lange Bahn über die Rückseite; sie liegt nicht unter den Elektroden einer anderen Funktion, ihre Länge wurde nicht bewertet.
+- Das GND-Gitter erzeugt Kupferinseln; deren Warnungen siehe oben.
+- Stromaufnahme: Der LRA wird aus der 3V3-Schiene des Waveshare-Boards versorgt, deren Belastbarkeit ungeprüft ist. Spannungseinbruch bei der Auto-Kalibrierung beobachten.
+- LCSC-Verfügbarkeit und Preise (Stand 2026-10-04, U1 nicht auf Lager).
 
 ## Neu erzeugen
 
-Voraussetzungen: KiCad 9 (Python-Modul `pcbnew`, `kicad-cli`), Python-Pakete `shapely`, `Pillow`; für Layout-Neuberechnung zusätzlich Java und `freerouting-2.1.0.jar` (https://github.com/freerouting/freerouting/releases) sowie `/tmp/freerouting/freerouting.json` mit Zeitlimit 3 min; `rsvg-convert` für PNG-Vorschauen.
+Voraussetzungen: KiCad 9 (Python-Modul `pcbnew`, `kicad-cli`), Python-Pakete `shapely`, `numpy`, `scipy`, `Pillow`; `rsvg-convert` für PNG-Vorschauen.
 
 ```sh
-python3 tools/make_lib.py                 # lib/Klickrad.pretty (Segmente, QFN ohne EP, Montageloch)
+python3 tools/make_lib.py                 # lib/Klickrad.pretty (Touch-Flächen, Loch), lib/Klickrad.kicad_sym (AT42QT2120)
 SKIPROUTE=1 tools/make.sh                 # abgegebene Platine neu füllen und beschriften (ohne Router)
-FREEROUTING=/pfad/freerouting.jar tools/make.sh   # komplette Neuberechnung inkl. Autorouter (Ergebnis kann abweichen)
-tools/export.sh                           # Schaltplan, ERC/DRC-Berichte, Gerber, Positionsdatei, Vorschau, Stückliste
+tools/make.sh                             # komplette Neuberechnung inkl. Router (dauert mehrere Minuten, Ergebnis kann abweichen)
+tools/export.sh                           # Schaltplan, ERC/DRC-Berichte, Gerber, Positionsdatei, Vorschau, Stückliste, Abdeckung
+python3 tools/pruefe_vorderseite.py       # F.Cu-Prüfung
 ```
 
 | Ordner/Datei | Inhalt |
 |---|---|
 | `klickrad.kicad_pro/.kicad_sch/.kicad_pcb` | KiCad-Projekt |
-| `lib/Klickrad.pretty`, `fp-lib-table`, `sym-lib-table` | eigene Footprints, Bibliothekstabellen |
-| `tools/` | Python-Skripte, die Schaltplan und Platine erzeugen (`netlist.py` ist die einzige Quelle für Bauteile und Netze) |
-| `tools/routed_freerouting.kicad_pcb` | Platzierung + Routing-Ergebnis, Ausgangspunkt für `SKIPROUTE=1` |
-| `fertigung/` | Gerber-ZIP, Bohrdaten, Bauteilpositionen |
-| `vorschau/` | SVG/PNG von Vorderseite, Rückseite, Kupfer, 3D-Ansichten, Schaltplan |
+| `lib/Klickrad.pretty`, `lib/Klickrad.kicad_sym`, `fp-lib-table`, `sym-lib-table` | eigene Footprints/Symbol, Bibliothekstabellen |
+| `tools/` | Python-Skripte; `netlist.py` ist die einzige Quelle für Bauteile und Netze, `wheel_geometry.py` für die Elektroden, `placement.py` für die Platzierung, `route.py`/`route_loop.py` für die Verdrahtung |
+| `tools/routed.kicad_pcb` | Platzierung + Routing-Ergebnis, Ausgangspunkt für `SKIPROUTE=1` |
+| `abdeckung/` | KiCad-Projekt der FR4-Abdeckung, `fertigung/` (Gerber-ZIP), `vorschau/` |
+| `fertigung/` | Gerber-ZIPs (JLCPCB, PCBWay), Bohrdaten, Bauteilpositionen, JLCPCB-BOM und -CPL |
+| `vorschau/` | SVG/PNG von Vorderseite, Rückseite, Kupfer, 3D-Ansichten, Schaltplan als PNG und PDF |
 | `pruefung/` | ERC- und DRC-Bericht |
 | `klickrad_bom.csv` | Stückliste |
+| `LICENSE` | CERN-OHL-S-2.0 |
 
-Der Schaltplan wird per Skript erzeugt und ist übersichtlich, aber nicht von Hand gezeichnet; Änderungen am besten in `tools/netlist.py` und `tools/gen_sch.py` machen und neu erzeugen, nicht im Editor, sonst weicht das Layout beim nächsten Lauf ab.
+Der Schaltplan wird per Skript erzeugt und ist übersichtlich, aber nicht von Hand gezeichnet; Änderungen am besten in `tools/netlist.py` und `tools/gen_sch.py` machen und neu erzeugen, nicht im Editor.

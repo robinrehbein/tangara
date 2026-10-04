@@ -2,7 +2,7 @@
 """Erzeugt hauptplatine.kicad_pcb.
 
 Koordinaten wie in netlist.py: Mitte = (0,0), x rechts, y oben, Blick von der Display-Seite (Oberseite).
-MODE=place   -> Platzierung + Umriss + Netze (ohne Leiterbahnen) nach $TMPDIR_PCB/pre.kicad_pcb
+MODE=place   -> Platzierung (tools/placement.json) + Umriss + Netze (ohne Leiterbahnen) nach $TMPDIR_PCB/pre.kicad_pcb
 MODE=finish  -> laedt $LOADFROM (Platzierung + Routing), fuegt Zonen, Beschriftung, Keepouts hinzu und speichert hauptplatine.kicad_pcb
 """
 import math, os, sys, json
@@ -36,7 +36,7 @@ def net(name):
 
 def loadfp(spec):
     lib, name = spec.split(':')
-    path = os.path.join(ROOT, 'lib', 'Tangara.pretty') if lib == 'Tangara' else FPDIR + lib + '.pretty'
+    path = os.path.join(ROOT, 'lib', 'Hauptplatine.pretty') if lib == 'Hauptplatine' else FPDIR + lib + '.pretty'
     fp = pcbnew.FootprintLoad(path, name)
     if fp is None: raise SystemExit('Footprint fehlt: ' + spec)
     fp.SetFPID(pcbnew.LIB_ID(lib, name))
@@ -51,6 +51,8 @@ def place(part, x, y, theta, side):
     """theta: Drehung der Ansicht (CCW, Blick von oben). Unterseite: Bauteil wird erst gespiegelt (Blick von unten wie Oberseite), dann gedreht."""
     fp = loadfp(part['fp'])
     fp.SetReference(part['ref']); fp.SetValue(part['value'])
+    for g in list(fp.GraphicalItems()):
+        if g.GetLayer() == pcbnew.Edge_Cuts: fp.Remove(g)   # Tangara-Footprints (Klinke/USB) enthalten Edge.Cuts-Konturen: hier unerwuenscht
     board.Add(fp)
     fp.SetPosition(V(0, 0))
     ref_pad = None
@@ -89,7 +91,7 @@ def track(netname, layer, pts, w=0.15):
         t = pcbnew.PCB_TRACK(board); t.SetStart(V(*a)); t.SetEnd(V(*b)); t.SetWidth(FromMM(w)); t.SetLayer(layer)
         if netname: t.SetNet(net(netname))
         board.Add(t)
-def via(netname, x, y, dia=0.6, drill=0.3):
+def via(netname, x, y, dia=0.45, drill=0.2):
     v = pcbnew.PCB_VIA(board); v.SetPosition(V(x, y)); v.SetWidth(FromMM(dia)); v.SetDrill(FromMM(drill))
     v.SetViaType(pcbnew.VIATYPE_THROUGH)
     if netname: v.SetNet(net(netname))
@@ -130,15 +132,6 @@ def zone(layer, pts, netname, prio=0, clearance=0.2, minw=0.2, keepout=None, lay
         z.SetDoNotAllowPads(False); z.SetDoNotAllowCopperPour('pour' in keepout); z.SetDoNotAllowFootprints('fp' in keepout)
     board.Add(z); return z
 
-def fp_to_view(ref, x_fp, y_fp):
-    """Footprint-Koordinate (KiCad, y nach unten, Bauteil-Ursprung) -> Ansicht (y oben)."""
-    part = [p for p in netlist.parts() if p['ref'] == ref][0]
-    x, y, th, side = part['at']
-    u, v = x_fp, -y_fp
-    if side == 'B': u = -u
-    a, b = rot(u, v, th)
-    return (x + a, y + b)
-
 def circle_pts(c, r, n=48):
     return [(c[0] + r * math.cos(2 * math.pi * i / n), c[1] + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
 
@@ -169,53 +162,22 @@ def outline():
     sline(L, (-a, yb + rc), (-a, yj), 0.1)
     sarc(L, (-a, yj), (0, cy + r), (a, yj))
 
-def bsetup():
-    if MODE != 'finish':
-        outline()
-    if MODE == 'place':
-        from shapely.geometry import box as sbox
-        # Innenlage 1: GND-Flaeche (Router verbindet GND per Via)
-        zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2, layers=None)
-        # XIAO: unter den freiliegenden Testpads der Modulunterseite kein Kupfer
-        c = [fp_to_view('U1', fx, fy) for fx, fy in ((0.0, -2.9), (9.9, -2.9), (9.9, 2.9), (0.0, 2.9))]
-        zone(B_CU, c, None, keepout={'tracks', 'vias', 'pour'}, prio=0)
-        zone(IN1, c, None, keepout={'pour'}, prio=0) if False else None
-        majors = [p for p in netlist.parts() if p.get('at')]
-        for part in majors:
-            place(part, *part['at'])
-        for ref, fp in placed.items():
-            layout.placed_side[ref] = 'B' if fp.GetLayer() == B_CU else 'T'
-            c = fp.GetPosition(); layout.anchor_center[ref] = P(c)
-        def pad_boxes():
-            out = {}
-            for ref, fp in placed.items():
-                side = layout.placed_side[ref]
-                lst = []
-                for pad in fp.Pads():
-                    bb = pad.GetBoundingBox()
-                    lst.append((sbox(ToMM(bb.GetLeft()) - OX, OY - ToMM(bb.GetBottom()), ToMM(bb.GetRight()) - OX, OY - ToMM(bb.GetTop())), side))
-                cl = pcbnew.B_CrtYd if side == 'B' else pcbnew.F_CrtYd
-                cyb = fp.GetCourtyard(cl).BBox()
-                if cyb.GetWidth() > 0:
-                    lst.append((sbox(ToMM(cyb.GetLeft()) - OX, OY - ToMM(cyb.GetBottom()), ToMM(cyb.GetRight()) - OX, OY - ToMM(cyb.GetTop())), side))
-                out[ref] = lst
-            return out
-        def anchor_net(aref, apin):
-            for p in placed[aref].Pads():
-                if p.GetNumber() == str(apin): return p.GetNetname()
-            return None
-        auto = layout.auto_place(netlist.parts(), placed, padpos, pad_boxes, anchor_net)
-        for part in netlist.parts():
-            if part['ref'] in placed: continue
-            if part['ref'] in auto: place(part, *auto[part['ref']])
-            else: print('NICHT PLATZIERT', part['ref'])
-bsetup()
+
+HOLES = layout.WHEEL_HOLES
+def run_place():
+    outline()
+    pl = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'placement.json')))
+    for part in netlist.parts():
+        r = part['ref']
+        if r in ('H1', 'H2', 'H3'):
+            hx, hy = HOLES[int(r[1]) - 1]; place(part, hx, hy, 0, 'T'); continue
+        x, y, th, side = pl[r]
+        place(part, x, y, th, side)
+    zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2)
+    board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
+    print('platziert:', len(placed))
 
 if MODE == 'place':
-    board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
-    for r in ('U1', 'U2', 'U3', 'U4', 'U5', 'J1', 'J2', 'J3', 'J4', 'J5', 'SW1'):
-        if r in placed:
-            print(r, [(p.GetNumber(), tuple(round(v, 2) for v in P(p.GetPosition()))) for p in placed[r].Pads()][:40])
-    print('platziert:', len(placed))
+    run_place()
 else:
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'finish.py')).read())

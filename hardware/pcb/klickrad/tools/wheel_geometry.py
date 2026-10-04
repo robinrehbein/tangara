@@ -25,6 +25,7 @@ DEAD = 1.5                       # Tangara 2,0 mm, nach Umfang skaliert
 BTN_R = 3.5                      # Tangara 2,5 mm (Ø 5); hier größer, weil Abdeckungsmarke Ø 11,6
 GUARD_R_IN, GUARD_R_OUT = 13.5, 15.4   # Tangara: Ring r = 22,2 (Linie 1 mm), 2,35 mm vom Rad entfernt
 HOLE_R, HOLE_ANG, HOLE_D = 14.6, (90, 210, 330), 2.2
+GUARD_LINK_R, GUARD_LINK_W, GUARD_LINK_SPAN = 12.82, 0.2, 10.5   # Stege zwischen den Guard-Bögen
 GUARD_HOLE_EXCL = 2.2            # kein Guard-Kupfer näher als 2,2 mm an der Lochmitte (Schraubenkopf Ø 3,5 / Tasche Ø 4)
 OPEN_R = 0.10                    # Öffnen: entfernt Spitzen schmaler als 0,2 mm
 TANGARA_PEAKS_BOARD = {2: 86.3, 0: 206.3, 1: 326.3}   # Elektrodenmaxima bei Tangara (Footprint gedreht um -148 Grad)
@@ -98,20 +99,34 @@ def build():
     btn = Point(0, 0).buffer(BTN_R, 64)
     ring = Point(0, 0).buffer(GUARD_R_OUT, 128).difference(Point(0, 0).buffer(GUARD_R_IN, 128))
     holes = unary_union([Point(HOLE_R * math.cos(math.radians(a)), HOLE_R * math.sin(math.radians(a))).buffer(GUARD_HOLE_EXCL, 64) for a in HOLE_ANG])
-    g = ring.difference(holes)
-    arcs = sorted([x.simplify(0.004) for x in g.geoms], key=lambda p: math.degrees(math.atan2(p.centroid.y, p.centroid.x)) % 360)
-    assert len(arcs) == 3, len(arcs)
-    return dict(wheel=wheel, button=btn, guard=arcs, peaks=peaks, dev=float(dev), key_of=key_of)
+    arcs = ring.difference(holes)
+    # Die drei Bögen werden innen (r = 12,82 mm) durch schmale Stege verbunden, die an den Befestigungslöchern vorbeilaufen
+    # (Abstand zur Lochmitte 1,78 mm; zum Rad 0,42 mm). So bleibt der Guard ein Netz mit einer einzigen Durchkontaktierung.
+    links = []
+    for a in HOLE_ANG[:2]:      # nur zwei Stege: Bogenkette ohne geschlossenen Ring (sonst entstünde ein Loch im Polygon)
+        band = Point(0, 0).buffer(GUARD_LINK_R + GUARD_LINK_W / 2, 128).difference(Point(0, 0).buffer(GUARD_LINK_R - GUARD_LINK_W / 2, 128))
+        sector = Polygon([(0, 0)] + [(20 * math.cos(math.radians(a + d)), 20 * math.sin(math.radians(a + d))) for d in np.linspace(-GUARD_LINK_SPAN, GUARD_LINK_SPAN, 40)])
+        links.append(band.intersection(sector))
+        for s in (-1, 1):   # radiale Anschlüsse an die Bogenenden
+            ang = math.radians(a + s * GUARD_LINK_SPAN)
+            p0 = ((GUARD_LINK_R - 0.1) * math.cos(ang), (GUARD_LINK_R - 0.1) * math.sin(ang)); p1 = ((GUARD_R_IN + 0.3) * math.cos(ang), (GUARD_R_IN + 0.3) * math.sin(ang))
+            links.append(LineString([p0, p1]).buffer(0.2, cap_style=2))
+    g = unary_union([arcs] + links)
+    g = g.buffer(-0.05).buffer(0.05)
+    if g.geom_type != 'Polygon': g = max(g.geoms, key=lambda q: q.area)
+    guard = g.simplify(0.004)
+    return dict(wheel=wheel, button=btn, guard=guard, peaks=peaks, dev=float(dev), key_of=key_of)
 
-def inner_point(poly, r0, r1, want_angle, margin=0.45):
+def inner_point(poly, r0, r1, want_angle, margin=0.45, span=360, taken=()):
     """Punkt in `poly` mit Abstand >= margin zum Rand, r in [r0, r1], möglichst nahe bei Winkel want_angle (Grad)."""
     best = None
     for r in np.arange(r0, r1 + 1e-9, 0.05):
         for a in np.arange(0, 360, 0.5):
             x, y = r * math.cos(math.radians(a)), r * math.sin(math.radians(a))
             p = Point(x, y)
-            if poly.contains(p) and poly.exterior.distance(p) >= margin:
-                d = abs((a - want_angle + 180) % 360 - 180) + 0.02 * r
+            dev = abs((a - want_angle + 180) % 360 - 180)
+            if dev <= span / 2 and poly.contains(p) and poly.exterior.distance(p) >= margin and all(math.hypot(x - tx, y - ty) >= 1.3 for tx, ty in taken):
+                d = dev + 0.02 * r
                 if best is None or d < best[0]: best = (d, x, y)
     return None if best is None else (round(best[1], 2), round(best[2], 2))
 

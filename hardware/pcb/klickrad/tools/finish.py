@@ -1,27 +1,8 @@
-# ---- Router-Reste entfernen: doppelte Leiterbahnen und Stichleitungen mit losem Ende
-_all = list(board.GetTracks())
-_tr = [t for t in _all if t.Type() == pcbnew.PCB_TRACE_T]
-_vias = [t.GetPosition() for t in _all if t.Type() == pcbnew.PCB_VIA_T]
-_pads = [p for fp in board.GetFootprints() for p in fp.Pads()]
-_rm = []
-_seen = set()
-for t in list(_tr):
-    k = (t.GetLayer(), frozenset(((t.GetStart().x, t.GetStart().y), (t.GetEnd().x, t.GetEnd().y))))
-    if k in _seen: _tr.remove(t); _rm.append(t)
-    else: _seen.add(k)
-def _touched(t, pt):
-    for o in _tr:
-        if o is not t and o.GetLayer() == t.GetLayer() and (o.GetStart() == pt or o.GetEnd() == pt): return True
-    if any(v == pt for v in _vias): return True
-    return any(p.HitTest(pt) and p.IsOnLayer(t.GetLayer()) for p in _pads)
-_ch = True
-while _ch:
-    _ch = False
-    for t in list(_tr):
-        if not (_touched(t, t.GetStart()) and _touched(t, t.GetEnd())):
-            _tr.remove(t); _rm.append(t); _ch = True; break
-for t in _rm: board.Remove(t)
-print('Router-Reste entfernt:', len(_rm))
+# ---- GND-Gitter auf B.Cu (Tangara: Linie 0,127 mm, Lücke 1,016 mm, 45 Grad, Glättung 2) wird erst nach dem Routing angelegt.
+# Jedes GND-Pad hat einen kurzen Leiterbahn-Stummel (route.py), der das Gitter kreuzt und es so anbindet.
+_z = zone(B_CU, disc(15.7), 'GND', 0, hatch=True)
+_z.SetMinThickness(FromMM(0.127)); _z.SetLocalClearance(FromMM(0.2))
+_z.SetHatchThickness(FromMM(0.127)); _z.SetHatchGap(FromMM(1.016)); _z.SetHatchSmoothingLevel(2); _z.SetHatchSmoothingValue(0.1)
 # ---- Beschriftung (Rückseite gespiegelt), LRA-Markierung
 rect(pcbnew.B_SilkS, *LRA, w=0.15)
 for a, b in (((-8, 3), (8, 9)), ((-8, 9), (8, 3))): line(pcbnew.B_Fab, a, b, 0.1)

@@ -4,7 +4,7 @@ import math, os, sys, json
 import pcbnew
 from pcbnew import VECTOR2I, FromMM, ToMM
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import netlist, make_lib
+import netlist, make_lib, sx
 ROOT = netlist.ROOT
 OX, OY = 100.0, 100.0
 FP = '/usr/share/kicad/footprints/'
@@ -39,9 +39,14 @@ def place(part, x, y, side='B', rot=0):
     fp.SetPosition(V(x, y))
     if side == 'B': fp.Flip(V(x, y), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
     fp.SetOrientationDegrees((180 + rot) if side == 'B' else rot)
+    lib, sname = part['sym'].split(':')
+    pn = {t[0]: t[1] for t in sx.pins(sx.sym(lib, sname))}
     for pad in fp.Pads():
-        nm = part['pins'].get(pad.GetNumber())
-        if nm: pad.SetNet(net(nm))
+        num = pad.GetNumber()
+        if num in part['pins']:
+            nm = part['pins'][num]
+            if nm is None: nm = f"unconnected-({part['ref']}-{pn[num]}-Pad{num})"
+            pad.SetNet(net(nm))
     if part.get('dnp'): fp.SetDNP(True)
     if part.get('nobom'): pass
     for item in (fp.Reference(), fp.Value()):

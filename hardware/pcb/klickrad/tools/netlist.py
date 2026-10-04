@@ -34,7 +34,6 @@ def parts():
     res('R7', '10k', ('3V3', 'EN'), 'DRV2605L EN-Pull-up (Tangara R4)')
     res('R8', '4.7k', ('3V3', 'SDA'), 'I2C Pull-up SDA, DNP (liegt auf der Hauptplatine / dem Waveshare-Board)', True)
     res('R9', '4.7k', ('3V3', 'SCL'), 'I2C Pull-up SCL, DNP', True)
-    res('R10', '10k', ('3V3', 'CHANGE'), 'CHANGE-Pull-up, DNP (Tangara: interner Pull-up der MCU)', True)
     add('SW1', 'BUTTON', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-button', {'1': 'EB'}, nobom=True, desc='Kapazitive Mitteltaste (Tangara SW1)')
     add('SW2', 'WHEEL', 'Connector_Generic:Conn_01x03', 'Klickrad:qtouch-wheel', {'1': 'E0', '2': 'E1', '3': 'E2'}, nobom=True, desc='Touch-Wheel, 3 Elektroden (Tangara SW2)')
     add('SW3', 'GUARD', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-guard', {'1': 'EG'}, nobom=True, desc='Guard-Kanal (Tangara SW3)')

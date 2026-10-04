@@ -35,7 +35,7 @@ def add(ref, value, kind, fp, pins, src, **kw):
     return d
 def get(ref): return [p for p in PARTS if p['ref'] == ref][0]
 
-KIND = {'R': 'R', 'C': 'C', 'L': 'L', 'Q': 'Q', 'D': 'D', 'U': 'IC', 'J': 'CONN', 'SW': 'SW', 'TP': 'TP'}
+KIND = {'X': 'X', 'R': 'R', 'C': 'C', 'L': 'L', 'Q': 'Q', 'D': 'D', 'U': 'IC', 'J': 'CONN', 'SW': 'SW', 'TP': 'TP'}
 FPMAP = {   # Tangara-Footprint -> unser Footprint
     'footprints:CUI_SJ-3506-SMT': 'Hauptplatine:CUI_SJ-3506-SMT',
     'footprints:GCT_USB4510-03-1-A_REVA': 'Hauptplatine:GCT_USB4510-03-1-A_REVA',
@@ -74,7 +74,8 @@ def tg(ref, newref=None, value=None, mpn=None, fp=None, names=None, src='Tangara
     if ref.startswith('TP'): kind = 'TP'
     elif ref.startswith('SW'): kind = 'SW'
     else: kind = KIND.get(ref[0], 'IC')
-    return add(newref or ref, val, kind, fpn, pins, src, mpn=mpn, mfr=mfr_of(mpn), tgref=ref, names={**nm, **(names or {})}, pkg=pkg_of(fpn), **kw)
+    base = dict(mpn=mpn, mfr=mfr_of(mpn), tgref=ref, names={**nm, **(names or {})}, pkg=pkg_of(fpn)); base.update(kw)
+    return add(newref or ref, val, kind, fpn, pins, src, **base)
 
 R_TAB = {'0': ('0402WGF0000TCE', 'C17168'), '1k': ('0402WGF1001TCE', 'C11702'), '2.2k': ('0402WGF2201TCE', 'C25879'), '4.7k': ('0402WGF4701TCE', 'C25900'),
          '10k': ('0402WGF1002TCE', 'C25744'), '100k': ('0402WGF1003TCE', 'C25741')}
@@ -101,8 +102,8 @@ S31 = {   # Pad -> Modulname (Datenblatt v0.7, Tabelle 3-1)
 }
 # Signale, die ein freies S31-GPIO bekommen (Zuordnung: tools/gpio_assign.py -> tools/gpio_map.json)
 GPIO_SIGNALS = ['LCD_CS', 'LCD_SCK', 'LCD_D0', 'LCD_D1', 'LCD_D2', 'LCD_D3', 'LCD_RST', 'LCD_TE', 'SDA', 'SCL', 'TP_INT',
-                'DAC_MCK', 'DAC_BCK', 'DAC_LRCK', 'DAC_DATA', 'AMP_EN', 'Q3_G', 'JACK_DETECT', 'WHEEL_INT', 'WHEEL_BTN',
-                'SYS_PWR_EN', 'KEY_LOCK', 'CHG_STAT1', 'CHG_STAT2', 'CHG_PG', 'TUSB_ID', 'TUSB_INT', 'HOST_EN', 'SD_CD', 'SD_VDD_EN', 'FG_ALRT']
+                'DAC_MCK_MCU', 'DAC_BCK', 'DAC_LRCK', 'DAC_DATA', 'AMP_EN', 'Q3_G', 'JACK_DETECT', 'WHEEL_INT', 'WHEEL_BTN',
+                'SYS_PWR_EN', 'KEY_LOCK_MCU', 'CHG_STAT1', 'CHG_STAT2', 'CHG_PG', 'CHG_SEL', 'CHG_PROG2', 'TUSB_ID', 'TUSB_INT', 'HOST_EN', 'SD_CD', 'SD_VDD_EN', 'FG_ALRT']
 GPIO_MAP = {}   # Signal -> Modulname (IOx)
 _gm = os.path.join(HERE, 'gpio_map.json')
 if os.path.exists(_gm): GPIO_MAP = json.load(open(_gm))
@@ -114,9 +115,9 @@ for pad, name in S31.items():
     if name in FIXED_S31: s31pins[pad] = FIXED_S31[name]
     elif name == 'NC': s31pins[pad] = None
     else: s31pins[pad] = _rev.get(name)
-add('U15', 'ESP32-S31-WROOM-3-N16R8V', 'IC', 'Hauptplatine:ESP32-S31-WROOM-3', s31pins, 'neu', names=dict(S31), mpn='ESP32-S31-WROOM-3-N16R8V',
+add('U15', 'ESP32-S31-WROOM-3-N16R16V', 'IC', 'Hauptplatine:ESP32-S31-WROOM-3', s31pins, 'neu', names=dict(S31), mpn='ESP32-S31-WROOM-3-N16R16V',
     mfr='Espressif', lcsc='', dk='', pkg='Modul 22 x 30 x 3,5',
-    desc='WLAN 6, Bluetooth 5.4 (Classic + LE Audio), USB 2.0 HS OTG, 16 MB Flash, 8 MB PSRAM (Datenblatt v0.7 PRELIMINARY); Tangara: ESP32-WROVER-E',
+    desc='WLAN 6, Bluetooth 5.4 (Classic + LE Audio), USB 2.0 HS OTG, 16 MB Flash (Quad), 16 MB PSRAM (Octal) (Datenblatt v0.7 PRELIMINARY); Tangara: ESP32-WROVER-E mit 8 MB PSRAM',
     at=None)
 
 # ======================================================================================================== Audio (Tangara, 1:1)
@@ -136,10 +137,17 @@ tg('U5')
 tg('J7', fp='Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal', mpn='SM03B-SRSS-TB(LF)(SN)', mfr='JST', src='angepasst', lcsc='C160403', dk='455-SM03B-SRSS-TBCT-ND', pkg='JST-SH 3 Pol',
    desc='JST-SH 3-pol. SMD statt PH 3-pol. THT (Tangara S3B-PH-K): Oberseite bleibt unter dem Display eben, passt in den Platz; Pin 1 NTC, 2 GND, 3 BAT+'); get('J7')['pins']['MP']='GND'
 tg('U4', value='TLV75733PDBV', mpn='TLV75733PDBVR', src='angepasst', lcsc='C485517', dk='296-50414-1-ND', desc='3V3-LDO 1 A statt 500 mA (TLV75533)')
-tg('SW1', names={'1': 'A_GND', '2': 'B_LOCK', '3': 'C_COM'}); tg('R4')
+# Tangara: Schiebeschalter SW1 (KEY_LOCK, Hold/Power) + SAMD21 haelt SYS_PWR_EN. Hier: Ein/Aus-Taster (seitlich betaetigt, wie im Gehaeuse-CAD),
+# der S31 haelt die Versorgung ueber SYS_PWR_EN (BAT54C D4) und kann sich selbst abschalten (Power-Latch).
+add('SW1', 'B3U-3000P', 'SW', 'Button_Switch_SMD:SW_SPST_B3U-3000P', {'1': 'LOCK_COM', '2': 'KEY_LOCK'}, 'angepasst', mpn='B3U-3000P', mfr='Omron', lcsc='C963349',
+    pkg='3,0 x 2,5 x 1,2 seitlich', desc='Ein/Aus-Taster statt Schiebeschalter JS102011SAQN (Tangara): drueckt SYS_POWER auf KEY_LOCK -> LDO_EN')
+tg('R4', value='10k', mpn='AC0603JR-0710KL', src='angepasst', desc='Taster-Vorwiderstand (Tangara: 100 k); bei Tastendruck KEY_LOCK ca. 0,9 x SYS_POWER')
+add('R200', '100k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': 'KEY_LOCK', '2': 'GND'}, 'neu', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603', desc='KEY_LOCK Pull-down (Taster offen = low)')
+add('R201', '10k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': 'KEY_LOCK', '2': 'KEY_LOCK_MCU'}, 'neu', mpn='AC0603JR-0710KL', mfr='Yageo', pkg='0603', desc='Serienwiderstand zum S31-GPIO (SYS_POWER bis 5 V, GPIO 3,3 V)')
+add('R202', '100k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': 'SYS_PWR_EN', '2': 'GND'}, 'neu', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603', desc='SYS_PWR_EN Pull-down (Latch faellt, wenn S31 aus)')
 # Bei Tangara stellt der SAMD21 CHG_SEL/CHG_PROG ein; hier feste Pull-ups (aus Tangara Rev. 4), S31 liest nur den Status
-add('R36', '100k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': 'SYS_POWER', '2': 'CHG_PROG2'}, 'angepasst', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603',
-    desc='PROG2 hoch = USB-Eingangslimit 500 mA (Tangara Rev. 4, dort SAMD21 gesetzt)')
+add('R36', '100k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': '3V3', '2': 'CHG_PROG2'}, 'angepasst', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603',
+    desc='PROG2 hoch = USB-Eingangslimit 500 mA (Tangara: Pin vom SAMD21 gesteuert); hier Pull-up an 3V3 (S31-GPIO darf nicht auf 5 V haengen), S31 kann ueberschreiben')
 add('R43', '10k', 'R', 'Resistor_SMD:R_0603_1608Metric', {'1': '3V3', '2': 'CHG_SEL'}, 'angepasst', mpn='AC0603JR-0710KL', mfr='Yageo', pkg='0603',
     desc='SEL hoch = USB-Eingang (Tangara Rev. 4)')
 
@@ -168,6 +176,13 @@ res('R103', '0', 'USB_DN', 'USB_HS_DM', 'USB-HS D-: Platz fuer Serienwiderstand'
 for ref, net, nm in [('TP10', 'UART_TX0', 'TX0'), ('TP11', 'UART_RX0', 'RX0'), ('TP12', 'USBJ_DP', 'IO34 USB-JTAG D+'), ('TP13', 'USBJ_DM', 'IO33 USB-JTAG D-'),
                      ('TP14', 'ESP_EN', 'EN'), ('TP15', 'BOOT', 'BOOT')]:
     add(ref, nm, 'TP', 'TestPoint:TestPoint_Pad_D1.0mm', {'1': net}, 'Espressif', nobom=True, desc='Testpunkt Programmierung/Debug')
+# WM8523 braucht MCLK (128..1152 x fs, kein PLL). S31 erzeugt MCLK aus dem Digitaltakt (Bruchteilsteiler, kein Audio-PLL erwaehnt -> Jitter).
+# Option: Oszillator (22,5792 MHz fuer 44,1/88,2 kHz bzw. 24,576 MHz fuer 48/96 kHz), per 0-Ohm-Bruecke statt S31-MCLK.
+res('R210', '0', 'DAC_MCK_MCU', 'DAC_MCK', 'MCLK-Quelle S31 (bestueckt)', src='angepasst')
+res('R211', '0', 'MCK_OSC', 'DAC_MCK', 'MCLK-Quelle Oszillator (DNP); R210 dann entfernen', src='neu', dnp=True)
+add('X1', 'Osc 22.5792MHz', 'X', 'Oscillator:Oscillator_SMD_Abracon_ASE-4Pin_3.2x2.5mm', {'1': '3V3', '2': 'GND', '3': 'MCK_OSC', '4': '3V3'}, 'neu', dnp=True, names={'1': 'EN', '2': 'GND', '3': 'OUT', '4': 'VDD'},
+    mpn='(Typ nach Abtastraten-Familie waehlen, z. B. 22,5792 MHz)', pkg='3,2 x 2,5', desc='Optionaler MCLK-Oszillator, 3V3, nicht bestueckt (DNP)')
+cap('C211', '100nF', '3V3', 'GND', 'Oszillator VDD (DNP)', dnp=True)
 # Pull-ups fuer Signale, die Tangara auf dem SAMD21/PCA8575 hatte oder die das Klickrad nicht bestueckt
 res('R120', '2.2k', '3V3', 'SDA', 'I2C Pull-up (Klickrad-Modul bestueckt keine)')
 res('R121', '2.2k', '3V3', 'SCL', 'I2C Pull-up')

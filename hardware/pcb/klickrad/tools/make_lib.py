@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Erzeugt die Projektbibliothek: lib/Klickrad.pretty (Touch-Elektroden, Befestigungsloch) und lib/Klickrad.kicad_sym (AT42QT2120 von Tangara)."""
-import os, re, sys
+import os, re, sys, math
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import wheel_geometry as G
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -12,15 +12,13 @@ os.makedirs(OUT, exist_ok=True)
 def pad_points():
     b = G.build()
     pts = {}
-    want = {0: 206.3, 1: 326.3, 2: 86.3}
-    for k in range(3):
-        pts[('W', k)] = G.inner_point(b['wheel'][k], 6.9, 8.4, want[k])
+    want = {0: 172.0, 1: 10.0, 2: 55.0}      # Winkel der Durchkontaktierungen (Frontansicht)
+    taken = []
+    for k in (1, 0, 2):
+        pts[('W', k)] = G.inner_point(b['wheel'][k], 6.5, 12.0, want[k], margin=0.33, span=100, taken=taken)
         assert pts[('W', k)], k
-    pts[('B', 0)] = (-2.2, 1.9)                       # Mitteltaste: Via links oben neben dem Mittelpunkt (U1 sitzt darunter)
-    for i, a in enumerate(b['guard']):
-        c = a.centroid
-        ang = (round(__import__('math').degrees(__import__('math').atan2(c.y, c.x))) % 360)
-        pts[('G', i)] = None
+        taken.append(pts[('W', k)])
+    pts[('B', 0)] = (0.45, 3.1)                       # Mitteltaste: Via oberhalb von U1/R4 (r = 2,98 < 3,5 - 0,3)
     return pts
 
 def poly_pad(num, cx, cy, poly, name_layer='F.Cu'):
@@ -48,10 +46,9 @@ def make(vias):
     cx, cy = vias[('B', 0)]
     t += poly_pad(1, cx, cy, b['button'])
     open(OUT + '/qtouch-button.kicad_mod', 'w').write(t + ')\n')
-    t = fp_head('qtouch-guard', 'Guard-Kanal: drei Kreisbogen-Flächen außen zwischen den Befestigungslöchern (Tangara: Ring r = 22,2 mm), alle Pads Nr. 1')
-    for i, a in enumerate(b['guard']):
-        cx, cy = vias[('G', i)]
-        t += poly_pad(1, cx, cy, a)
+    t = fp_head('qtouch-guard', 'Guard-Kanal: drei Kreisbögen außen zwischen den Befestigungslöchern, innen durch zwei schmale Stege verbunden (Tangara: Ring r = 22,2 mm), ein Pad')
+    cx, cy = vias[('G', 0)]
+    t += poly_pad(1, cx, cy, b['guard'])
     open(OUT + '/qtouch-guard.kicad_mod', 'w').write(t + ')\n')
     open(OUT + '/MountingHole_2.2mm_NPTH.kicad_mod', 'w').write('''(footprint "MountingHole_2.2mm_NPTH"
 	(version 20241229)
@@ -85,14 +82,9 @@ def make_symbols():
 
 if __name__ == '__main__':
     import json
-    # Guard-Vias: Mitte jedes Bogens (Stecker-Bogen weicht nach 240 Grad aus)
-    import math
-    b = G.build(); vias = {}
-    vias = {k: v for k, v in pad_points().items() if v}
-    for i, a in enumerate(b['guard']):
-        c = a.centroid; ang = math.degrees(math.atan2(c.y, c.x)) % 360
-        if abs(ang - 270) < 20: ang = 238.0
-        vias[('G', i)] = (round(14.45 * math.cos(math.radians(ang)), 2), round(14.45 * math.sin(math.radians(ang)), 2))
-        assert a.contains(__import__('shapely.geometry', fromlist=['Point']).Point(*vias[('G', i)]))
+    b = G.build(); vias = {k: v for k, v in pad_points().items() if v}
+    from shapely.geometry import Point
+    vias[('G', 0)] = (round(14.2 * math.cos(math.radians(150)), 2), round(14.2 * math.sin(math.radians(150)), 2))     # Guard-Via oben links (nahe R5)
+    assert b['guard'].contains(Point(*vias[('G', 0)]))
     json.dump({f'{k[0]}{k[1]}': v for k, v in vias.items()}, open(os.path.join(ROOT, 'tools', 'vias_touch.json'), 'w'), indent=1)
     make(vias); make_symbols(); __import__("subprocess").run(["kicad-cli", "sym", "upgrade", os.path.join(ROOT, "lib", "Klickrad.kicad_sym")], check=False, capture_output=True); print('ok', vias)

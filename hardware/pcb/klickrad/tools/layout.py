@@ -28,7 +28,7 @@ if MODE == 'place':
 
     # ---- Touch-Flächen vorn (Footprints liegen in Platinenkoordinaten) und ihre Durchkontaktierungen
     for ref in ('SW1', 'SW2', 'SW3'): place(PARTS[ref], 0, 0, 'F', 0)
-    for key, net_ in (('W0', 'E0'), ('W1', 'E1'), ('W2', 'E2'), ('B0', 'EB'), ('G0', 'EG'), ('G1', 'EG'), ('G2', 'EG')):
+    for key, net_ in (('W0', 'E0'), ('W1', 'E1'), ('W2', 'E2'), ('B0', 'EB'), ('G0', 'EG')):
         via(net_, *VIAS[key])
 
     # ---- Bauteile (Rückseite, Koordinaten Frontansicht)
@@ -36,18 +36,12 @@ if MODE == 'place':
     for ref, (x, y, r) in POS.items():
         place(PARTS[ref], x, y, 'B', r)
     for fp in board.GetFootprints(): fp.Value().SetVisible(False); fp.Reference().SetVisible(False)
+    for net_, lay, pts_, w_ in PRE_TRACKS: track(net_, B_CU if lay == 'B' else F_CU, pts_, w_)
+    for net_, x_, y_ in PRE_VIAS: via(net_, x_, y_)
 
     # ---- Zonen: GND als Gitter (Tangara-Werte) auf B.Cu, LRA-Freifläche als Bauteil-Sperrzone, Randzone ohne Leiterbahnen
-    z = zone(B_CU, disc(15.7), 'GND', 0, hatch=True)
-    z.SetMinThickness(FromMM(0.127)); z.SetLocalClearance(FromMM(0.2))
-    z.SetHatchThickness(FromMM(0.127)); z.SetHatchGap(FromMM(1.016)); z.SetHatchSmoothingLevel(2); z.SetHatchSmoothingValue(0.1)
     zone(B_CU, [(LRA[0], LRA[1]), (LRA[2], LRA[1]), (LRA[2], LRA[3]), (LRA[0], LRA[3])], '', 0, keepout=True)
-    kz = zone(F_CU, disc(17.0), '', 0, keepout=True, hole=disc(15.5), layers=[F_CU, B_CU])
-    kz.SetDoNotAllowFootprints(False); kz.SetDoNotAllowTracks(True); kz.SetDoNotAllowVias(True)
-    # Vorderseite: keine Leiterbahnen oder Vias des Routers außerhalb des Innenkreises r < 6 (Rad und Guard bleiben frei von fremdem Kupfer)
-    fz = zone(F_CU, disc(15.5), '', 0, keepout=True, hole=disc(6.0), layers=[F_CU])
-    fz.SetDoNotAllowFootprints(False); fz.SetDoNotAllowTracks(True); fz.SetDoNotAllowVias(True)
+    # (Rand- und Vorderseiten-Sperrzonen entfallen: Specctra kennt keine Löcher in Sperrflächen; Prüfung per DRC und tools/pruefe_vorderseite.py)
     board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
 else:
-    if not os.environ.get('NOSES'): pcbnew.ImportSpecctraSES(board, os.path.join(TMP, 'k.ses'))
     exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'finish.py')).read())

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Erzeugt lib/Hauptplatine.pretty mit den Footprints, die nicht in den KiCad-Standardbibliotheken stehen.
 
-1. XIAO-ESP32-S3-Plus-SMD
-   Quelle: Seeed Studio "New_XIAO_Series_Footprints.zip" (XIAO-ESP32-S3-Plus-SMD.kicad_mod), Pad-Positionen 1:1
+1. S31-ESP32-S3-Plus-SMD
+   Quelle: Seeed Studio "New_S31_Series_Footprints.zip" (XIAO-ESP32-S3-Plus-SMD.kicad_mod), Pad-Positionen 1:1
    uebernommen (Kopie der Originaldatei in quellen/). Aenderungen gegenueber dem Original:
    * nur die Randpads 1-23 und die Akkupads 32 (VBAT) / 33 (GND) bleiben; Pads 24-31 (acht Test-/USB-/JTAG-Pads
      auf der Modulunterseite) und Pad 34 (Zweck unklar) entfallen: sie werden nicht verloetet
@@ -69,7 +69,7 @@ def fpc34():
 def x2qfn():
     s = HEAD % ('X2QFN-12-RWB', 'TI RWB0012A X2QFN-12 1,6 x 1,6 mm, Raster 0,4 mm; Landmuster nach TI-Beispiel (Datenblatt TUSB320LAI, Abschnitt Mechanical)', 'X2QFN 12 TI RWB')
     s += prop('Reference', 'REF**', 0, -1.7, 'F.SilkS', size=0.6) + prop('Value', 'X2QFN-12-RWB', 0, 1.7, 'F.Fab', size=0.6)
-    s += '\t(attr smd)\n'
+    s += '\t(attr smd)\n\t(clearance 0.09)\n'
     s += pad(1, 0.2, -0.4, 0.2, 0.7, 'rect') + pad(2, -0.2, -0.4, 0.2, 0.7, 'rect')
     for i, y in enumerate((-0.6, -0.2, 0.2, 0.6)):
         s += pad(3 + i, -0.65, y, 0.5, 0.2, 'rect')

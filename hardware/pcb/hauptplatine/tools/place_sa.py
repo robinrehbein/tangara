@@ -79,21 +79,40 @@ movable = [r for r in PARTS if r not in FIXED and PARTS[r]['kind'] != 'H']
 state = {}
 for r, st in FIXED.items(): state[r] = tuple(st)
 
+TALL_TOP = {'U15', 'J1', 'J4', 'J6', 'J7', 'J21', 'SW1', 'U17', 'X1'}   # Hoehe > 1,45 mm: nicht unter das Display
+def is_flat(ref):
+    """Bauteilhoehe <= 1,45 mm -> darf unter das Display (Display-Auflage 1,6 mm ueber der Platinenoberseite, Gehaeuse-Aenderung)."""
+    p = PARTS[ref]
+    if ref in TALL_TOP or p['kind'] == 'H': return False
+    if p['kind'] == 'C' and p.get('pkg') in ('1206', '1210'): return False
+    return True
+FLAT = {r for r in PARTS if is_flat(r)}
 # Top-Seite: nur flache Teile, nur im freien Streifen unter dem Display
 TOP_OK_PKG = ('0402', '0603', 'TP', 'IC_FLAT')
 def top_allowed(ref):
-    p = PARTS[ref]
-    if p['kind'] in ('R', 'C') and p.get('pkg') in ('0402', '0603', '0805'): return True
-    if p['kind'] == 'TP': return True
-    if ref in layout.TOP_OK: return True
-    return False
+    return ref in FLAT or ref == 'J20'
 TOPABLE = {r for r in movable if top_allowed(r)}
 
 BOARD = layout.board_poly()
-BOARD_IN = BOARD.buffer(-0.5)
+BOARD_IN = BOARD.buffer(-0.7)
 FORB = layout.forbidden_b()            # Bauteile unten verboten (Aussparung, Naben ...)
 FORB_T = layout.forbidden_t()          # oben verboten (Display-Bereich, Aussparung ...)
-PFORB, PFORB_T = prep(FORB), prep(FORB_T)
+FORB_TF = layout.forbidden_t(flat=True)   # flache Teile (<= 0,6 mm) duerfen unter das Display
+def antenna_keepout():
+    f = pcbnew.FootprintLoad(os.path.join(ROOT, 'lib', 'Hauptplatine.pretty'), 'ESP32-S31-WROOM-3')
+    polys = []
+    for z in f.Zones():
+        o = z.Outline(); pts = []
+        for i in range(o.OutlineCount()):
+            ch = o.Outline(i)
+            pts = [to_view(FIXED['U15'], pcbnew.ToMM(ch.CPoint(k).x), pcbnew.ToMM(ch.CPoint(k).y)) for k in range(ch.PointCount())]
+            if len(pts) >= 3: polys.append(Polygon(pts).buffer(0.2))
+    return unary_union(polys)
+ANT = antenna_keepout()
+print('Antennen-Keepout-Flaeche', round(ANT.area, 1), [round(v, 1) for v in ANT.bounds])
+FORB, FORB_T, FORB_TF = unary_union([FORB, ANT]), unary_union([FORB_T, ANT]), unary_union([FORB_TF, ANT])
+PFORB, PFORB_T, PFORB_TF = prep(FORB), prep(FORB_T), prep(FORB_TF)
+
 BATT = box(*layout.BATT)
 PBATT = prep(BATT)
 TALL = layout.TALL                     # Refs, die nicht unter den Akku duerfen
@@ -119,7 +138,9 @@ def part_cost_static(ref, st):
         if PFORB.intersects(r): pen += 50 + 20 * r.intersection(FORB).area
         if ref in TALL and PBATT.intersects(r): pen += 50 + 20 * r.intersection(BATT).area
     else:
-        if PFORB_T.intersects(r): pen += 50 + 20 * r.intersection(FORB_T).area
+        if ref in FLAT:
+            if PFORB_TF.intersects(r): pen += 50 + 20 * r.intersection(FORB_TF).area
+        elif PFORB_T.intersects(r): pen += 50 + 20 * r.intersection(FORB_T).area
         if ref not in TOPABLE and ref not in FIXED: pen += 100
     if PARTS[ref].get('tht') and not tht_ok(ref, st): pen += 80
     return pen
@@ -138,6 +159,9 @@ def ncost():
             vx, vy = to_view(st, x, y)
             nets.setdefault(nm, []).append((vx, vy))
     tot = 0.0
+    mc = state['U15'][:2]
+    for nm in netlist.GPIO_SIGNALS:
+        if nm in nets: nets[nm].append(mc)
     for nm, pts in nets.items():
         if len(pts) < 2: continue
         xs = [a for a, b in pts]; ys = [b for a, b in pts]
@@ -157,13 +181,30 @@ def anchor_cost(ref):
 
 ANCH = {r: anchor_of(r) for r in movable if anchor_of(r)}
 GAP = 0.25
+def _tht_rects(ref, st):
+    out = []
+    for num, x, y, tht, w, h in fpgeom(SPEC[ref])['pads']:
+        if tht:
+            vx, vy = to_view(st, x, y); m = max(w, h) / 2 + 0.3
+            out.append((vx - m, vy - m, vx + m, vy + m))
+    return out
+_THT = {r: any(p[3] for p in fpgeom(SPEC[r])['pads']) for r in PARTS}
+def cross_tht(a, sa, b, sb):
+    """THT-Pads von a (kommen auf der Gegenseite heraus) duerfen nicht in Bauteil b liegen."""
+    if not _THT[a]: return 0.0
+    rb = rect_of(SPEC[b], sb)
+    pen = 0.0
+    for (x0, y0, x1, y1) in _tht_rects(a, sa):
+        if min(x1, rb[2]) - max(x0, rb[0]) > 0 and min(y1, rb[3]) - max(y0, rb[1]) > 0: pen += 40
+    return pen
 def overlap_pen(ref, st):
     r0 = rect_of(SPEC[ref], st)
     pen = 0.0
     for o, so in state.items():
         if o == ref: continue
-        if so[3] != st[3] and not (PARTS[o].get('tht') or PARTS[ref].get('tht')): continue
-        if so[3] != st[3]: continue
+        if so[3] != st[3]:
+            pen += cross_tht(ref, st, o, so) + cross_tht(o, so, ref, st)
+            continue
         r1 = rect_of(SPEC[o], so)
         dx = min(r0[2], r1[2] + 0) - max(r0[0], r1[0]) + GAP
         dy = min(r0[3], r1[3]) - max(r0[1], r1[1]) + GAP
@@ -178,6 +219,12 @@ def total_cost():
         c += anchor_cost(r)
     return c
 
+if os.environ.get('DBG'):
+    for r in FIXED:
+        st = state[r]; x0, y0, x1, y1 = rect_of(SPEC[r], st); rr = box(x0, y0, x1, y1)
+        print(r, st, 'rect', [round(v, 1) for v in (x0, y0, x1, y1)], 'ausserhalb', round(rr.difference(BOARD_IN).area, 1),
+              'forb', round(rr.intersection(FORB).area, 1) if st[3] == 'B' else round(rr.intersection(FORB_T).area, 1), 'batt', round(rr.intersection(BATT).area, 1), 'tht_ok', tht_ok(r, st))
+    sys.exit()
 # Startzustand: zufaellig in der Platine
 def rand_state(ref):
     for _ in range(200):
@@ -210,6 +257,7 @@ def local_cost(ref, st):
             po = PARTS[o]
             for num, x, y, tht, w, h in fpgeom(SPEC[o])['pads']:
                 if po['pins'].get(num) == nm: pts.append(to_view(so, x, y))
+        if nm in netlist.GPIO_SIGNALS: pts.append(tuple(state['U15'][:2]))
         if len(pts) > 1:
             xs = [a for a, b in pts]; ys = [b for a, b in pts]
             c += NETW(nm) * ((max(xs) - min(xs)) + (max(ys) - min(ys)))
@@ -222,7 +270,10 @@ def local_cost(ref, st):
 # NETZ-INDEX fuer Geschwindigkeit
 t0 = time.time()
 N = int(os.environ.get('ITER', '60000'))
-T0, T1 = 12.0, 0.05
+T0, T1 = float(os.environ.get('T0', '12.0')), 0.05
+if os.environ.get('INIT'):
+    for r_, v_ in json.load(open(os.environ['INIT'])).items():
+        if r_ in state and r_ not in FIXED: state[r_] = (v_[0], v_[1], v_[2], v_[3])
 cur = None
 for it in range(N):
     T = T0 * (T1 / T0) ** (it / N)
@@ -253,6 +304,7 @@ for it in range(N):
     if c1 <= c0 or random.random() < math.exp(-(c1 - c0) / T):
         state[ref] = new
     if it % 10000 == 0:
+        json.dump({r: [round(v[0], 2), round(v[1], 2), v[2], v[3]] for r, v in state.items()}, open((os.environ.get('OUT') or 'placement.json') + '.ckpt', 'w'))
         print(f'it {it} T {T:.2f} total {total_cost():.0f}  ({time.time()-t0:.0f}s)', flush=True)
 
 # Bericht
@@ -262,4 +314,4 @@ for r in state:
     if ps > 0 or op > 0:
         bad += 1; print('PROBLEM', r, round(ps), round(op), [round(v, 1) if isinstance(v, float) else v for v in state[r]])
 print('Teile mit Problem:', bad, 'Gesamt', round(total_cost()))
-json.dump({r: [round(s[0], 2), round(s[1], 2), s[2], s[3]] for r, s in state.items()}, open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'placement.json'), 'w'), indent=0)
+json.dump({r: [round(s[0], 2), round(s[1], 2), s[2], s[3]] for r, s in state.items()}, open(os.environ.get('OUT') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'placement.json'), 'w'), indent=0)

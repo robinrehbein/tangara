@@ -147,11 +147,11 @@ def conn_pins(ref, pos, flag_ref=None):
 place('U1', (115.0, 105.0)); conn_pins('U1', (115.0, 105.0), flag_ref='U1')
 text('U1 AT42QT2120 (VQFN-20, Comms-Modus): MODE an GND, I2C 0x1C, KEY0-2 = Wheel, KEY3 = Mitteltaste, KEY4 = Guard', 40, 62, 1.5, True)
 text('Wie Tangara: kein Cs noetig (QT2120-Datenblatt: no external Cs required), RESET ueber 10k an 3V3, Exposed Pad ohne Anschluss', 40, 68, 1.27)
-text('Pins 1, 2, 16-20 (KEY5-KEY11) unbenutzt. CHANGE ist open drain: Pull-up auf der MCU-Seite (R10 nur fuer den Einzeltest).', 40, 73, 1.27)
+text('Pins 1, 2, 16-20 (KEY5-KEY11) unbenutzt. CHANGE ist open drain: Pull-up auf der MCU-Seite (wie bei Tangara: interner Pull-up der MCU).', 40, 73, 1.27)
 # Entkopplung/Reset
-for i, ref in enumerate(('C1', 'C2', 'R6', 'R10')):
+for i, ref in enumerate(('C1', 'C2', 'R6')):
     pos = (60.0 + i * 15.24, 160.0); place(ref, pos); conn_pins(ref, pos)
-text('U1 Entkopplung (0,1 uF direkt am Pin) / RESET-Pull-up / CHANGE-Pull-up (DNP)', 58, 150, 1.27, True)
+text('U1 Entkopplung (0,1 uF direkt am Pin) / RESET-Pull-up', 58, 150, 1.27, True)
 # Serienwiderstaende der Elektroden
 for i, ref in enumerate(('R1', 'R2', 'R3', 'R4', 'R5')):
     pos = (60.0 + i * 15.24, 215.0); place(ref, pos); conn_pins(ref, pos)
