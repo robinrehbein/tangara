@@ -2,11 +2,10 @@
 """Handnachbesserung der Router-Ausgabe (tools/routed.kicad_pcb): fehlende Teilstücke von Hand ergänzen. Aufruf: fix_routing.py datei.kicad_pcb"""
 import sys, pcbnew
 from pcbnew import FromMM, VECTOR2I
-FIX = [   # Stücke
-    ('3V3', 'B.Cu', [(0.45, -5.11), (0.95, -5.05)], 0.2),           # R6-Pad 1 -> Via
-    ('3V3', 'F.Cu', [(0.95, -5.05), (1.95, -5.05)], 0.2),           # Brücke auf F.Cu über das SDA-Signal (Lücke im Router-Ergebnis)
+FIX = [   # (Netz, Lage, Punkte, Breite)
+    ('3V3', 'B.Cu', [(9.9, -4.55), (9.9, -6.0), (9.5, -7.35)], 0.2),    # Lücke im Router-Ergebnis zwischen U2-Pin 10 und C3
 ]
-VIAS = [('3V3', 0.95, -5.05), ('3V3', 1.95, -5.05)]
+VIAS = []
 b = pcbnew.LoadBoard(sys.argv[1])
 for net, lay, pts, w in FIX:
     for a, c in zip(pts[:-1], pts[1:]):
