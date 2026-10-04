@@ -64,6 +64,7 @@ Die AliExpress-Teile sind meist ohne Datenblatt. Typische Bauformen und Resonanz
 - Frequenz und Spannung ungeprüft für die tatsächlich gelieferten Teile. DRV2605L: Auto-Kalibrierung ausführen, Nennspannung und Resonanz in die Register eintragen.
 - Zum Einbau auf der Rückseite des Ø-32-mm-Moduls (Bauteile max. 1,5 mm plus LRA): Höhe 3,0–3,5 mm einplanen; Fläche aller drei Typen passt in Ø 32.
 - Vorsicht bei „Z-Achse“ / runden Münz-LRA (z. B. Ø 10 × 4 mm): schwingen senkrecht zur Platine und wirken anders.
+- **Ergänzung nach der Dünnbau-Studie:** Das Endgerät hat unter dem Klickrad nur Platz für einen LRA bis ca. 3,0 mm (mit Ausschnitt in der Hauptplatine) bzw. ca. 1,0 mm (ohne). Damit der Prototyp genau das testet, zusätzlich einen **flachen LRA** (z. B. Vybronics VLV101040J, 10 × 10 × 1,0 mm, Typ und Achse prüfen; AliExpress: `LRA 1010 flat`) und einen **X-Achsen-LRA ≤ 3,0 mm** (z. B. ca. 12 × 6 × 2,0 mm) mitbestellen. Mehrkosten ca. 5–10 €.
 
 ## Hinweise zu Verbrauchsmaterial
 

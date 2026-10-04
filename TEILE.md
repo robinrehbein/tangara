@@ -33,7 +33,7 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 - Haptik-Treiber: DRV2605L (I²C, Adresse 0x5A fest), LRA-Modus
 - Mitteltaste: nach GND, Pull-up auf der MCU-Seite
 
-**Änderung für das dünne Endgerät (Entscheidung nach `docs/DUENNBAU.md`):** JST-SH ist mit ca. 4 mm zu hoch. Klickrad v2 bekommt einen **flachen 6-poligen FPC/FFC-Stecker (≤ 1,2 mm)** mit derselben Pinbelegung; am Waveshare-Prototyp über eine FFC-Breakout-Platine. Mitteltaste v2 **kapazitiv** (AT42QT2120 Key 3), Pin 6 wird Reserve. Platine 0,8 mm, Rückseitenbauteile ≤ 0,8 mm, flacher LRA (z. B. Vybronics VL120628H, 12 × 6 × 2,0, prüfen), Abdeckung 0,6-mm-FR4.
+**Änderung für das dünne Endgerät (Entscheidung nach `docs/DUENNBAU.md`):** JST-SH ist mit ca. 4 mm zu hoch. Klickrad v2 und Hauptplatine bekommen den **FFC-Stecker Molex 503480-0600** (0,5 mm, 6-pol., ca. 1,0 mm hoch, Bottom Contact) mit derselben Pinbelegung; Kabel Standard-FFC Typ A, sofern die Ausrichtung passt. Der LRA-Ausschnitt in der Hauptplatine ist Standard (LRA bis 3,0 mm); am Waveshare-Prototyp über eine FFC-Breakout-Platine. Mitteltaste v2 **kapazitiv** (AT42QT2120 Key 3), Pin 6 wird Reserve. Platine 0,8 mm, Rückseitenbauteile ≤ 0,8 mm, flacher LRA (z. B. Vybronics VL120628H, 12 × 6 × 2,0, prüfen), Abdeckung 0,6-mm-FR4.
 
 **Stecker v1: JST-SH 1,0 mm, 6-polig** (v2: FPC/FFC, gleiche Belegung)
 
