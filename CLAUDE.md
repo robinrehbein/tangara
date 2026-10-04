@@ -36,3 +36,4 @@ Erst lesen: `KONZEPT.md` (Entscheidungen), `PLAN.md` (Phasen), `TEILE.md` (Teile
 - Maße und Schnittstellen nur in `TEILE.md` ändern und dort begründen
 - Was nicht geprüft werden konnte (Hardware-Test, DRC ohne KiCad), ausdrücklich als ungeprüft kennzeichnen
 - Offene Entscheidungen in `KONZEPT.md` unter „Offene Punkte“ eintragen statt zu raten
+- Agenten: **Sonnet, wo möglich** (Umsetzung, Recherche, CAD, Firmware, Routing); **Opus, wo nötig** (kritische Design-Reviews vor einer Bestellung, schwierige Architektur- oder Fehleranalysen)
