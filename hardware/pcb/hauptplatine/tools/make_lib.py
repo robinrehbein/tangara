@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Erzeugt lib/Tangara.pretty mit den Footprints, die nicht in den KiCad-Standardbibliotheken stehen.
+"""Erzeugt lib/Hauptplatine.pretty mit den Footprints, die nicht in den KiCad-Standardbibliotheken stehen.
 
 1. XIAO-ESP32-S3-Plus-SMD
    Quelle: Seeed Studio "New_XIAO_Series_Footprints.zip" (XIAO-ESP32-S3-Plus-SMD.kicad_mod), Pad-Positionen 1:1
@@ -17,7 +17,7 @@
 """
 import os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, 'lib', 'Tangara.pretty')
+OUT = os.path.join(ROOT, 'lib', 'Hauptplatine.pretty')
 os.makedirs(OUT, exist_ok=True)
 
 HEAD = '(footprint "%s"\n\t(version 20241229)\n\t(generator "tangara_make_lib")\n\t(generator_version "9.0")\n\t(layer "F.Cu")\n\t(descr "%s")\n\t(tags "%s")\n'
@@ -43,39 +43,6 @@ def pad(num, x, y, w, h, shape='roundrect', rr=0.1, rot=0, extra=''):
     return (f'\t(pad "{num}" smd {shape}\n\t\t(at {x} {y}{" " + str(rot) if rot else ""})\n\t\t(size {w} {h})\n'
             f'\t\t(layers "F.Cu" "F.Mask" "F.Paste")\n{r}{extra}\t)\n')
 
-# ---------------------------------------------------------------- XIAO
-def xiao():
-    s = HEAD % ('XIAO-ESP32-S3-Plus-SMD', 'Seeed XIAO ESP32S3 Plus als SMD-Modul (Randpads + Akkupads), Quelle: Seeed New_XIAO_Series_Footprints',
-                'XIAO ESP32S3 Plus Seeed')
-    s += prop('Reference', 'REF**', 0, -10.5, 'F.SilkS') + prop('Value', 'XIAO-ESP32-S3-Plus-SMD', 0, 10.5, 'F.Fab')
-    s += prop('Datasheet', 'https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/', 0, 0, 'F.Fab', True)
-    s += '\t(attr smd)\n'
-    # Randpads (Seeed: 2,032 x 0,95 rotiert; hier direkt als 0,95 x 2,032)
-    xs = [7.62, 5.08, 2.54, 0, -2.54, -5.08, -7.62]
-    for i, x in enumerate(xs):                      # Pads 1-7  (D0..D6)  y = -8,255
-        s += pad(i + 1, x, -8.255, 0.95, 2.032)
-    for i, x in enumerate(xs):                      # Pads 8-14 (D7..D10, 3V3, GND, 5V)  x laeuft von -7,62 nach +7,62
-        s += pad(8 + i, -x, 8.255, 0.95, 2.032)
-    for i, x in enumerate((6.35, 3.81, 1.27, -1.27, -3.81, -6.35)):   # Pads 15-20 (D11..D16)  y = -8,655
-        s += pad(15 + i, x, -8.655, 0.95, 1.232)
-    for i, x in enumerate((-6.35, -3.81, -1.27)):   # Pads 21-23 (D19, D18, D17)  y = +8,655
-        s += pad(21 + i, x, 8.655, 0.95, 1.232)
-    # Akkupads auf der Modulunterseite (Seeed-PCB: BAT+ -0,99/5,03 und GND 1,01/5,03, je 2,03 x 1,02, im Modulrahmen)
-    s += pad(32, -5.03, -0.994, 2.2, 1.1)
-    s += pad(33, -5.03, 1.006, 2.2, 1.1)
-    # Umriss Modul
-    s += rect(-10.414, -8.89, 10.541, 8.89, 'F.Fab', 0.1)
-    s += rect(-10.6, -9.5, 10.75, 9.5, 'F.CrtYd', 0.05)
-    s += line(10.541, -4.5, 12.05, -4.0, 'F.Fab') + line(12.05, -4.0, 12.05, 4.0, 'F.Fab') + line(12.05, 4.0, 10.541, 4.5, 'F.Fab')
-    s += rect(10.6, -4.6, 12.3, 4.6, 'F.CrtYd', 0.05)
-    s += line(-10.5, -9.3, -10.5, -7.0, 'F.SilkS', 0.15) + line(-10.5, 9.3, -10.5, 7.0, 'F.SilkS', 0.15)
-    s += line(10.75, -9.3, 10.75, -7.0, 'F.SilkS', 0.15) + line(10.75, 9.3, 10.75, 7.0, 'F.SilkS', 0.15)
-    s += text('USB-C >', 8.0, 0, 'F.SilkS', 0.8) + text('1', 7.62, -10.3, 'F.SilkS', 0.8)
-    s += text('BAT+', -5.03, -3.0, 'F.SilkS', 0.6) + text('BAT-', -5.03, 3.0, 'F.SilkS', 0.6)
-    s += text('U.FL', -8.75, -3.44, 'F.Fab', 0.6)
-    s += ')\n'
-    return s
-
 # ---------------------------------------------------------------- FPC-Buchse
 def fpc34():
     s = HEAD % ('FPC-AXE534124', 'Panasonic AXE534124 34 Pol 0,4 mm Board-to-FPC-Buchse, Landmuster ABGELEITET (ungeprueft)',
@@ -97,7 +64,41 @@ def fpc34():
     s += ')\n'
     return s
 
-for name, fn in (('XIAO-ESP32-S3-Plus-SMD', xiao), ('FPC-AXE534124', fpc34)):
+
+# ---------------------------------------------------------------- X2QFN-12 (TI RWB0012A, TUSB320)
+def x2qfn():
+    s = HEAD % ('X2QFN-12-RWB', 'TI RWB0012A X2QFN-12 1,6 x 1,6 mm, Raster 0,4 mm; Landmuster nach TI-Beispiel (Datenblatt TUSB320LAI, Abschnitt Mechanical)', 'X2QFN 12 TI RWB')
+    s += prop('Reference', 'REF**', 0, -1.7, 'F.SilkS', size=0.6) + prop('Value', 'X2QFN-12-RWB', 0, 1.7, 'F.Fab', size=0.6)
+    s += '\t(attr smd)\n'
+    s += pad(1, 0.2, -0.4, 0.2, 0.7, 'rect') + pad(2, -0.2, -0.4, 0.2, 0.7, 'rect')
+    for i, y in enumerate((-0.6, -0.2, 0.2, 0.6)):
+        s += pad(3 + i, -0.65, y, 0.5, 0.2, 'rect')
+    s += pad(7, -0.2, 0.4, 0.2, 0.7, 'rect') + pad(8, 0.2, 0.4, 0.2, 0.7, 'rect')
+    for i, y in enumerate((0.6, 0.2, -0.2, -0.6)):
+        s += pad(9 + i, 0.65, y, 0.5, 0.2, 'rect')
+    s += rect(-0.8, -0.8, 0.8, 0.8, 'F.Fab', 0.1) + rect(-1.1, -1.1, 1.1, 1.1, 'F.CrtYd', 0.05)
+    s += line(-1.15, -0.95, -1.15, -0.45, 'F.SilkS', 0.12)   # Pin-1-Seite (oben rechts liegt Pin 1; Marke links oben)
+    s += ')\n'
+    return s
+
+import shutil
+def copy_tangara():
+    """Footprints aus der Tangara-Hardware (CERN-OHL-S-2.0) unveraendert uebernehmen."""
+    for fn in ('CUI_SJ-3506-SMT', 'GCT_USB4510-03-1-A_REVA', 'SON40P300X300X80-13N', 'SOT65P210X110-6N'):
+        shutil.copy(os.path.join(ROOT, 'quellen', fn + '.kicad_mod'), os.path.join(OUT, fn + '.kicad_mod'))
+
+def copy_espressif():
+    """ESP32-S31-WROOM-3 aus github.com/espressif/kicad-libraries (CC-BY-SA 4.0 mit Ausnahme fuer Designs); KiCad-10-Format -> KiCad-9-Format."""
+    src = os.path.join(ROOT, 'quellen', 'Espressif_ESP32-S31-WROOM-3_original.kicad_mod')
+    t = open(src).read()
+    t = t.replace('(version 20260206)', '(version 20241229)').replace('(generator_version "10.0")', '(generator_version "9.0")')
+    t = re.sub(r'\n\t\(duplicate_pad_numbers_are_jumpers[^\n]*', '', t)
+    t = re.sub(r'\n\t\t\(unlocked yes\)', '', t)
+    open(os.path.join(OUT, 'ESP32-S31-WROOM-3.kicad_mod'), 'w').write(t)
+
+import re
+for name, fn in (('FPC-AXE534124', fpc34), ('X2QFN-12-RWB', x2qfn)):
     with open(os.path.join(OUT, name + '.kicad_mod'), 'w') as f:
         f.write(fn())
-print('Footprints geschrieben:', os.listdir(OUT))
+copy_tangara(); copy_espressif()
+print('Footprints geschrieben:', sorted(os.listdir(OUT)))

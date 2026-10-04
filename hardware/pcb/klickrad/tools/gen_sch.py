@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Erzeugt klickrad.kicad_sch (KiCad 9) aus netlist.py. Symbole werden aus den KiCad-Standardbibliotheken eingebettet."""
+"""Erzeugt klickrad.kicad_sch (KiCad 9) aus netlist.py. Symbole werden aus den KiCad-Standardbibliotheken und lib/Klickrad.kicad_sym eingebettet."""
 import math, os, sys, uuid
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import netlist, sx
@@ -10,9 +10,10 @@ ROOT_UUID = U('root')
 SYMDIR = '/usr/share/kicad/symbols/'
 
 def extract(lib, name):
-    t = open(SYMDIR + lib + '.kicad_sym').read()
-    key = '\n\t(symbol "%s"' % name
-    i = t.index(key) + 1
+    t = open(sx.SYMFILE(lib)).read()
+    import re
+    i = re.search(r'\n[ \t]*\(symbol "%s"' % re.escape(name), t).start() + 1
+    while t[i] in ' \t': i += 1
     d, k = 0, i
     while True:
         c = t[k]
@@ -36,6 +37,7 @@ def wire(a, b): w(f'\t(wire (pts (xy {fmt(a[0])} {fmt(a[1])}) (xy {fmt(b[0])} {f
 def junction(p): w(f'\t(junction (at {fmt(p[0])} {fmt(p[1])}) (diameter 0) (color 0 0 0 0) (uuid "{uid()}"))')
 def text(s, x, y, size=1.27, bold=False):
     w(f'\t(text "{s}" (exclude_from_sim no) (at {fmt(x)} {fmt(y)} 0) (effects (font (size {size} {size}){" bold" if bold else ""}) (justify left bottom)) (uuid "{uid()}"))')
+def noconnect(p): w(f'\t(no_connect (at {fmt(p[0])} {fmt(p[1])}) (uuid "{uid()}"))')
 def label(name, p, ang):
     just = {0: 'left', 180: 'right', 90: 'left', 270: 'right'}[ang]
     w(f'\t(global_label "{name}" (shape passive) (at {fmt(p[0])} {fmt(p[1])} {ang}) (fields_autoplaced yes) (effects (font (size 1.27 1.27)) (justify {just})) (uuid "{uid()}")')
@@ -100,11 +102,10 @@ def outward_sheet(a):  # Bibliothekswinkel (y nach oben) -> Blattwinkel für stu
     return {0: 0, 180: 180, 90: 90, 270: 270}[a]
 
 parts = {p['ref']: p for p in netlist.parts()}
-OFFS = {'U1': dict(ref_off=(-12, -26), val_off=(-12, 28)), 'U2': dict(ref_off=(-12, -18), val_off=(-12, 20)), 'J1': dict(ref_off=(0, -12), val_off=(0, 12)),
-        'SW1': dict(ref_off=(-3, -5), val_off=(-3, 4))}
-for k in range(12): OFFS[f'SEG{k+1}'] = dict(ref_off=(2, -1), hide_val=True)
-LIBS = [('Sensor_Touch', 'MPR121QR2'), ('Driver_Haptic', 'DRV2605LDGS'), ('Device', 'C'), ('Device', 'R'), ('Switch', 'SW_Push'),
-        ('Connector_Generic', 'Conn_01x06'), ('Connector', 'TestPoint'), ('power', 'GND'), ('power', '+3V3'), ('power', 'PWR_FLAG')]
+OFFS = {'U1': dict(ref_off=(-12, -30), val_off=(-12, 32)), 'U2': dict(ref_off=(-12, -18), val_off=(-12, 20)), 'J1': dict(ref_off=(0, -12), val_off=(0, 12)),
+        'SW1': dict(ref_off=(3, -2), val_off=(3, 2)), 'SW2': dict(ref_off=(3, -4), val_off=(3, 4)), 'SW3': dict(ref_off=(3, -2), val_off=(3, 2))}
+LIBS = [('Klickrad', 'AT42QT2120'), ('Driver_Haptic', 'DRV2605LDGS'), ('Device', 'C'), ('Device', 'R'), ('Connector_Generic', 'Conn_01x01'),
+        ('Connector_Generic', 'Conn_01x03'), ('Connector_Generic', 'Conn_01x06'), ('Connector', 'TestPoint'), ('power', 'GND'), ('power', '+3V3'), ('power', 'PWR_FLAG')]
 PINS = {f'{l}:{n}': sx.pins(sx.sym(l, n)) for l, n in LIBS}
 
 w('(kicad_sch')
@@ -113,9 +114,9 @@ w('\t(generator "eeschema")')
 w('\t(generator_version "9.0")')
 w(f'\t(uuid "{ROOT_UUID}")')
 w('\t(paper "A3")')
-w('\t(title_block (title "Klickrad-Modul v1") (date "2026-10-04") (rev "1") (company "Nano-Player (Hobbyprojekt)")')
-w('\t\t(comment 1 "MPR121 (0x5B) + DRV2605L (0x5A, LRA) + Taster, JST-SH 6-pol.")')
-w('\t\t(comment 2 "Schnittstelle laut TEILE.md, Abschnitt Klickrad-Modul"))')
+w('\t(title_block (title "Klickrad-Modul v2") (date "2026-10-04") (rev "2") (company "Nano-Player (Hobbyprojekt)")')
+w('\t\t(comment 1 "AT42QT2120 (0x1C, Wheel) + DRV2605L (0x5A, LRA), Beschaltung nach Tangara-Faceplate (CERN-OHL-S-2.0, cool tech zone)")')
+w('\t\t(comment 2 "Schnittstelle laut TEILE.md, Abschnitt Klickrad-Modul; JST-SH 6-pol., Pin 5 = CHANGE, Pin 6 = Reserve"))')
 w('\t(lib_symbols')
 for l, n in LIBS: w(extract(l, n))
 w('\t)')
@@ -131,61 +132,52 @@ def place(ref, pos, rot=0, **kw):
            pinnums=sorted(p['pins'].keys(), key=lambda s: int(s) if s.isdigit() else 999), **kw)
     return p
 
-def conn_pins(ref, pos, sidefn=None):
-    """Alle Pins des Bauteils mit Stummel+Label/Leistungssymbol versehen."""
+def conn_pins(ref, pos, flag_ref=None):
+    """Alle Pins des Bauteils mit Stummel+Label/Leistungssymbol bzw. No-Connect-Flag versehen."""
     p = parts[ref]; lp = PINS[p['sym']]
     for num, netname in p['pins'].items():
         spos, outw = pin_sheet(lp, num, pos)
-        if sidefn: outw = sidefn(num, outw)
-        stub(spos, outw, netname)
+        typ = [t[5] for t in lp if t[0] == num][0]
+        if netname is None:
+            if typ != 'no_connect': noconnect(spos)
+            continue
+        stub(spos, outw, netname, flag=(ref == flag_ref and netname in ('3V3', 'GND')))
 
-# ---- MPR121
-place('U1', (110.0, 100.0)); conn_pins('U1', (110.0, 100.0))
-text('MPR121 (QFN-20): ADDR an VDD = I2C 0x5B, REXT 75k, VREG 0,1uF', 80, 64, 1.5, True)
-# Entkopplung MPR121 (Reihe darunter)
-x0 = 70.0
-for i, ref in enumerate(('C1', 'C3', 'C2', 'R1')):
-    pos = (x0 + i * 15.24, 148.0); place(ref, pos)
-    p = parts[ref]; lp_ = PINS[p['sym']]
-    for num, netname in p['pins'].items():
-        spos, outw = pin_sheet(lp_, num, pos)
-        stub(spos, outw, netname, flag=(ref == 'C1' and netname in ('3V3', 'GND')))
-text('MPR121 Entkopplung / REXT / VREG', 68, 138, 1.27, True)
-# ---- Taster
-place('SW1', (60.0, 60.0)); conn_pins('SW1', (60.0, 60.0))
-text('Mitteltaste (aktiv low, Pull-up auf MCU-Seite)', 48, 52, 1.27, True)
+# ---- AT42QT2120
+place('U1', (115.0, 105.0)); conn_pins('U1', (115.0, 105.0), flag_ref='U1')
+text('U1 AT42QT2120 (VQFN-20, Comms-Modus): MODE an GND, I2C 0x1C, KEY0-2 = Wheel, KEY3 = Mitteltaste, KEY4 = Guard', 40, 62, 1.5, True)
+text('Wie Tangara: kein Cs noetig (QT2120-Datenblatt: no external Cs required), RESET ueber 10k an 3V3, Exposed Pad ohne Anschluss', 40, 68, 1.27)
+text('Pins 1, 2, 16-20 (KEY5-KEY11) unbenutzt. CHANGE ist open drain: Pull-up auf der MCU-Seite (R10 nur fuer den Einzeltest).', 40, 73, 1.27)
+# Entkopplung/Reset
+for i, ref in enumerate(('C1', 'C2', 'R6', 'R10')):
+    pos = (60.0 + i * 15.24, 160.0); place(ref, pos); conn_pins(ref, pos)
+text('U1 Entkopplung (0,1 uF direkt am Pin) / RESET-Pull-up / CHANGE-Pull-up (DNP)', 58, 150, 1.27, True)
+# Serienwiderstaende der Elektroden
+for i, ref in enumerate(('R1', 'R2', 'R3', 'R4', 'R5')):
+    pos = (60.0 + i * 15.24, 215.0); place(ref, pos); conn_pins(ref, pos)
+text('Serienwiderstaende 10k je Elektrode (Datenblatt 3.1: 4,7k ... 20k), nah am Chip', 58, 205, 1.27, True)
+# ---- Elektroden
+place('SW2', (200.0, 215.0)); conn_pins('SW2', (200.0, 215.0))
+place('SW1', (235.0, 215.0)); conn_pins('SW1', (235.0, 215.0))
+place('SW3', (260.0, 215.0)); conn_pins('SW3', (260.0, 215.0))
+text('Kupferflaechen vorn (Lackschicht geschlossen): Wheel (3 Elektroden), Mitteltaste, Guard (3 Boegen, ein Netz)', 195, 205, 1.27, True)
 # ---- Stecker
-jpos = (40.0, 110.0); place('J1', jpos)
-lp = PINS[parts['J1']['sym']]
-for num, netname in parts['J1']['pins'].items():
-    spos, outw = pin_sheet(lp, num, jpos)
-    e = stub(spos, outw, netname)
-text('J1 JST-SH 6-pol. (SM06B-SRSS-TB)', 18, 94, 1.27, True)
+jpos = (40.0, 105.0); place('J1', jpos); conn_pins('J1', jpos)
+text('J1 JST-SH 6-pol. (SM06B-SRSS-TB): Pin 6 = BTN (Reserve, nicht beschaltet)', 18, 86, 1.27, True)
 # ---- DRV2605L
-place('U2', (215.0, 100.0)); conn_pins('U2', (215.0, 100.0))
-text('DRV2605L (MSOP-10): I2C 0x5A, LRA-Modus, EN fest an 3V3, IN/TRIG an GND', 188, 64, 1.5, True)
-for i, ref in enumerate(('C4', 'C6', 'C5')):
-    pos = (190.0 + i * 15.24, 148.0); place(ref, pos); conn_pins(ref, pos)
-text('DRV2605L Entkopplung (VDD 1uF + 10uF, REG 1uF)', 188, 138, 1.27, True)
-# LRA-Pads
+place('U2', (215.0, 105.0)); conn_pins('U2', (215.0, 105.0))
+text('U2 DRV2605L (VSSOP-10): I2C 0x5A, LRA-Modus, IN/TRIG an GND, EN ueber 10k an 3V3 (wie Tangara)', 188, 62, 1.5, True)
+for i, ref in enumerate(('C3', 'C4', 'C5', 'R7')):
+    pos = (190.0 + i * 15.24, 160.0); place(ref, pos); conn_pins(ref, pos)
+text('DRV2605L: VDD 1 uF (+ 10 uF fuer den LRA-Strom), REG 1 uF, EN-Pull-up', 188, 150, 1.27, True)
 for i, ref in enumerate(('TP1', 'TP2')):
-    pos = (255.0 + i * 15.24, 100.0)
-    place(ref, pos)
-    stub((snap(pos[0]), snap(pos[1])), 270, parts[ref]['pins']['1'])
-text('Loetpads LRA-Litzen (Rueckseite)', 250, 92, 1.27, True)
-# ---- Pull-ups (DNP)
-for i, ref in enumerate(('R2', 'R3')):
-    pos = (110.0 + i * 15.24, 185.0); place(ref, pos); conn_pins(ref, pos)
-text('I2C-Pull-ups 4,7k: DNP (Hauptboard hat 2,2k). Nur bestuecken, wenn Modul allein getestet wird.', 100, 174, 1.27, True)
-# ---- Segmente
-sm = netlist.seg_map()
-for k in range(12):
-    col, row = k % 6, k // 6
-    pos = (230.0 + col * 15.24, 40.0 + row * 28)
-    place(f'SEG{k+1}', pos)
-    stub((snap(pos[0]), snap(pos[1])), 270, f'ELE{sm[k]}')
-    text(f'S{k+1} {15+30*k}deg', pos[0] - 4, pos[1] - 4, 1.0)
-text('Touch-Segmente (Kupfer vorn, Mitte Winkel 0 = rechts, gegen den Uhrzeigersinn)', 228, 30, 1.27, True)
+    pos = (265.0 + i * 15.24, 105.0)
+    place(ref, pos); stub((snap(pos[0]), snap(pos[1])), 270, parts[ref]['pins']['1'])
+text('Loetpads LRA-Litzen (Rueckseite)', 260, 96, 1.27, True)
+# ---- Pull-ups I2C (DNP)
+for i, ref in enumerate(('R8', 'R9')):
+    pos = (115.0 + i * 15.24, 245.0); place(ref, pos); conn_pins(ref, pos)
+text('I2C-Pull-ups 4,7k: DNP (das Waveshare-Board hat 2,2k). Nur bestuecken, wenn das Modul allein getestet wird.', 105, 235, 1.27, True)
 w('\t(sheet_instances (path "/" (page "1")))')
 w('\t(embedded_fonts no)')
 w(')')

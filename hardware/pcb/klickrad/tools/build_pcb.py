@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Erzeugt klickrad.kicad_pcb (Koordinaten: Frontansicht, x rechts, y oben, Ursprung = Platinenmitte)."""
+"""Erzeugt klickrad.kicad_pcb v2, 2 Lagen (Koordinaten: Frontansicht, x rechts, y oben, Ursprung = Platinenmitte)."""
 import math, os, sys, json
 import pcbnew
 from pcbnew import VECTOR2I, FromMM, ToMM
@@ -14,8 +14,7 @@ def P(p): return (ToMM(p.x) - OX, OY - ToMM(p.y))
 MODE = os.environ.get('MODE', 'place')
 board = pcbnew.LoadBoard(os.environ['LOADFROM']) if MODE == 'finish' else pcbnew.BOARD()
 B_CU, F_CU = pcbnew.B_Cu, pcbnew.F_Cu
-IN1, IN2 = pcbnew.In1_Cu, pcbnew.In2_Cu
-if MODE != 'finish': board.SetCopperLayerCount(4)
+if MODE != 'finish': board.SetCopperLayerCount(2)
 nets = {}
 if MODE == 'finish':
     for name, n in board.GetNetsByName().items():

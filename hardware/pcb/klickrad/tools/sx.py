@@ -1,4 +1,7 @@
-import re
+import re, os
+ROOTD=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def SYMFILE(lib):
+    return os.path.join(ROOTD,'lib','Klickrad.kicad_sym') if lib=='Klickrad' else '/usr/share/kicad/symbols/%s.kicad_sym'%lib
 def parse(s):
     tok=re.findall(r'\(|\)|"(?:\\.|[^"\\])*"|[^\s()"]+',s)
     i=0
@@ -13,7 +16,7 @@ def parse(s):
         return t
     return rd()
 def sym(lib,name):
-    t=open('/usr/share/kicad/symbols/%s.kicad_sym'%lib).read()
+    import os; t=open(SYMFILE(lib)).read()
     d=parse(t)
     for x in d:
         if isinstance(x,list) and x[0]=='symbol' and x[1]==('S',name): return x

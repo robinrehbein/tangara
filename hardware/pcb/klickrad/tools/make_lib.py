@@ -1,75 +1,58 @@
 #!/usr/bin/env python3
-"""Erzeugt die lokale Footprint-Bibliothek lib/Klickrad.pretty
-(QFN ohne Exposed Pad, 12 Touch-Segmente, Befestigungsloch, LRA-Markierung)."""
-import math, re, os
-from shapely.geometry import Polygon
-from shapely import affinity
+"""Erzeugt die Projektbibliothek: lib/Klickrad.pretty (Touch-Elektroden, Befestigungsloch) und lib/Klickrad.kicad_sym (AT42QT2120 von Tangara)."""
+import os, re, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import wheel_geometry as G
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'lib', 'Klickrad.pretty')
+TANGARA_SYM = '/home/user/tangara-ref/tangara-hw/tangara-faceplate/faceplate-symbols.kicad_sym'
 os.makedirs(OUT, exist_ok=True)
-KF = '/usr/share/kicad/footprints/'
 
-R_IN, R_OUT, GAP, NSEG = 6.5, 12.8, 0.4, 12
-VIA_R = 7.6
-def seg_angle(k): return 15.0 + 30.0 * k       # Segmentmitte (Grad, 0 = rechts, CCW)
+# Lage der Durchkontaktierungen (Mitte der Pads) -> von layout.py ebenfalls benutzt
+def pad_points():
+    b = G.build()
+    pts = {}
+    want = {0: 206.3, 1: 326.3, 2: 86.3}
+    for k in range(3):
+        pts[('W', k)] = G.inner_point(b['wheel'][k], 6.9, 8.4, want[k])
+        assert pts[('W', k)], k
+    pts[('B', 0)] = (-2.2, 1.9)                       # Mitteltaste: Via links oben neben dem Mittelpunkt (U1 sitzt darunter)
+    for i, a in enumerate(b['guard']):
+        c = a.centroid
+        ang = (round(__import__('math').degrees(__import__('math').atan2(c.y, c.x))) % 360)
+        pts[('G', i)] = None
+    return pts
 
-def strip_pads(txt, drop):
-    out, i = [], 0
-    while True:
-        j = txt.find('\n\t(pad ', i)
-        if j < 0: out.append(txt[i:]); break
-        out.append(txt[i:j])
-        d, k = 0, j + 1
-        while True:
-            c = txt[k]
-            if c == '(': d += 1
-            elif c == ')':
-                d -= 1
-                if d == 0: break
-            elif c == '"':
-                k = txt.index('"', k + 1)
-            k += 1
-        blk = txt[j:k + 1]
-        m = re.match(r'\n\t\(pad "([^"]*)"', blk)
-        if not (m and m.group(1) in drop): out.append(blk)
-        i = k + 1
-    return ''.join(out)
+def poly_pad(num, cx, cy, poly, name_layer='F.Cu'):
+    coords = list(poly.exterior.coords)[:-1]
+    s = ' '.join('(xy %.4f %.4f)' % (x - cx, -(y - cy)) for x, y in coords)   # KiCad-Footprint: y nach unten
+    return (f'\t(pad "{num}" smd custom (at {cx:.4f} {-cy:.4f}) (size 0.3 0.3) (layers "{name_layer}")\n'
+            f'\t\t(options (clearance outline) (anchor circle))\n'
+            f'\t\t(primitives (gr_poly (pts {s}) (width 0) (fill yes))))\n')
 
-def make_qfn():
-    t = open(KF + 'Package_DFN_QFN.pretty/QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm.kicad_mod').read()
-    t = strip_pads(t, {'', '21'})
-    t = t.replace('QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm', 'QFN-20_3x3mm_P0.4mm_noEP')
-    t = re.sub(r'\(model .*?\n\t\)\n', '', t, flags=re.S)
-    open(OUT + '/QFN-20_3x3mm_P0.4mm_noEP.kicad_mod', 'w').write(t)
+def fp_head(name, descr):
+    return (f'(footprint "{name}"\n\t(version 20241229)\n\t(generator "make_lib.py")\n\t(layer "F.Cu")\n\t(descr "{descr}")\n'
+            f'\t(attr smd exclude_from_pos_files exclude_from_bom)\n'
+            f'\t(property "Reference" "REF**" (at 0 0 0) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))\n'
+            f'\t(property "Value" "{name}" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))\n'
+            f'\t(property "Footprint" "" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))\n')
 
-def sector(a0, a1, r0, r1, n=10):
-    pts = [(r1 * math.cos(math.radians(a0 + (a1 - a0) * i / n)), r1 * math.sin(math.radians(a0 + (a1 - a0) * i / n))) for i in range(n + 1)]
-    pts += [(r0 * math.cos(math.radians(a1 - (a1 - a0) * i / n)), r0 * math.sin(math.radians(a1 - (a1 - a0) * i / n))) for i in range(n + 1)]
-    return Polygon(pts)
-
-def make_segments():
-    for k in range(NSEG):
-        a = seg_angle(k)
-        poly = sector(a - 15, a + 15, R_IN - GAP / 2, R_OUT + GAP / 2).buffer(-GAP / 2, join_style=2, mitre_limit=5)
-        cx, cy = VIA_R * math.cos(math.radians(a)), VIA_R * math.sin(math.radians(a))
-        pts = ' '.join('(xy %.4f %.4f)' % (x - cx, -(y - cy)) for x, y in list(poly.exterior.coords)[:-1])
-        txt = f'''(footprint "SEG{k+1}"
-	(version 20241229)
-	(generator "make_lib.py")
-	(layer "F.Cu")
-	(descr "Touch-Segment {k+1}, Mitte {a:.0f} Grad, Kupfer ohne Lötstopplack-Öffnung")
-	(attr smd exclude_from_pos_files exclude_from_bom)
-	(property "Reference" "SEG{k+1}" (at 0 0 0) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
-	(property "Value" "Touch" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
-	(property "Footprint" "" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
-	(pad "1" smd custom (at 0 0) (size 0.6 0.6) (layers "F.Cu")
-		(options (clearance outline) (anchor circle))
-		(primitives (gr_poly (pts {pts}) (width 0) (fill yes))))
-)
-'''
-        open(OUT + f'/SEG{k+1}.kicad_mod', 'w').write(txt)
-
-def make_misc():
+def make(vias):
+    b = G.build()
+    t = fp_head('qtouch-wheel', 'Interpolierter Touch-Wheel (3 Elektroden, 3 Ringe) nach Tangara qtouch-wheel, auf r = 6,3 ... 12,3 mm skaliert. Pad k = KEY k. Lötstopplack bleibt geschlossen.')
+    for k in range(3):
+        cx, cy = vias[('W', k)]
+        t += poly_pad(k + 1, cx, cy, b['wheel'][k])
+    open(OUT + '/qtouch-wheel.kicad_mod', 'w').write(t + ')\n')
+    t = fp_head('qtouch-button', 'Kapazitive Mitteltaste (Scheibe), nach Tangara qtouch-button, Radius %.1f mm' % G.BTN_R)
+    cx, cy = vias[('B', 0)]
+    t += poly_pad(1, cx, cy, b['button'])
+    open(OUT + '/qtouch-button.kicad_mod', 'w').write(t + ')\n')
+    t = fp_head('qtouch-guard', 'Guard-Kanal: drei Kreisbogen-Flächen außen zwischen den Befestigungslöchern (Tangara: Ring r = 22,2 mm), alle Pads Nr. 1')
+    for i, a in enumerate(b['guard']):
+        cx, cy = vias[('G', i)]
+        t += poly_pad(1, cx, cy, a)
+    open(OUT + '/qtouch-guard.kicad_mod', 'w').write(t + ')\n')
     open(OUT + '/MountingHole_2.2mm_NPTH.kicad_mod', 'w').write('''(footprint "MountingHole_2.2mm_NPTH"
 	(version 20241229)
 	(generator "make_lib.py")
@@ -81,5 +64,35 @@ def make_misc():
 )
 ''')
 
+def make_symbols():
+    t = open(TANGARA_SYM).read()
+    i = t.index('(symbol "AT42QT2120"')
+    d, k = 0, i
+    while True:
+        c = t[k]
+        if c == '(': d += 1
+        elif c == ')':
+            d -= 1
+            if d == 0: break
+        elif c == '"': k = t.index('"', k + 1)
+        k += 1
+    sym = t[i:k + 1]
+    sym = sym.replace('(property "Footprint" "MODULE"', '(property "Footprint" "Package_DFN_QFN:VQFN-20-1EP_3x3mm_P0.45mm_EP1.55x1.55mm"')
+    sym = sym.replace('(property "Datasheet" "DOCUMENTATION"', '(property "Datasheet" "https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-9634-AT42-QTouch-Sensor-AT42QT2120_Datasheet.pdf"')
+    out = ('(kicad_symbol_lib (version 20220914) (generator kicad_symbol_editor)\n'
+           '  ' + sym + '\n)\n')
+    open(os.path.join(ROOT, 'lib', 'Klickrad.kicad_sym'), 'w').write(out)
+
 if __name__ == '__main__':
-    make_qfn(); make_segments(); make_misc(); print('ok')
+    import json
+    # Guard-Vias: Mitte jedes Bogens (Stecker-Bogen weicht nach 240 Grad aus)
+    import math
+    b = G.build(); vias = {}
+    vias = {k: v for k, v in pad_points().items() if v}
+    for i, a in enumerate(b['guard']):
+        c = a.centroid; ang = math.degrees(math.atan2(c.y, c.x)) % 360
+        if abs(ang - 270) < 20: ang = 238.0
+        vias[('G', i)] = (round(14.45 * math.cos(math.radians(ang)), 2), round(14.45 * math.sin(math.radians(ang)), 2))
+        assert a.contains(__import__('shapely.geometry', fromlist=['Point']).Point(*vias[('G', i)]))
+    json.dump({f'{k[0]}{k[1]}': v for k, v in vias.items()}, open(os.path.join(ROOT, 'tools', 'vias_touch.json'), 'w'), indent=1)
+    make(vias); make_symbols(); __import__("subprocess").run(["kicad-cli", "sym", "upgrade", os.path.join(ROOT, "lib", "Klickrad.kicad_sym")], check=False, capture_output=True); print('ok', vias)
