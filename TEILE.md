@@ -33,7 +33,9 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 - Haptik-Treiber: DRV2605L (I²C, Adresse 0x5A fest), LRA-Modus
 - Mitteltaste: nach GND, Pull-up auf der MCU-Seite
 
-**Stecker: JST-SH 1,0 mm, 6-polig**
+**Änderung für das dünne Endgerät (Entscheidung nach `docs/DUENNBAU.md`):** JST-SH ist mit ca. 4 mm zu hoch. Klickrad v2 bekommt einen **flachen 6-poligen FPC/FFC-Stecker (≤ 1,2 mm)** mit derselben Pinbelegung; am Waveshare-Prototyp über eine FFC-Breakout-Platine. Mitteltaste v2 **kapazitiv** (AT42QT2120 Key 3), Pin 6 wird Reserve. Platine 0,8 mm, Rückseitenbauteile ≤ 0,8 mm, flacher LRA (z. B. Vybronics VL120628H, 12 × 6 × 2,0, prüfen), Abdeckung 0,6-mm-FR4.
+
+**Stecker v1: JST-SH 1,0 mm, 6-polig** (v2: FPC/FFC, gleiche Belegung)
 
 | Pin | Signal |
 |---|---|
@@ -46,7 +48,21 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 
 DRV2605L-EN fest auf 3V3; Standby per I²C.
 
-## Endgerät (Konzept, siehe `hardware/render/explosionsmodell.html`)
+## Endgerät: Ziel-Stack-up (Entscheidung nach `docs/DUENNBAU.md`, Variante A)
+
+| Punkt | Entscheidung |
+|---|---|
+| Außenmaße | ca. **40 × 90 × 8,5 mm** (8,2 nominal + 0,3 Reserve; Rückfall 9,0) |
+| Display | **2,06" AMOLED 410 × 502, CO5300, QSPI** (ca. 315 ppi). Auflösung beim Händler vor dem Kauf prüfen. |
+| MCU-Modul | ESP32-S31-**WROOM-1** (18 × 25,5 × 3,1) statt WROOM-3, sofern alle benötigten Pins herausgeführt sind (prüfen) |
+| Hauptplatine | 0,8 mm, hohe Teile nur auf der Rückseite (≤ 3,3 mm), ca. 37 × 84 mm |
+| Klinke | SJ-43504-SMT-TR (5,0 mm) in Randausschnitt der Platine (statt SJ-3506, 6,0 mm). Risiko: Überstand nach vorn ungeprüft. |
+| Akku | Pouch 3,0 mm (303450, 500–600 mAh), Fach 34 × 50 × 3,3 |
+| Front/Rückseite | Front 0,8-mm-Acryl oder Glas, Rückwand 1,0 mm gedruckt oder 0,8-mm-FR4 |
+
+Die Maße darunter beschreiben noch den ersten Entwurf (12,2 mm) und werden mit dem neuen CAD ersetzt.
+
+## Endgerät (erster Entwurf, siehe `hardware/render/explosionsmodell.html`)
 
 | Teil | Maße |
 |---|---|
