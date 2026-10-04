@@ -63,6 +63,18 @@ DRV2605L-EN fest auf 3V3; Standby per I²C.
 - Oberschale ohne Schraubdome (Display belegt die Stellen), Halt über Innenrahmen und 4 Rastnasen; ungeprüft
 - Klickrad-Platine im Endgerät vorerst mit Distanzring und Klebeband. Offen: 3 Aussparungen in der Hauptplatine für eine Verschraubung.
 
+## Hauptplatine Endgerät: festgelegte Chips
+
+| Funktion | Chip |
+|---|---|
+| MCU, WLAN 6, Bluetooth Classic + LE Audio, USB-HS-OTG | ESP32-S31-WROOM-3 |
+| DAC + Kopfhörerverstärker (Klinke, Hi-Res) | Cirrus Logic CS43131 |
+| USB-C-Rollenumschaltung (Laden und USB-Audio-Host) | TI TUSB320LAI |
+| 5 V für USB-Host | TI TPS61023 + TI TPS2553 |
+| LiPo-Lader mit Power-Path | TI BQ24074 |
+| Akkustand | MAX17048 (I²C 0x36) |
+| 3V3 | TI TPS63802 (Buck-Boost) |
+
 ## Bestellstatus
 
 Noch nichts bestellt.
