@@ -2,7 +2,7 @@
 PARTS = {p['ref']: p for p in netlist.parts()}
 TMP = os.environ.get('TMPDIR_PCB', '/tmp/w')
 VIAS = json.load(open(os.path.join(ROOT, 'tools', 'vias_touch.json')))
-LRA = (-6.0, 3.0, 6.0, 9.0)           # Freifläche LRA (Rückseite, nur Bauteile gesperrt)
+LRA = (-6.0, 3.0, 6.0, 9.0)      # Option B (12 x 6 x 2,0); Option A (10 x 10 x 1,0, Mitte y = +6) wird unten zusätzlich gesperrt           # Freifläche LRA (Rückseite, nur Bauteile gesperrt)
 if MODE == 'place':
     # ---- Entwurfsregeln (JLCPCB/PCBWay 2 Lagen, 1,0 mm)
     ds = board.GetDesignSettings()
@@ -36,7 +36,7 @@ if MODE == 'place':
     for ref, (x, y, r) in POS.items():
         place(PARTS[ref], x, y, 'B', r)
     # Paare, deren 3V3-Pads sich berühren (spart Leiterbahnen: gleiches Netz, Pads überlappen um 0,3 mm): (A, B) -> B wird um 180 Grad gedreht an A angesetzt
-    for a_, b_, lb_ in (('C1', 'C2', 0.48), ('R8', 'R9', 0.48), ('C3', 'C5', 0.775)):
+    for a_, b_, lb_ in (('C1', 'C2', 0.48), ('R8', 'R9', 0.48)):
         fa, fb = placed[a_], placed[b_]
         pa = [p for p in fa.Pads() if p.GetNetname() == '3V3'][0]
         ca, pp = fa.GetPosition(), pa.GetPosition()
@@ -49,7 +49,7 @@ if MODE == 'place':
     for net_, x_, y_ in PRE_VIAS: via(net_, x_, y_)
 
     # ---- Zonen: GND als Gitter (Tangara-Werte) auf B.Cu, LRA-Freifläche als Bauteil-Sperrzone, Randzone ohne Leiterbahnen
-    zone(B_CU, [(LRA[0], LRA[1]), (LRA[2], LRA[1]), (LRA[2], LRA[3]), (LRA[0], LRA[3])], '', 0, keepout=True)
+    zone(B_CU, [(-6, 3), (-5, 3), (-5, 1.5), (5, 1.5), (5, 3), (6, 3), (6, 9), (5, 9), (5, 11), (-5, 11), (-5, 9), (-6, 9)], '', 0, keepout=True)
     # (Rand- und Vorderseiten-Sperrzonen entfallen: Specctra kennt keine Löcher in Sperrflächen; Prüfung per DRC und tools/pruefe_vorderseite.py)
     board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
 else:

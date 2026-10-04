@@ -20,6 +20,7 @@ CLR = 0.13
 VIA_D, VIA_DR = 0.6, 0.3
 WIDTH = {'GND': 0.2, '3V3': 0.2, 'LRA_P': 0.2, 'LRA_N': 0.2}
 DEFW = 0.15
+GND_RING = (3.3, 5.5)     # GND-Fläche auf F.Cu (Zone, in finish.py)
 F_RMIN, F_RMAX = 2.5 + 0.15, 6.3 - 0.15
 import os
 ORDER = ['3V3', 'SDA', 'K2', 'KB', 'KG', 'K1', 'K0', 'E0', 'E1', 'E2', 'EB', 'EG', 'SCL', 'CHANGE', 'EN', 'REG', 'RESET', 'LRA_P', 'LRA_N', 'GND']
@@ -222,6 +223,10 @@ def route_net(net, allow_soft):
         if t[3] == 'via': c |= cells_of(t[2], 1, 0.05)
         return c
     tree = tcells(ts[0]); rest = ts[1:]; missing = []; crossed = set()
+    if net == 'GND':    # GND-Ring auf F.Cu (Kupferfläche zwischen Taste und Rad) als Anschlussfläche, nur Zellen ohne fremdes Kupfer
+        rg = Point(0, 0).buffer(GND_RING[1]).difference(Point(0, 0).buffer(GND_RING[0]))
+        rc = {c_ for c_ in cells_of(rg, 1, 0.0) if not (hard[1] | soft[1])[c_[2], c_[1]]}
+        tree |= rc
     for la_, g_, w_ in fixedgeo.get(net, []): tree |= cells_of(g_, la_)
     for t_ in list(rest):
         if tcells(t_) & tree: rest.remove(t_); tree |= tcells(t_)

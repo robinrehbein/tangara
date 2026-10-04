@@ -4,7 +4,7 @@ Aufruf: route_random.py pre.kicad_pcb out.kicad_pcb SEED"""
 import subprocess, sys, os, random, re
 here = os.path.dirname(os.path.abspath(__file__))
 src, dst, seed = sys.argv[1], sys.argv[2], int(sys.argv[3])
-nets = 'LRA_P,LRA_N,3V3,SDA,SCL,CHANGE,K2,KB,KG,K1,K0,E0,E1,E2,EB,EG,EN,REG,RESET'.split(',')
+nets = 'LRA_P,LRA_N,GND,3V3,SDA,SCL,CHANGE,K2,KB,KG,K1,K0,E0,E1,E2,EB,EG,EN,REG,RESET'.split(',')
 random.seed(seed); best = 99
 def run(o):
     try:

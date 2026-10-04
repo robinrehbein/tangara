@@ -167,9 +167,9 @@ text('J1 FFC 6-pol. (SM06B-SRSS-TB): Pin 6 = BTN (Reserve, nicht beschaltet)', 1
 # ---- DRV2605L
 place('U2', (215.0, 105.0)); conn_pins('U2', (215.0, 105.0))
 text('U2 DRV2605L (VSSOP-10): I2C 0x5A, LRA-Modus, IN/TRIG an GND, EN ueber 10k an 3V3 (wie Tangara)', 188, 62, 1.5, True)
-for i, ref in enumerate(('C3', 'C4', 'C5', 'R7')):
+for i, ref in enumerate(('C3', 'C4', 'R7')):
     pos = (190.0 + i * 15.24, 160.0); place(ref, pos); conn_pins(ref, pos)
-text('DRV2605L: VDD 1 uF (+ 10 uF fuer den LRA-Strom), REG 1 uF, EN-Pull-up', 188, 150, 1.27, True)
+text('DRV2605L: VDD 1 uF, REG 1 uF, EN-Pull-up (wie Tangara)', 188, 150, 1.27, True)
 for i, ref in enumerate(('TP1', 'TP2')):
     pos = (265.0 + i * 15.24, 105.0)
     place(ref, pos); stub((snap(pos[0]), snap(pos[1])), 270, parts[ref]['pins']['1'])

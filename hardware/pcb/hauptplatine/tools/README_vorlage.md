@@ -160,6 +160,30 @@ Koordinaten: Ursprung = Plattenmitte, x nach rechts, y nach oben, Blick auf die 
 
 Stapel (DUENNBAU 5, Variante A): Rückwand 1,0, Luft 0,2, Rückzone 3,3, Platine 0,8, Vorderseite 1,1 (flache Teile + Klinke), Display 1,0 (Panel) bis 2,05 (Modul mit Touch, Luft schrumpft), Front 0,8 = 8,2 mm nominal, 8,5 mm mit Toleranz. Zusätzlich gilt hier: Bauteile auf der Rückseite höchstens 3,3 mm (Modul 3,1, USB-C 3,18, Klinke unter der Platine 3,1), SW1 1,2, microSD 1,9, Bulk-C29 2,7.
 
+## Abgleich mit CAD v2 (params.py, Block E2_*)
+
+Stand: Die Platine wurde mit den Werten aus DUENNBAU/Gesamtvorgabe gebaut (37 × 86). Die CAD-v2-Randbedingungen wurden danach geliefert und **nicht alle sind erfüllbar**. Hier der Vergleich, damit die Koordination die E2_*-Werte angleichen oder die Randbedingungen lockern kann.
+
+| Nr. | Vorgabe CAD v2 | Stand Hauptplatine | Bewertung |
+|---|---|---|---|
+| 1 | Nur 0,25 mm Luft unter dem Display, also keine Bauteile auf der Vorderseite im Displaybereich (34,8 × 43,1, Mitte y = +20,43) | Flache Teile (≤ 1,0 mm) stehen auf der Vorderseite, auch unter dem Display, Luft dort 1,1 mm nötig | **nicht erfüllt.** Flächenbilanz: Vorderseite außerhalb Display und Klickrad-Kreis nur ca. 521 mm², Rückseite außerhalb Akkufach 1127 mm², zusammen 1648 mm²; Platzbedarf der Bauteile (Courtyards) flach 781 + hoch 1043 = 1824 mm². Bei 37 × 86 ist die Platine rechnerisch zu klein, wenn die Vorderseite unter dem Display leer bleiben muss. Lösungen: (a) Luft unter dem Display mindestens 1,1 mm (Panel ohne Deckglas 1,0 mm statt Modul 2,05 mm, Gesamtdicke bleibt 8,5), (b) Platine deutlich größer (ca. +6 mm Länge, Gehäuse über 96 mm), (c) kleinerer Akku. Empfehlung (a). |
+| 2 | Rückzone ≤ 3,3 mm | Höchstes Rückseitenteil 3,18 mm (USB-C), WROOM-1 3,1 mm, Klinke 3,1 mm | erfüllt |
+| 3 | Akku 34 × 50 neben der Klinke, WROOM-1 um 90° gedreht (25,5 × 18) | Modul **nicht gedreht** (18 × 25,5, Antenne zur Oberkante, ragt 3,5 mm über die Platine, Gehäuse +3 mm). Akkufach x −17...+17, y −29,4...+20,6 | abweichend; mit gedrehtem Modul läge die Antenne an der Seitenkante, das wäre ein Neu-Layout |
+| 4 | Klinkenausschnitt = Gesamtkörper 9,1 × 14 + 0,45 je Seite; Klinke x = −12, USB-C x = +10 | Klinke x = −12 mit **Schlitz 6,8 mm** (Entlastungsbohrungen Ø 1,3); USB-C **x = +9,0** (Mundloch 9,24) | Klinke: Ausschnitt kleiner als im CAD, Körper liegt auf der Rückseite. USB-C: bitte E2_USB_X = 9,0 setzen |
+| 5 | 5 Domkeepouts M1,6 bei (−16, 42), (16, 42), (−1,5, −42,5), (−17,8, 24,5), (17,8, −33) | 3 Löcher Ø 1,8 bei (+17,4, +41,0), (+17,4, +22,0), (+16,2, −41,0) | Konflikte der CAD-Positionen: (−16, 42) mit microSD J4 und Modul; (−17,8, 24,5) mit BT1 (−14,6, +22,5); (−1,5, −42,5) mit J21 (−2,1, −38,8) und Klinke; (17,8, −33) mit SW1 (12,8, −32,8) grenzwertig. Vorschlag: CAD übernimmt meine 3 Positionen |
+| 6 | Klickrad-Mitte y = −22 (vorläufig), LRA-Aussparung optional | Kreis r = 16,3 um (0, −25) freigehalten, Aussparung für LRA **nicht** vorgesehen | Mitte y = −25 bitte eintragen. Ist der LRA höher als 1,0 mm, ist eine Aussparung ca. 13 × 7 mm mit Fräskontur nötig, **nicht** umgesetzt |
+| 7 | FPC-Schlitz Platzhalter 14 × 1,2 bei (0, −3,2) | Kein Schlitz, flacher FFC-Stecker J20 (30 Pin) bei @@X_J20@@ | E2_PCB_SLOT bitte entfernen; Schlitz wäre Neu-Layout |
+| 8 | Platine 37 × 84, Ecken R4, 4 Auflagepads 1 × 8 mm | **37 × 86**, Ecken R4,0; Auflagepads nicht vorgesehen | E2_PCB bitte auf 86; Plattenränder sind kupferfrei ≥ 0,2 mm |
+
+Endgültige Werte der Hauptplatine für die Übernahme ins CAD (Mitte = Plattenmitte):
+- E2_PCB = (37,0, 86,0, 4,0); Klinke x = −12,0, Schlitz 6,8 mm breit bis y = −30,3; USB-C x = +9,0
+- Akkufach (−17,0, −29,4) bis (+17,0, +20,6), Pouch 34 × 50
+- WROOM-1 bei @@X_U15@@, Antenne an der Oberkante, Überstand 3,5 mm (Gehäuse oben +3 mm)
+- microSD J4 bei @@X_J4@@, SW1 bei @@X_SW1@@, J21 bei @@X_J21@@, J20 bei @@X_J20@@, BT1 bei @@X_BT1@@
+- Befestigungslöcher: (+17,4, +41,0), (+17,4, +22,0), (+16,2, −41,0); Klickrad-Mitte y = −25,0
+
+Alle Aussagen sind Flächenrechnungen aus dem Platzierungsprogramm, **nicht** durch eine CAD-Kollisionsprüfung belegt. **Vor der Bestellung muss die Koordination entscheiden**, ob Punkt 1 gelockert wird.
+
 ## Geprüft / nicht geprüft
 
 **Geprüft (automatisch, Berichte in `pruefung/`):**

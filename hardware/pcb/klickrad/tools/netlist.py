@@ -23,7 +23,6 @@ def parts():
     cap('C2', '1uF', ('3V3', 'GND'), d='AT42QT2120 VDD Puffer (Tangara C5)')
     cap('C3', '1uF', ('3V3', 'GND'), d='DRV2605L VDD (Tangara C3)')
     cap('C4', '1uF', ('REG', 'GND'), d='DRV2605L REG (Tangara C4)')
-    cap('C5', '10uF', ('3V3', 'GND'), fp='Capacitor_SMD:C_0603_1608Metric', d='LRA-Stromspitzen (neu gegenueber Tangara)')
     res = lambda ref, v, nets, d='', dnp=False: add(ref, v, 'Device:R', 'Resistor_SMD:R_0402_1005Metric', {'1': nets[0], '2': nets[1]}, dnp=dnp, desc=d)
     res('R1', '10k', ('K0', 'E0'), 'Serienwiderstand Wheel-Elektrode 0 (Tangara R1)')
     res('R2', '10k', ('K1', 'E1'), 'Serienwiderstand Wheel-Elektrode 1 (Tangara R2)')
