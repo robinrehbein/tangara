@@ -1,0 +1,636 @@
+<title>Nano-Player Explosionsmodell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: Werkbank. Links die 3D-Bühne, rechts das Stücklisten-Pult; auf dem Handy untereinander. */
+  :root {
+    --bg: #eceef1;
+    --panel: #f8f9fa;
+    --stage: #dfe2e6;
+    --fg: #1b1e23;
+    --muted: #5d636d;
+    --line: #cfd3d9;
+    --accent: #cf5f1b;
+    --accent-soft: #f6dcc9;
+    --chip-print: #2f6f8f;
+    --chip-pcb: #2e7a4f;
+    --chip-buy: #7a5a2e;
+    --font-display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121418; --panel: #1a1d22; --stage: #16191e; --fg: #e8eaee; --muted: #9aa1ab;
+      --line: #2c3139; --accent: #ff8a3d; --accent-soft: #3a2618;
+      --chip-print: #6fb3d6; --chip-pcb: #6cc792; --chip-buy: #d6ad6f; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121418; --panel: #1a1d22; --stage: #16191e; --fg: #e8eaee; --muted: #9aa1ab;
+    --line: #2c3139; --accent: #ff8a3d; --accent-soft: #3a2618;
+    --chip-print: #6fb3d6; --chip-pcb: #6cc792; --chip-buy: #d6ad6f; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; line-height: 1.5; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 32px; display: grid; gap: 16px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 3vw, 30px); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+  .dims { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 18px; font-variant-numeric: tabular-nums; }
+  .dims b { color: var(--fg); font-weight: 500; }
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+  @media (max-width: 900px) { .main { grid-template-columns: minmax(0, 1fr); } }
+  .stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; height: clamp(420px, 74vh, 780px); }
+  @media (max-width: 900px) { .stage { height: 62vh; min-height: 380px; } }
+  .stage canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .stage canvas.hovering { cursor: pointer; }
+  .hint { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--muted); pointer-events: none; }
+  .views { position: absolute; top: 10px; left: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .views button, .btn { font: 500 12.5px var(--font-body); color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+  .views button:hover, .btn:hover { border-color: var(--accent); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 18px; min-width: 0; }
+  .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  .slider-row input { flex: 1; accent-color: var(--accent); }
+  .slider-row output { font-family: var(--font-mono); font-size: 12px; width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+  .swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--panel); box-shadow: 0 0 0 1px var(--line); cursor: pointer; padding: 0; }
+  .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--accent); }
+  .info { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 6px; background: var(--bg); }
+  .info h2 { font-family: var(--font-display); font-size: 18px; margin: 0; font-weight: 600; }
+  .info p { margin: 0; color: var(--fg); }
+  .info dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: 13px; }
+  .info dt { color: var(--muted); }
+  .info dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .info .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; padding: 1px 8px; border-radius: 99px; border: 1px solid currentColor; }
+  .chip.print { color: var(--chip-print); } .chip.pcb { color: var(--chip-pcb); } .chip.buy { color: var(--chip-buy); }
+  .group { display: grid; gap: 2px; }
+  .group + .group { margin-top: 10px; }
+  .part { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; }
+  .part:hover { background: var(--bg); }
+  .part.sel { background: var(--accent-soft); }
+  .part input { accent-color: var(--accent); margin: 0; }
+  .part button { all: unset; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .part button:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+  .part .n { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .grouphead { display: flex; align-items: center; justify-content: space-between; }
+  .note { font-size: 12px; color: var(--muted); margin: 0; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Nano-Player Explosionsmodell</h1>
+    <div class="dims">
+      <span>Konzept: <b>42 × 95 × 12,2 mm</b></span>
+      <span>iPod nano 5. Gen.: <b>38,7 × 90,7 × 6,2 mm</b></span>
+      <span>Display: <b>1,8" AMOLED, 368 × 448</b></span>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="stage" id="stage">
+      <div class="views">
+        <button type="button" data-view="front">Vorne</button>
+        <button type="button" data-view="iso">Schräg</button>
+        <button type="button" data-view="side">Seite</button>
+        <button type="button" data-view="back">Hinten</button>
+      </div>
+      <div class="hint">Ziehen zum Drehen · Scrollen oder Zwei-Finger zum Zoomen · Teil antippen für Details</div>
+    </div>
+
+    <aside>
+      <section>
+        <p class="label">Zerlegen</p>
+        <div class="slider-row">
+          <input id="explode" type="range" min="0" max="100" value="55" aria-label="Explosionsgrad">
+          <output id="explodeOut" for="explode">55 %</output>
+        </div>
+        <div class="slider-row" style="margin-top:8px">
+          <button class="btn" type="button" id="btnAssembled">Zusammenbauen</button>
+          <button class="btn" type="button" id="btnExploded">Ganz zerlegen</button>
+          <button class="btn" type="button" id="btnAll">Alle zeigen</button>
+        </div>
+      </section>
+
+      <section>
+        <p class="label">Gehäusefarbe</p>
+        <div class="swatches" id="swatches"></div>
+      </section>
+
+      <section class="info" id="info" aria-live="polite"></section>
+
+      <section>
+        <p class="label">Teile</p>
+        <div id="partlist"></div>
+        <p class="note" style="margin-top:10px">Konzeptmodell mit vorläufigen Maßen. Display, Modul und Akku sind Platzhalter, bis die echten Teile ausgewählt sind.</p>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/environments/RoomEnvironment.js"></script>
+<script>
+(function () {
+  // ---------- Grundmaße (mm) ----------
+  const W = 42, L = 95, R = 7, WALL = 1.4;
+  const SEAM = 6.0, TOP = 12.2;
+  const DISP_Y = 21, WHEEL_Y = -27, WHEEL_R = 15, CENTER_R = 5.8;
+
+  // ---------- Szene ----------
+  const stage = document.getElementById('stage');
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.9;
+  stage.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 1, 2000);
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 60;
+  controls.maxDistance = 600;
+
+  if (THREE.RoomEnvironment) {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new THREE.RoomEnvironment(), 0.04).texture;
+  }
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f99, 0.35));
+  const key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(80, 120, 160);
+  scene.add(key);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.35);
+  rim.position.set(-120, -40, -80);
+  scene.add(rim);
+
+  // Gerät steht aufrecht: x = Breite, y = Länge, z = Dicke (vorne = +z)
+  const device = new THREE.Group();
+  device.position.z = -TOP / 2;
+  scene.add(device);
+
+  function applyStageColor() {
+    const c = getComputedStyle(document.documentElement).getPropertyValue('--stage').trim() || '#dfe2e6';
+    renderer.setClearColor(new THREE.Color(c), 1);
+  }
+  applyStageColor();
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyStageColor); } catch (e) {}
+  new MutationObserver(applyStageColor).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // ---------- Geometrie-Helfer ----------
+  function rr(target, w, h, r, cx = 0, cy = 0) {
+    const x = cx - w / 2, y = cy - h / 2;
+    r = Math.min(r, w / 2, h / 2);
+    target.moveTo(x + r, y);
+    target.lineTo(x + w - r, y); target.quadraticCurveTo(x + w, y, x + w, y + r);
+    target.lineTo(x + w, y + h - r); target.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    target.lineTo(x + r, y + h); target.quadraticCurveTo(x, y + h, x, y + h - r);
+    target.lineTo(x, y + r); target.quadraticCurveTo(x, y, x + r, y);
+    return target;
+  }
+  const rrShape = (w, h, r, cx, cy) => rr(new THREE.Shape(), w, h, r, cx, cy);
+  const rrPath = (w, h, r, cx, cy) => rr(new THREE.Path(), w, h, r, cx, cy);
+  function circlePath(r, cx = 0, cy = 0) { const p = new THREE.Path(); p.absarc(cx, cy, r, 0, Math.PI * 2, true); return p; }
+  function circleShape(r, cx = 0, cy = 0) { const s = new THREE.Shape(); s.absarc(cx, cy, r, 0, Math.PI * 2, false); return s; }
+  function extrude(shape, depth, bevel) {
+    const opts = { depth, curveSegments: 48, bevelEnabled: !!bevel };
+    if (bevel) Object.assign(opts, { bevelThickness: bevel, bevelSize: bevel, bevelSegments: 4 });
+    return new THREE.ExtrudeGeometry(shape, opts);
+  }
+  function mesh(geo, mat, z = 0, x = 0, y = 0) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); return m; }
+  function box(w, h, d, mat, x, y, z) { return mesh(new THREE.BoxGeometry(w, h, d), mat, z, x, y); }
+  function std(color, roughness = 0.5, metalness = 0.0, extra = {}) {
+    return new THREE.MeshStandardMaterial(Object.assign({ color: new THREE.Color(color).convertSRGBToLinear(), roughness, metalness }, extra));
+  }
+
+  // ---------- Texturen ----------
+  function screenTexture() {
+    const c = document.createElement('canvas'); c.width = 368; c.height = 448;
+    const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, 368, 448);
+    g.fillStyle = '#1f2228'; g.fillRect(0, 0, 368, 40);
+    g.font = '600 20px system-ui, sans-serif'; g.fillStyle = '#fff'; g.textBaseline = 'middle';
+    g.fillText('Musik', 14, 21);
+    g.fillStyle = '#b8bcc4'; g.textAlign = 'right'; g.fillText('▶  87%', 354, 21); g.textAlign = 'left';
+    const items = [['Wird gespielt', ''], ['Titel', '1.284'], ['Alben', '112'], ['Künstler', '87'], ['Playlists', '9'], ['Radio', ''], ['Navidrome', ''], ['Einstellungen', '']];
+    items.forEach(([t, d], i) => {
+      const y = 48 + i * 50;
+      if (i === 1) { g.fillStyle = '#ff8a3d'; g.fillRect(0, y, 368, 48); }
+      g.fillStyle = i === 1 ? '#000' : '#fff'; g.font = '500 24px system-ui, sans-serif';
+      g.fillText(t, 16, y + 25);
+      if (d) { g.fillStyle = i === 1 ? '#3a2010' : '#8a8f98'; g.font = '400 18px system-ui, sans-serif'; g.textAlign = 'right'; g.fillText(d, 350, y + 25); g.textAlign = 'left'; }
+    });
+    g.fillStyle = '#8a8f98'; g.fillRect(362, 48, 4, 80);
+    const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; return t;
+  }
+  function wheelTexture() {
+    const S = 512, c = document.createElement('canvas'); c.width = S; c.height = S;
+    const g = c.getContext('2d');
+    const grad = g.createRadialGradient(S / 2, S / 2, 60, S / 2, S / 2, S / 2);
+    grad.addColorStop(0, '#f2f3f5'); grad.addColorStop(1, '#dfe1e5');
+    g.fillStyle = grad; g.beginPath(); g.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#7d828b'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    const rad = (CENTER_R + WHEEL_R) / 2 / WHEEL_R * (S / 2);
+    g.font = '700 34px system-ui, sans-serif'; g.fillText('MENU', S / 2, S / 2 - rad);
+    g.font = '700 34px system-ui, sans-serif'; g.fillText('▶❚❚', S / 2, S / 2 + rad);
+    g.fillText('◀◀', S / 2 - rad, S / 2); g.fillText('▶▶', S / 2 + rad, S / 2);
+    const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; t.anisotropy = 8; return t;
+  }
+
+  // ---------- Materialien ----------
+  const COLORS = [
+    { name: 'Graphit', hex: '#3b3f46' }, { name: 'Silber', hex: '#c9ccd1' }, { name: 'Orange', hex: '#e2702f' },
+    { name: 'Blau', hex: '#2f6fb3' }, { name: 'Grün', hex: '#5f9a4a' }, { name: 'Pink', hex: '#d0507f' },
+  ];
+  const caseMat = std(COLORS[0].hex, 0.55, 0.12);
+  const darkPlastic = std(0x24272c, 0.7);
+  const framePlastic = std(0x55595f, 0.75);
+  const pcbGreen = std(0x1d5a3a, 0.55, 0.05);
+  const pcbTouch = std(0x1d5a3a, 0.55, 0.05);
+  const copper = std(0xc8a24a, 0.35, 0.8);
+  const shield = std(0xc4c8cc, 0.3, 0.9);
+  const chip = std(0x15171a, 0.6);
+  const metal = std(0xb3b7bc, 0.3, 0.85);
+  const flex = std(0xc98a2b, 0.45, 0.1);
+  const lraMat = std(0x9aa0a6, 0.35, 0.8);
+  const batteryMat = std(0x7d8590, 0.45, 0.6);
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x0b0c0e, roughness: 0.05, metalness: 0.2, transparent: true, opacity: 0.32 });
+  const portMat = new THREE.MeshBasicMaterial({ color: 0x0a0b0d });
+
+  // ---------- Teile ----------
+  // cat: print = 3D-Druck, pcb = eigene Platine, buy = Kaufteil
+  const PARTS = [
+    {
+      id: 'glass', name: 'Deckglas', cat: 'buy', explode: [0, 0, 44],
+      dims: '30 × 36,5 × 1,1 mm', source: 'Glas oder Acryl, Rand schwarz bedruckt',
+      note: 'Viele AMOLED-Module bringen bereits ein Deckglas mit. Dann entfällt dieses Teil und das Modul sitzt bündig im Fenster.',
+      build(g) { g.add(mesh(extrude(rrShape(30, 36.5, 2.2, 0, DISP_Y), 1.1), glassMat, 11.08)); },
+    },
+    {
+      id: 'top', name: 'Oberschale', cat: 'print', explode: [0, 0, 30], colored: true,
+      dims: '42 × 95 × 6,2 mm, Wand 1,4 mm', source: 'Resin (glatt) oder PETG, 0,12–0,2 mm Schicht',
+      note: 'Fenster für das Display und Öffnung für das Klickrad. Trägt das Deckglas. Wird mit der Rückschale verschraubt.',
+      build(g) {
+        const ring = rrShape(W - 1, L - 1, R - 0.5); ring.holes.push(rrPath(W - 2 * WALL + 1, L - 2 * WALL + 1, R - WALL + 0.5));
+        g.add(mesh(extrude(ring, TOP - SEAM - 1, 0.5), caseMat, SEAM + 0.5));
+        const plate = rrShape(W - 2 * WALL, L - 2 * WALL, R - WALL);
+        plate.holes.push(rrPath(30.2, 36.7, 2.3, 0, DISP_Y));
+        plate.holes.push(circlePath(WHEEL_R + 0.3, 0, WHEEL_Y));
+        g.add(mesh(extrude(plate, 1.2), caseMat, TOP - 1.2));
+        // Öffnungen für USB-C und Klinke (unten), microSD (rechts), Taste (oben) als dunkle Aussparungen
+        const usb = mesh(extrude(rrShape(9.2, 3.4, 1.6), 0.3), portMat, 0); usb.rotation.x = Math.PI / 2; usb.position.set(0, -L / 2 - 0.02, 5.8); g.add(usb);
+        const jack = mesh(extrude(circleShape(2.7), 0.3), portMat, 0); jack.rotation.x = Math.PI / 2; jack.position.set(-12, -L / 2 - 0.02, 5.8); g.add(jack);
+        const sd = mesh(extrude(rrShape(12, 1.6, 0.6), 0.3), portMat, 0); sd.rotation.y = Math.PI / 2; sd.position.set(W / 2 + 0.02, -40, 6.9); g.add(sd);
+      },
+    },
+    {
+      id: 'wheelcover', name: 'Klickrad-Abdeckung', cat: 'print', explode: [0, 0, 36],
+      dims: 'Ø 30 / Ø 11,6 mm, 1,95 mm dick', source: '3D-Druck (Resin) oder gelasertes Acryl',
+      note: 'Liegt direkt auf der Touch-Platine, damit kein Luftspalt die kapazitive Erkennung schwächt. Beschriftung gelasert oder bedruckt.',
+      build(g) {
+        const s = circleShape(WHEEL_R, 0, WHEEL_Y); s.holes.push(circlePath(CENTER_R, 0, WHEEL_Y));
+        g.add(mesh(extrude(s, 1.95), std(0xe3e5e8, 0.55), 10.25));
+        const top = new THREE.Mesh(new THREE.RingGeometry(CENTER_R, WHEEL_R, 96), new THREE.MeshStandardMaterial({ map: wheelTexture(), roughness: 0.6 }));
+        top.position.set(0, WHEEL_Y, TOP + 0.01); g.add(top);
+      },
+    },
+    {
+      id: 'center', name: 'Mitteltaste', cat: 'print', explode: [0, 0, 41],
+      dims: 'Ø 11 × 1,15 mm', source: '3D-Druck (Resin)',
+      note: 'Drückt auf den Taster in der Mitte der Touch-Platine. Leicht gewölbt drucken, damit der Daumen sie blind findet.',
+      build(g) {
+        const c = new THREE.Mesh(new THREE.CylinderGeometry(5.5, 5.5, 1.15, 64), std(0xd9dbdf, 0.5));
+        c.rotation.x = Math.PI / 2; c.position.set(0, WHEEL_Y, 11.6); g.add(c);
+      },
+    },
+    {
+      id: 'touch', name: 'Klickrad-Platine', cat: 'pcb', explode: [0, 0, 18],
+      dims: 'Ø 32 × 1,0 mm', source: 'eigene Platine, 2 Lagen (hardware/pcb/klickrad)',
+      note: 'Vorne 8–12 kapazitive Segmente und die Mitteltaste, hinten Touch-Controller, Haptik-Treiber und LRA. Ein 6-poliger JST-SH-Stecker zur Hauptplatine. Dasselbe Modul steckt auch im Prototyp.',
+      build(g) {
+        const s = circleShape(16, 0, WHEEL_Y);
+        [90, 210, 330].forEach(a => { const r = a * Math.PI / 180; s.holes.push(circlePath(1.1, 14.6 * Math.cos(r), WHEEL_Y + 14.6 * Math.sin(r))); });
+        g.add(mesh(extrude(s, 1.0), pcbTouch, 9.2));
+        for (let i = 0; i < 8; i++) {
+          const a0 = i * Math.PI / 4 + 0.04, a1 = (i + 1) * Math.PI / 4 - 0.04;
+          const seg = new THREE.Shape();
+          seg.absarc(0, WHEEL_Y, 12.8, a0, a1, false);
+          seg.absarc(0, WHEEL_Y, 6.5, a1, a0, true);
+          g.add(mesh(extrude(seg, 0.05), copper, 10.2));
+        }
+        g.add(box(3.6, 3.6, 0.8, metal, 0, WHEEL_Y, 10.6));
+        g.add(box(1.6, 1.6, 0.5, chip, 0, WHEEL_Y, 11.15));
+        g.add(box(7, 4.2, 1.3, std(0xe8e2d0, 0.6), 0, WHEEL_Y + 9, 8.55));
+      },
+    },
+    {
+      id: 'display', name: 'AMOLED-Display', cat: 'buy', explode: [0, 0, 16],
+      dims: 'Modul ca. 33 × 42 × 2,4 mm', source: '1,8" AMOLED, 368 × 448, QSPI (z. B. Treiber CO5300 oder SH8601)',
+      note: 'Hochformat wie beim nano 5G. Genaue Außenmaße hängen vom gekauften Modul ab; die Oberschale wird danach angepasst.',
+      build(g) {
+        g.add(box(33, 42, 2.4, std(0x0e0f12, 0.4, 0.2), 0, DISP_Y, 9.7));
+        const scr = new THREE.Mesh(new THREE.PlaneGeometry(29, 35.3), new THREE.MeshBasicMaterial({ map: screenTexture(), toneMapped: false }));
+        scr.position.set(0, DISP_Y, 10.92); g.add(scr);
+        g.add(box(14, 7, 0.15, flex, 0, DISP_Y - 24, 8.5));
+      },
+    },
+    {
+      id: 'pcb', name: 'Hauptplatine', cat: 'pcb', explode: [0, 0, 0],
+      dims: '38 × 89 × 1,0 mm', source: 'eigene Platine, 4 Lagen empfohlen',
+      note: 'Alle Bauteile sitzen auf der Unterseite, oben liegen nur Display und Klickrad-Modul. Unter dem Klickrad hat sie eine Aussparung Ø 26 mm für LRA und Bauteile des Moduls. Ein/Aus-Taster an der Oberkante.',
+      build(g) {
+        const board = rrShape(38, 89, 5); board.holes.push(circlePath(13, 0, WHEEL_Y));
+        g.add(mesh(extrude(board, 1.0), pcbGreen, 7.4));
+        g.add(box(4, 2.6, 1.6, metal, 8, L / 2 - 4.5, 9.2));
+      },
+    },
+    {
+      id: 'module', name: 'ESP32-S31-Modul', cat: 'buy', explode: [0, 0, -3],
+      dims: 'ca. 18 × 16 × 2,4 mm (Platzhalter)', source: 'Espressif, WLAN 6, Bluetooth Classic und LE Audio',
+      note: 'Die Antenne zeigt zur Gehäuseseite. Das Kunststoffgehäuse lässt Funk durch; kein Metall in der Nähe der Antenne.',
+      build(g) {
+        g.add(box(18, 16, 0.8, std(0x1b4d33, 0.6), 9.5, -6, 6.95));
+        g.add(box(12, 15, 1.6, shield, 7.0, -6, 5.75));
+        g.add(box(5, 15, 0.3, std(0x14171a, 0.6), 15.5, -6, 6.4));
+      },
+    },
+    {
+      id: 'dac', name: 'Audio-DAC und Verstärker', cat: 'buy', explode: [0, 0, -3],
+      dims: 'ca. 4 × 4 mm', source: 'Bauteil, z. B. wie bei Tangara (WM8523 mit Kopfhörerverstärker)',
+      note: 'Weit weg von WLAN-Antenne und Haptik-Leitungen platzieren, eigene saubere Versorgung.',
+      build(g) { g.add(box(4, 4, 0.9, chip, -9, -5, 6.95)); g.add(box(3, 3, 0.9, chip, -9, -11, 6.95)); },
+    },
+    {
+      id: 'drv', name: 'Haptik-Treiber DRV2605L', cat: 'buy', explode: [0, 0, 18],
+      dims: '3 × 3 mm', source: 'Texas Instruments, I²C-Adresse 0x5A',
+      note: 'Sitzt auf der Rückseite der Klickrad-Platine und steuert den LRA mit Overdrive und aktivem Bremsen für einen kurzen, harten Klick.',
+      build(g) { g.add(box(3, 3, 0.8, chip, 6, WHEEL_Y + 6, 8.8)); },
+    },
+    {
+      id: 'mpr', name: 'Touch-Controller MPR121', cat: 'buy', explode: [0, 0, 18],
+      dims: '3 × 3 mm', source: 'NXP, I²C-Adresse 0x5B',
+      note: 'Liest die Touch-Segmente als Rohwerte. Daraus berechnet die Firmware einen feinen Drehwinkel.',
+      build(g) { g.add(box(3, 3, 0.8, chip, -6, WHEEL_Y + 6, 8.8)); },
+    },
+    {
+      id: 'usb', name: 'USB-C-Buchse', cat: 'buy', explode: [0, -4, -3],
+      dims: 'ca. 9 × 7,4 × 3,2 mm', source: 'Bauteil, Mid-Mount',
+      note: 'Laden und Flashen der Firmware.',
+      build(g) { g.add(box(9, 7.4, 3.2, metal, 0, -L / 2 + 5.2, 5.8)); },
+    },
+    {
+      id: 'jack', name: 'Kopfhörerbuchse 3,5 mm', cat: 'buy', explode: [0, -4, -3],
+      dims: 'Ø 6 × 12 mm', source: 'Bauteil',
+      note: 'Sitzt neben der USB-C-Buchse an der Unterkante, wie beim iPod.',
+      build(g) {
+        const c = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 12, 32), darkPlastic);
+        c.position.set(-12, -L / 2 + 7.5, 5.6); g.add(c);
+      },
+    },
+    {
+      id: 'sd', name: 'microSD-Slot', cat: 'buy', explode: [4, 0, -3],
+      dims: 'ca. 13 × 12 × 1,4 mm', source: 'Bauteil, Push-Push',
+      note: 'Musikspeicher, seitlich zugänglich.',
+      build(g) { g.add(box(13, 12, 1.4, metal, 12.5, -40, 6.7)); },
+    },
+    {
+      id: 'lra', name: 'X-Achsen-LRA', cat: 'buy', explode: [0, 0, 7],
+      dims: 'ca. 6 × 16 × 3,6 mm', source: 'Linearer Vibrationsmotor, schwingt seitlich',
+      note: 'Auf die Rückseite der Klickrad-Platine geklebt und schwingt seitlich. So kommt der Klick genau dort an, wo der Daumen liegt.',
+      build(g) { g.add(box(16, 6, 3.6, lraMat, 0, WHEEL_Y - 2, 7.2)); },
+    },
+    {
+      id: 'battery', name: 'Akku', cat: 'buy', explode: [0, 0, -18],
+      dims: 'ca. 34 × 38 × 4,6 mm (Platzhalter)', source: 'LiPo 1S mit Schutzschaltung, ca. 700 mAh',
+      note: 'Liegt unter dem Display. Größe und Kapazität erst festlegen, wenn die Platine steht.',
+      build(g) {
+        g.add(mesh(extrude(rrShape(34, 38, 1.5, 0, 24), 4.6), batteryMat, 1.3));
+        g.add(box(8, 3, 0.12, std(0xb3401e, 0.5), 0, 6.8, 5.95));
+      },
+    },
+    {
+      id: 'frame', name: 'Innenrahmen', cat: 'print', explode: [0, 0, -8],
+      dims: '39 × 92 × 6,2 mm', source: 'PETG, steif',
+      note: 'Trägt Hauptplatine und Akku. Vier M2-Gewindeeinsätze zum Verschrauben. Steif drucken, damit die Haptik nicht verpufft.',
+      build(g) {
+        const ring = rrShape(W - 2 * WALL - 0.2, L - 2 * WALL - 0.2, R - WALL);
+        ring.holes.push(rrPath(W - 2 * WALL - 3.4, L - 2 * WALL - 3.4, R - WALL - 1.5));
+        g.add(mesh(extrude(ring, 6.2), framePlastic, 1.2));
+        g.add(box(W - 2 * WALL - 1, 2, 4.0, framePlastic, 0, 3.5, 3.2));
+        [[-15, 40], [15, 40], [-15, -40], [15, -40]].forEach(([x, y]) => {
+          const b = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.3, 6.2, 24), framePlastic);
+          b.rotation.x = Math.PI / 2; b.position.set(x, y, 4.3); g.add(b);
+        });
+      },
+    },
+    {
+      id: 'back', name: 'Rückschale', cat: 'print', explode: [0, 0, -30], colored: true,
+      dims: '42 × 95 × 6 mm, Wand 1,4 mm', source: 'Resin oder PETG',
+      note: 'Boden mit vier Senkungen für die Schrauben. Trennfuge zur Oberschale auf halber Höhe.',
+      build(g) {
+        const ring = rrShape(W - 1, L - 1, R - 0.5); ring.holes.push(rrPath(W - 2 * WALL + 1, L - 2 * WALL + 1, R - WALL + 0.5));
+        g.add(mesh(extrude(ring, SEAM - 1, 0.5), caseMat, 0.5));
+        g.add(mesh(extrude(rrShape(W - 2 * WALL, L - 2 * WALL, R - WALL), 1.2), caseMat, 0));
+      },
+    },
+    {
+      id: 'power', name: 'Ein/Aus-Taste', cat: 'print', explode: [0, 10, 24], colored: true,
+      dims: '8 × 2 × 3 mm', source: '3D-Druck, drückt auf Taster der Hauptplatine',
+      note: 'An der Oberkante wie der Hold-Schalter beim nano.',
+      build(g) { g.add(mesh(extrude(rrShape(8, 3, 1.2), 1.4), caseMat, 0)); g.children[0].rotation.x = -Math.PI / 2; g.children[0].position.set(8, L / 2 + 0.4, 10.3); },
+    },
+    {
+      id: 'screws', name: 'Schrauben und Einsätze', cat: 'buy', explode: [0, 0, -40],
+      dims: '4 × M2 × 8 mm, 4 × M2-Gewindeeinsatz', source: 'Normteile',
+      note: 'Von hinten durch die Rückschale in die Gewindeeinsätze im Innenrahmen.',
+      build(g) {
+        [[-15, 40], [15, 40], [-15, -40], [15, -40]].forEach(([x, y]) => {
+          const head = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, 1.0, 24), metal);
+          head.rotation.x = Math.PI / 2; head.position.set(x, y, -0.02); g.add(head);
+          const shaft = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 7, 16), metal);
+          shaft.rotation.x = Math.PI / 2; shaft.position.set(x, y, 3.5); g.add(shaft);
+        });
+      },
+    },
+  ];
+  const CAT = { print: { label: '3D-Druck', cls: 'print' }, pcb: { label: 'Eigene Platine', cls: 'pcb' }, buy: { label: 'Kaufteil', cls: 'buy' } };
+
+  // Teile aufbauen
+  const meshToPart = new Map();
+  PARTS.forEach(p => {
+    p.group = new THREE.Group();
+    p.build(p.group);
+    p.visible = true;
+    p.group.traverse(o => {
+      if (o.isMesh) {
+        o.material = o.material.clone();
+        o.userData.baseOpacity = o.material.opacity;
+        o.userData.baseTransparent = o.material.transparent;
+        meshToPart.set(o, p);
+      }
+    });
+    device.add(p.group);
+  });
+
+  // ---------- Zustand ----------
+  let explode = 0.55, explodeTarget = 0.55, selected = null;
+
+  function applyExplode() {
+    PARTS.forEach(p => p.group.position.set(p.explode[0] * explode, p.explode[1] * explode, p.explode[2] * explode));
+  }
+  const accentColor = () => new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#cf5f1b');
+
+  function applyHighlight() {
+    const acc = accentColor();
+    PARTS.forEach(p => {
+      p.group.visible = p.visible;
+      const isSel = selected === p;
+      const dim = selected && !isSel;
+      p.group.traverse(o => {
+        if (!o.isMesh) return;
+        const m = o.material;
+        if (m.emissive) m.emissive.copy(isSel ? acc : new THREE.Color(0x000000)).multiplyScalar(isSel ? 0.28 : 0);
+        m.transparent = dim ? true : o.userData.baseTransparent;
+        m.opacity = dim ? Math.min(0.22, o.userData.baseOpacity) : o.userData.baseOpacity;
+        m.depthWrite = !dim;
+        m.needsUpdate = true;
+      });
+    });
+  }
+
+  // ---------- UI ----------
+  const slider = document.getElementById('explode');
+  const out = document.getElementById('explodeOut');
+  slider.addEventListener('input', () => { explodeTarget = slider.value / 100; explode = explodeTarget; out.value = slider.value + ' %'; });
+  function animateTo(v) { explodeTarget = v; }
+  document.getElementById('btnAssembled').onclick = () => animateTo(0);
+  document.getElementById('btnExploded').onclick = () => animateTo(1);
+  document.getElementById('btnAll').onclick = () => { PARTS.forEach(p => p.visible = true); select(null); renderList(); };
+
+  const sw = document.getElementById('swatches');
+  COLORS.forEach((c, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'swatch'; b.style.background = c.hex; b.title = c.name; b.setAttribute('aria-label', 'Gehäusefarbe ' + c.name);
+    b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.onclick = () => {
+      PARTS.filter(p => p.colored).forEach(p => p.group.traverse(o => { if (o.isMesh && o.material !== undefined && o.material.color && !o.material.map && o.material.type === 'MeshStandardMaterial' && o.material.type === 'MeshStandardMaterial') o.material.color.set(c.hex).convertSRGBToLinear(); }));
+      sw.querySelectorAll('.swatch').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    };
+    sw.appendChild(b);
+  });
+
+  const info = document.getElementById('info');
+  function renderInfo() {
+    if (!selected) {
+      info.innerHTML = '<h2>Gesamtgerät</h2><p>' + PARTS.length + ' Teile: ' +
+        PARTS.filter(p => p.cat === 'print').length + ' zum Drucken, ' +
+        PARTS.filter(p => p.cat === 'pcb').length + ' eigene Platinen, ' +
+        PARTS.filter(p => p.cat === 'buy').length + ' Kaufteile.</p><p class="note">Tippe ein Teil im Modell oder in der Liste an, um Maße, Herkunft und Hinweise zu sehen.</p>';
+      return;
+    }
+    const p = selected, c = CAT[p.cat];
+    info.innerHTML = '<div><span class="chip ' + c.cls + '">' + c.label + '</span></div>' +
+      '<h2>' + p.name + '</h2>' +
+      '<dl><dt>Maße</dt><dd>' + p.dims + '</dd><dt>Herkunft</dt><dd>' + p.source + '</dd></dl>' +
+      '<p>' + p.note + '</p>' +
+      '<div class="actions"><button class="btn" type="button" id="isoBtn">Nur dieses Teil</button><button class="btn" type="button" id="hideBtn">Ausblenden</button><button class="btn" type="button" id="clearBtn">Auswahl aufheben</button></div>';
+    document.getElementById('isoBtn').onclick = () => { PARTS.forEach(q => q.visible = q === p); applyHighlight(); renderList(); };
+    document.getElementById('hideBtn').onclick = () => { p.visible = false; select(null); renderList(); };
+    document.getElementById('clearBtn').onclick = () => select(null);
+  }
+
+  const list = document.getElementById('partlist');
+  function renderList() {
+    list.innerHTML = '';
+    ['print', 'pcb', 'buy'].forEach(cat => {
+      const items = PARTS.filter(p => p.cat === cat);
+      const grp = document.createElement('div'); grp.className = 'group';
+      grp.innerHTML = '<div class="grouphead"><span class="chip ' + CAT[cat].cls + '">' + CAT[cat].label + '</span><span class="n">' + items.length + '</span></div>';
+      items.forEach(p => {
+        const row = document.createElement('div'); row.className = 'part' + (selected === p ? ' sel' : '');
+        const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = p.visible; cb.id = 'vis-' + p.id;
+        cb.setAttribute('aria-label', p.name + ' anzeigen');
+        cb.onchange = () => { p.visible = cb.checked; if (!p.visible && selected === p) select(null); else applyHighlight(); };
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = p.name;
+        b.onclick = () => select(selected === p ? null : p);
+        const n = document.createElement('span'); n.className = 'n'; n.textContent = p.dims.split(',')[0].replace(' (Platzhalter)', '');
+        row.append(cb, b, n); grp.appendChild(row);
+      });
+      list.appendChild(grp);
+    });
+  }
+  function select(p) {
+    selected = p;
+    if (p) p.visible = true;
+    applyHighlight(); renderInfo(); renderList();
+  }
+
+  // Kamera-Ansichten
+  const VIEWS = {
+    front: [0, 0, 260], iso: [215, 75, 135], side: [270, 10, 10], back: [-150, 50, -200],
+  };
+  let camTarget = null;
+  document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => { camTarget = new THREE.Vector3(...VIEWS[b.dataset.view]); });
+  camera.position.set(...VIEWS.iso);
+  controls.target.set(0, 0, 4);
+
+  // Auswahl per Klick im Modell
+  const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  let downAt = null;
+  function pick(ev) {
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hits = ray.intersectObjects(device.children, true).filter(h => {
+      const p = meshToPart.get(h.object);
+      return p && p.visible && (!selected || p === selected || h.object.material.opacity > 0.3);
+    });
+    return hits.length ? meshToPart.get(hits[0].object) : null;
+  }
+  renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
+  renderer.domElement.addEventListener('pointerup', e => {
+    if (!downAt) return;
+    const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]);
+    downAt = null;
+    if (moved < 6) select(pick(e));
+  });
+  renderer.domElement.addEventListener('pointermove', e => {
+    if (e.buttons) return;
+    renderer.domElement.classList.toggle('hovering', !!pick(e));
+  });
+
+  // Größe
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function loop() {
+    requestAnimationFrame(loop);
+    if (Math.abs(explode - explodeTarget) > 0.001) {
+      explode = reduceMotion ? explodeTarget : explode + (explodeTarget - explode) * 0.12;
+      slider.value = Math.round(explode * 100); out.value = slider.value + ' %';
+    }
+    if (camTarget) {
+      camera.position.lerp(camTarget, reduceMotion ? 1 : 0.12);
+      if (camera.position.distanceTo(camTarget) < 0.5) camTarget = null;
+    }
+    applyExplode();
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  applyExplode(); renderInfo(); renderList(); loop();
+})();
+</script>

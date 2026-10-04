@@ -47,7 +47,7 @@ Mit der App in [`android-emulator/`](android-emulator/README.md) ermitteln und h
 |---|---|
 | Display | _offen_ |
 | Rasterschritt (Grad) | _offen_ |
-| Haptik-Typ | _offen_ |
+| Haptik-Typ | Predefined: Click (DRV2605L: Effekt 1 oder 4) |
 | Stärke | _offen_ |
 | Mindestabstand zwischen Ticks (ms) | _offen_ |
 | Anschlag am Listenende | _offen_ |
