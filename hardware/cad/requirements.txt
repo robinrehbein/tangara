@@ -1,0 +1,5 @@
+cadquery
+trimesh
+matplotlib
+numpy
+scipy

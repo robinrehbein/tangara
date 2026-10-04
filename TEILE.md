@@ -54,6 +54,11 @@ DRV2605L-EN fest auf 3V3; Standby per I²C.
 | Akku | ca. 34 × 40 × 4,6 (Platzhalter) |
 | Schrauben | 4 × M2, bei (±15, ±40), Gewindeeinsätze im Innenrahmen |
 
+**Abweichungen im CAD-Entwurf** (Details: `hardware/cad/README.md`)
+- Ein/Aus-Taste auf z = 9,2 statt 10,3 (sonst zu dünne Wand über der Öffnung)
+- Oberschale ohne Schraubdome (Display belegt die Stellen), Halt über Innenrahmen und 4 Rastnasen; ungeprüft
+- Klickrad-Platine im Endgerät vorerst mit Distanzring und Klebeband. Offen: 3 Aussparungen in der Hauptplatine für eine Verschraubung.
+
 ## Bestellstatus
 
 Noch nichts bestellt.
