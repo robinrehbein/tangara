@@ -1,0 +1,190 @@
+menu "Nano-Player"
+
+    choice NANO_PANEL
+        prompt "Display-Variante des Waveshare-Boards"
+        default NANO_PANEL_CO5300
+        help
+            Waveshare liefert seit 30.05.2026 nur noch V2 (CO5300 + CST820). V1 hatte SH8601 + FT3168.
+
+        config NANO_PANEL_CO5300
+            bool "V2: CO5300 (Standard)"
+        config NANO_PANEL_SH8601
+            bool "V1: SH8601"
+    endchoice
+
+    config NANO_DISPLAY_BRIGHTNESS
+        int "Helligkeit (0-255)"
+        range 1 255
+        default 200
+
+    menu "Klickrad"
+        config NANO_WHEEL_SEPARATE_I2C
+            bool "Eigener I2C-Bus fuer das Klickrad (Pins in board_config.h, pruefen)"
+            default n
+
+        choice NANO_WHEEL_CTRL
+            prompt "Touch-Controller des Klickrad-Moduls"
+            default NANO_WHEEL_QT2120
+            help
+                Klickrad v2 (Tangara-Technik): AT42QT2120 auf I2C 0x1C im Wheel-Modus, liefert die
+                Position 0..255 direkt. Klickrad v1: MPR121 auf 0x5B mit bis zu 12 Segmenten, die
+                Winkelberechnung macht components/clickwheel.
+
+            config NANO_WHEEL_QT2120
+                bool "AT42QT2120 (Tangara, Klickrad v2)"
+            config NANO_WHEEL_MPR121
+                bool "MPR121 (Klickrad v1)"
+        endchoice
+
+        config NANO_WHEEL_BTN_GPIO
+            bool "Mitteltaste zusaetzlich ueber BTN-Pin (Stecker-Pin 6) lesen"
+            default y
+            help
+                Beim AT42QT2120-Modul ist die Mitteltaste Taste 3 des Chips (wie Tangara). Der BTN-Pin
+                bleibt zusaetzlich aktiv, falls das Modul eine mechanische Taste daran hat. Ist nichts
+                angeschlossen, haelt der interne Pull-up den Pin auf high.
+
+        config NANO_WHEEL_SEGMENTS
+            int "Anzahl Touch-Segmente im Ring (MPR121 ELE0..)"
+            range 3 12
+            default 12
+            depends on NANO_WHEEL_MPR121
+
+        config NANO_WHEEL_FIRST_SEGMENT_DEG
+            int "Winkel von Segment 0 bzw. Wheel-Position 0 in Grad (0 = rechts, im Uhrzeigersinn, -90 = oben)"
+            range -180 180
+            default -90 if NANO_WHEEL_QT2120
+            default 105
+            help
+                AT42QT2120 laut Tangara-Code: Position 0 = oben (-90 Grad).
+                MPR121 (Klickrad v1): ELE0 liegt unten leicht links, die Elektrodennummern steigen im
+                Uhrzeigersinn. Daraus ergibt sich 105.
+                AT42QT2120: Winkel der Wheel-Position 0. Der Wert -90 ist ein Platzhalter; er haengt von
+                der Lage der drei Wheel-Elektroden auf der Platine ab und muss am echten Rad bestimmt werden
+                (NANO_WHEEL_LOG_RAW zeigt die Position). Drehsinn ueber die Option darunter.
+
+        config NANO_WHEEL_CLOCKWISE
+            bool "Segmentnummern bzw. Wheel-Position steigen im Uhrzeigersinn"
+            default n if NANO_WHEEL_QT2120
+            default y
+            help
+                AT42QT2120 laut Tangara-Code (input_touch_wheel.cpp): Position 0 = oben, 64 = links,
+                128 = unten, 192 = rechts, die Position steigt also gegen den Uhrzeigersinn. Das gilt fuer
+                die Elektrodenlage der Tangara-Platine; fuer unser Modul am echten Rad pruefen.
+
+        config NANO_WHEEL_DETENT_DEG
+            int "Rasterschritt in Grad"
+            range 3 90
+            default 15
+            help
+                Emulator-Standard 15 Grad. Kleiner = mehr Ticks pro Umdrehung.
+
+        config NANO_WHEEL_POLL_MS
+            int "Abtastintervall beim Beruehren (ms)"
+            range 2 20
+            default 5
+            help
+                Der MPR121 liefert alle ca. 4 ms einen neuen gefilterten Wert. Der AT42QT2120 wird
+                im Wheel-Betrieb ebenfalls in diesem Takt gelesen (Tangara pollt ihn nur bei CHANGE = low).
+
+        config NANO_WHEEL_TOUCH_ON
+            int "Touch-Schwelle (Signalstaerke in Rohwert-Einheiten)"
+            default 40
+            depends on NANO_WHEEL_MPR121
+
+        config NANO_WHEEL_TOUCH_OFF
+            int "Loslass-Schwelle"
+            default 20
+            depends on NANO_WHEEL_MPR121
+
+        config NANO_WHEEL_NOISE_FLOOR
+            int "Rauschgrenze pro Segment"
+            default 8
+            depends on NANO_WHEEL_MPR121
+
+        config NANO_WHEEL_TAP_SLOP_DEG
+            int "Bewegung in Grad, ab der es Drehen statt Tippen ist"
+            default 20
+
+        config NANO_WHEEL_LOG_RAW
+            bool "Rohwerte der Segmente periodisch loggen (Kalibrierung)"
+            default n
+    endmenu
+
+    menu "Haptik"
+        config NANO_TICK_MIN_INTERVAL_MS
+            int "Mindestabstand zwischen Ticks (ms), Rate-Limit"
+            range 0 500
+            default 20
+
+        config NANO_ENDSTOP_MIN_INTERVAL_MS
+            int "Mindestabstand fuer den Anschlag (ms)"
+            range 0 1000
+            default 80
+
+        config NANO_EFFECT_TICK
+            int "DRV2605L-Effekt fuer Raster-Tick (1 = Strong Click 100 %, 4 = Sharp Click 100 %)"
+            range 1 123
+            default 1
+
+        config NANO_EFFECT_CLICK
+            int "Effekt fuer Mitteltaste/Tipp (4 = Sharp Click 100 %)"
+            range 1 123
+            default 4
+
+        config NANO_EFFECT_ENDSTOP
+            int "Effekt am Listenende (10 = Double Click 100 %, 14 = Strong Buzz 100 %)"
+            range 1 123
+            default 10
+
+        config NANO_LRA_FREQ_HZ
+            int "LRA-Resonanzfrequenz (Hz) - Datenblatt pruefen"
+            default 235
+            help
+                Default = Tangara-Motor (235 Hz, 1,8 V RMS, 2,6 V Spitze). Entspricht dem ersten
+                LRA-Kandidaten in docs/EINKAUFSLISTE.md.
+
+        config NANO_LRA_RATED_MVRMS
+            int "LRA-Nennspannung (mV RMS) - Datenblatt pruefen"
+            default 1800
+
+        config NANO_LRA_OVERDRIVE_MVPEAK
+            int "LRA-Overdrive-Grenze (mV Spitze) - Datenblatt pruefen"
+            default 2600
+
+        config NANO_HAPTIC_ERM
+            bool "ERM-Motor statt LRA (Tangara-Modus: offener Regelkreis, Bibliothek C)"
+            default n
+
+        config NANO_HAPTIC_IGNORE_NACK
+            bool "ACK-Pruefung beim DRV2605L abschalten (Tangara-Workaround)"
+            default n
+            help
+                Tangara schaltet die ACK-Pruefung ab ("Why does the driver sometimes NACK?"). Nur
+                aktivieren, wenn am echten Modul I2C-Fehler im Log auftauchen.
+
+        config NANO_HAPTIC_INTERRUPT
+            bool "Laufenden Effekt vor dem naechsten abbrechen (wie Tangara)"
+            default y
+            help
+                Schreibt GO = 0 vor jedem Effekt. Kostet eine zusaetzliche kurze I2C-Transaktion,
+                macht schnelle Ticks aber direkter.
+
+        config NANO_HAPTIC_AUTOCAL
+            bool "Auto-Kalibrierung beim ersten Start (ca. 1 s, LRA brummt kurz), Ergebnis im NVS"
+            default y
+    endmenu
+
+    menu "Debug"
+        config NANO_LATENCY_PROBE
+            bool "Latenz-Messpunkte (GPIO-Toggle) fuer Logic Analyzer"
+            default y
+            help
+                PROBE_STEP_GPIO toggelt beim Erkennen eines Rasterschritts, PROBE_HAPTIC_GPIO direkt
+                nach dem I2C-Befehl an den DRV2605L. Pins in board_config.h.
+
+        config NANO_I2C_SCAN
+            bool "Beim Start I2C-Bus scannen und loggen"
+            default y
+    endmenu
+endmenu
