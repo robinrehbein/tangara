@@ -17,7 +17,7 @@ for ref, f in fps.items():
     f.Value().SetVisible(False)
     r = f.Reference()
     r.SetTextSize(VECTOR2I(FromMM(0.6), FromMM(0.6))); r.SetTextThickness(FromMM(0.1))
-    if p['kind'] in ('R', 'C', 'TP', 'H') or p['pkg'] in ('0402',):
+    if p['kind'] in ('R', 'C', 'TP', 'H') or p.get('pkg') in ('0402',):
         r.SetVisible(False)
     # Eigenschaften fuer Stueckliste/Nachvollziehbarkeit
     for k, nm in (('mpn', 'MPN'), ('mfr', 'Manufacturer'), ('src', 'Herkunft')):
