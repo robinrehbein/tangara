@@ -6,10 +6,10 @@ Gemeinsame Grundlage für Firmware, CAD und Platinen. Maße in mm. Werte mit „
 
 | Teil | Auswahl | Hinweis |
 |---|---|---|
-| Hauptboard | Waveshare ESP32-S3-Touch-AMOLED-1.8 | 1,8" AMOLED 368 × 448 (QSPI, SH8601), Touch, PMU AXP2101, Audio-Codec ES8311, IMU, RTC, SD (alles prüfen). Außenmaße und herausgeführte Pins prüfen. |
-| Klickrad-Modul | eigene Platine, siehe unten | |
-| LRA | X-Achsen-LRA, 2–3 Typen zum Vergleichen | Bauform und Resonanzfrequenz je Typ notieren |
-| Akku | LiPo 1S mit Schutzschaltung, Stecker passend zum Waveshare-Board (prüfen, vermutlich MX1.25) | Größe nach Gehäuse |
+| Hauptboard | Waveshare ESP32-S3-Touch-AMOLED-1.8 | 1,8" AMOLED 368 × 448 (QSPI), geprüft: V1 SH8601 + FT3168, **V2 (seit 30.05.2026 lieferbar) CO5300 + CST820**; PMU AXP2101, Codec ES8311 mit NS4150B -> **nur Onboard-Lautsprecher, kein Kopfhörerausgang**, IMU QMI8658, RTC PCF85063, IO-Expander TCA9554, TF-Slot. Maße laut Wiki-Zeichnung **37,6 × 45,2 × 15,0** (mit Gehäuse; nackte Platine ungeprüft). Pads 1,27 mm: VBUS, GND, 3V3, GND, TXD, RXD, **SCL = GPIO14, SDA = GPIO15** (geteilter Bus, 2,2 kΩ Pull-ups onboard), GPIO17, 18, 38–42, USB D−/D+ = GPIO19/20. Klickrad-Vorschlag: INT = GPIO17, BTN = GPIO18. Keine Adresskollision mit 0x5A/0x5B. Details und Quellen: `docs/RECHERCHE.md`. |
+| Klickrad-Modul | eigene Platine, siehe unten | Anschluss an die Waveshare-Pads: 3V3, GND, SDA = GPIO15, SCL = GPIO14, INT = GPIO17, BTN = GPIO18; I²C-Pull-ups liegen schon auf dem Board, auf dem Modul nicht bestücken |
+| LRA | X-Achsen-LRA, 2–3 Typen zum Vergleichen | Bauform und Resonanzfrequenz je Typ notieren. Kandidaten: 4,5 × 12 × 3,0 (235 Hz), 9,5 × 9,5 × 3,5 (170 Hz), 8 × 15 × 3,0 (170 Hz), Herstellerangaben, siehe `docs/EINKAUFSLISTE.md` |
+| Akku | LiPo 1S mit Schutzschaltung, Stecker passend zum Waveshare-Board (geprüft: MX1.25, 2-polig; Polung am Board prüfen) | Größe nach Gehäuse; Waveshare empfiehlt 3,85 × 24 × 28 mm, 400 mAh |
 | Gehäuse | Prototyp-Gehäuse v1 (FDM-Druck) | Display oben, Klickrad unten, Hochformat |
 
 ## Klickrad-Modul (eigene Platine)
