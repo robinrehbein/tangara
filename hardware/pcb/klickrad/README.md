@@ -23,15 +23,15 @@ Quellen: Blogartikel „A Deep Dive Into the Design of Tangara's Touchwheel“ (
 | Entkopplung QT2120 | **übernommen** | 0,1 µF + 1 µF an VDD | C1 0,1 µF + C2 1 µF (0402) |
 | DRV2605L | **übernommen** | VSSOP-10, VDD 1 µF, REG 1 µF, IN/TRIG an GND, EN über 10 kΩ nach 3V3, OUT± auf Lötpads | gleich (U2, C3, C4, R7, Lötpads TP1/TP2); EN jetzt wie bei Tangara über 10 kΩ statt fest an 3V3 |
 | Wheel-Elektroden | **übernommen, skaliert** | 3 verschachtelte Elektroden (3 Ringe), r = 7,9 … 19,9 mm, Abstand 0,29 mm, Deadzone 2 mm | gleicher Algorithmus (SVG-Tool), r = 6,3 … 12,3 mm (Ringbreite 12 → 6 mm), Abstand 0,25 mm, Deadzone 1,5 mm, Spitzen < 0,2 mm abgerundet |
-| Mitteltaste | **übernommen** | kapazitive Scheibe r = 2,5 mm (`qtouch-button`) | kapazitive Scheibe, **r = 3,5 mm** (größer, weil die Abdeckungsmarke Ø 11,6 mm hat) |
-| Guard | **übernommen, angepasst** | Ring r = 22,2 mm, Linie 1 mm, 2,35 mm vom Rad entfernt, über 10 kΩ an KEY4 | drei Kreisbogen-Flächen r = 13,5 … 15,4 mm (1,2 mm Abstand zum Rad), wegen der drei Befestigungslöcher geteilt, alle an KEY4 |
+| Mitteltaste | **übernommen** | kapazitive Scheibe r = 2,5 mm (`qtouch-button`) | gleich, r = 2,5 mm (Ø 5 mm) |
+| Guard | **übernommen, angepasst** | Ring r = 22,2 mm, Linie 1 mm, 2,35 mm vom Rad entfernt, über 10 kΩ an KEY4 | ein Kupferpolygon: drei Kreisbögen r = 13,5 … 15,4 mm (wegen der drei Befestigungslöcher geteilt), innen durch zwei schmale Stege (0,2 mm) verbunden, 1 Via, 1,2 mm Abstand zum Rad, über 10 kΩ an KEY4 |
 | GND unter dem Rad | **übernommen** | GND-Gitter auf B.Cu (Linie 0,127 mm, Lücke 1,016 mm, 45°), Vorderseite unter dem Rad ohne Kupferfüllung | gleich (Gitter), Vorderseite ohne Füllung |
 | Lagenzahl | **übernommen** | 2 Lagen | 2 Lagen, 1,0 mm statt 1,6 mm |
 | Wheel-Position 0 / Drehsinn | **übernommen** | 0 oben, steigend gegen den Uhrzeigersinn | gleich, siehe Abschnitt „Wheel-Position“ |
 | Abdeckung | **übernommen** | 0,6 mm FR4 mit Siebdruck (`touchwheel-cover`) | KiCad-Projekt `abdeckung/` (Ø 30), Beschriftung MENU / ◄◄ / ►► / ►II |
 | I²C-Pull-ups | neu | auf der Hauptplatine | R8/R9 4,7 kΩ, **DNP** |
-| 10 µF am DRV2605L | neu | – | C5 10 µF 0603 (LRA-Stromspitzen aus dem 3V3 des Waveshare-Boards) |
-| Stecker | neu | FFC 15-polig (Molex 505278-1533) | **Hirose FH12-6S-0.5SH(55)**, FFC/FPC 0,5 mm, 6-polig, Bauhöhe 1,0 mm, Pin 6 = Reserve |
+| 10 µF am DRV2605L | entfällt | – | nicht auf dem Modul (Platzmangel auf 2 Lagen); bei Spannungseinbruch beim LRA 10 µF auf der Hauptplatine nahe dem Stecker ergänzen |
+| Stecker | neu | FFC 15-polig (Molex 505278-1533) | **Molex 503480-0600**, FFC/FPC 0,5 mm, 6-polig, Dual Contact, Bauhöhe 1,0 mm, Pin 6 = Reserve |
 | Rundform, Löcher, LRA-Fläche | neu | Rechteck mit Display | Ø 32, 3 Löcher, LRA-Freifläche 12 × 6 mm für flachen LRA |
 | Display, LCD-Treiber, Backlight | entfällt | JD-T1800, Q1 … | nicht vorhanden |
 
@@ -43,8 +43,8 @@ Quellen: Blogartikel „A Deep Dive Into the Design of Tangara's Touchwheel“ (
 | Auswertung | Rohwerte → Winkelberechnung in der Firmware | Wheel-Position 0 … 255 direkt vom Chip (Tangara-Treiber) |
 | Mitteltaste | SMD-Taster (Omron B3U-1000P) auf J1 Pin 6 | kapazitiv (KEY3, wie Tangara); **J1 Pin 6 ist Reserve und nicht beschaltet** |
 | Lagen / Dicke | 4 Lagen, 1,0 mm | **2 Lagen, 0,8 mm** (GND-Gitter auf B.Cu) |
-| Stecker | JST-SH 1,0 mm seitlich (>1,5 mm hoch) | **Hirose FH12-6S-0.5SH** FFC 0,5 mm, 1,0 mm hoch (Dünnbau, Gerätedicke 8,5 mm) |
-| LRA-Fläche | 16 × 6 mm | **12 × 6 mm** (x −6 … +6, y +3 … +9) für Vybronics VL120628H (12 × 6 × 2,0 mm; Typ und Achse prüfen) |
+| Stecker | JST-SH 1,0 mm seitlich (>1,5 mm hoch) | **Molex 503480-0600** FFC 0,5 mm, 1,0 mm hoch (Dünnbau, Gerätedicke 8,5 mm) |
+| LRA-Fläche | 16 × 6 mm, LRA 3,6 mm hoch | 16 × 6 mm (x −8 … +8, y +3 … +9), LRA **bis 3,0 mm Höhe**, flache Typen siehe Abschnitt Mechanik |
 | Touch-Ring | r = 6,5 … 12,8 mm | r = 6,3 … 12,3 mm; zusätzlich Guard r = 13,5 … 15,4 mm |
 | Haptik EN | fest an 3V3 | über 10 kΩ an 3V3 (wie Tangara) |
 | Pull-ups | R2/R3 4,7 kΩ (DNP) | R8/R9 4,7 kΩ (DNP); CHANGE-Pull-up entfällt (MCU-intern, wie Tangara) |
@@ -56,8 +56,8 @@ Quellen: Blogartikel „A Deep Dive Into the Design of Tangara's Touchwheel“ (
 | Block | Bauteil | Beschaltung |
 |---|---|---|
 | Touch-Controller | U1 AT42QT2120 (VQFN-20) | MODE (Pin 10) und VSS an GND, VDD 0,1 µF (C1) + 1 µF (C2), RESET über 10 kΩ (R6) an 3V3, KEY0–2 über je 10 kΩ an die drei Wheel-Elektroden, KEY3 über 10 kΩ an die Mitteltaste, KEY4 über 10 kΩ an den Guard, KEY5–11 offen, CHANGE → J1 Pin 5 |
-| Haptik-Treiber | U2 DRV2605LDGSR (VSSOP-10) | VDD (Pin 6, 10) an 3V3 mit 1 µF (C3) + 10 µF (C5), REG 1 µF (C4), IN/TRIG an GND, EN über 10 kΩ (R7) an 3V3, OUT+/OUT− → Lötpads TP1/TP2 |
-| Stecker | J1 Hirose FH12-6S-0.5SH(55), FFC/FPC 0,5 mm, 6-polig, Rückseite | siehe unten |
+| Haptik-Treiber | U2 DRV2605LDGSR (VSSOP-10) | VDD (Pin 6, 10) an 3V3 mit 1 µF (C3, wie Tangara), REG 1 µF (C4), IN/TRIG an GND, EN über 10 kΩ (R7) an 3V3, OUT+/OUT− → Lötpads TP1/TP2 |
+| Stecker | J1 Molex 503480-0600, FFC/FPC 0,5 mm, 6-polig, Rückseite | siehe unten |
 | Pull-ups | R8 (SDA), R9 (SCL) 4,7 kΩ | **DNP**, nur für den Einzeltest des Moduls (Waveshare-Board hat 2,2 kΩ) |
 
 ### Pinbelegung J1
@@ -106,10 +106,10 @@ Erzeugt durch `tools/wheel_geometry.py` (Port des Tangara-SVG-Werkzeugs). Parame
 | Abstand zwischen Elektroden | 0,29 mm | 0,25 mm |
 | Deadzone | 2 mm | 1,5 mm |
 | Fläche je Elektrode | 295 mm² | 87,6 mm² |
-| Mitteltaste | r 2,5 mm (19,6 mm²) | r 3,5 mm (38,5 mm²) |
-| Guard | Ring r 22,2 mm, 1 mm breit (≈ 140 mm²) | 3 Bögen r 13,5 … 15,4 mm, zusammen 148,5 mm² (größer als eine Wheel-Elektrode, wie im Datenblatt gefordert) |
+| Mitteltaste | r 2,5 mm (19,6 mm²) | r 2,5 mm (19,6 mm²), wie Tangara |
+| Guard | Ring r 22,2 mm, 1 mm breit (≈ 140 mm²) | 3 Bögen + Stege r 13,5 … 15,4 mm, 151 mm² (größer als eine Wheel-Elektrode, wie im Datenblatt gefordert) |
 | Abstand Rad – Guard | 2,35 mm | 1,2 mm |
-| Abstand Rad – Taste | 5,4 mm | 2,8 mm |
+| Abstand Rad – Taste | 5,4 mm | 3,8 mm |
 | Kleinste Struktur | 0,29 mm | 0,25 mm Abstand, ≥ 0,2 mm Breite |
 
 Das Datenblatt nennt für Wheels „typisch 30 … 50 mm Durchmesser, Segmentbreite typisch 12 mm“. Unser Rad hat 24,6 mm Durchmesser und 6 mm Breite und liegt damit **unter dem typischen Bereich**; ein Modell (Finger als Scheibe, Vektorsumme der drei Elektroden) ergibt für die Winkelauflösung ähnliche Werte wie die Tangara-Geometrie (maximale Abweichung ≈ 12° gegenüber ≈ 14° bei Tangara). **Das ersetzt keinen Test am Rad.**
@@ -117,9 +117,9 @@ Das Datenblatt nennt für Wheels „typisch 30 … 50 mm Durchmesser, Segmentbre
 ## Mechanik
 
 - Umriss Ø 32,0 mm, Dicke **0,8 mm** (Bestellung: 0,8 mm; 1,0 mm geht ebenfalls, dann sind Platine und Gerät 0,2 mm dicker und die Touch-Grundkapazität etwas kleiner). Drei Löcher Ø 2,2 mm (NPTH) auf r = 14,6 mm bei 90°, 210°, 330° (wie v1).
-- **Stecker J1** (Hirose FH12-6S-0.5SH(55), Flip-Lock, Kontakte oben, Bauhöhe 1,0 mm) weiter bei 270° (6-Uhr-Richtung), Mitte bei y = −10,8 mm; Körper x = −4,6 … +4,6 mm, y = −15,7 … −7,8 mm, Kabel (FFC 0,5 mm, 6-polig) verlässt die Platine nach unten. Das Gehäuse ragt am Rand ca. 0,3 mm über den Umriss (Kunststoff, kein Kupfer). Pins wie v1: 1 3V3 (bei x = +1,25), 6 Reserve (x = −1,25), Raster 0,5 mm. **Für den Prototyp** am Waveshare-Board: 6-polige FFC-Breakout-Platine 0,5 mm (z. B. Adapter FPC 6P 0,5 mm auf 2,54-mm-Stifte) mit gleichem Kabel („gleiche Seite“ / Typ A oder B nach Kabelkontakten prüfen: beide Kabelenden müssen die Kontakte auf derselben Seite haben, das Kabel zeigt auf der Platine mit den Kontakten nach unten); Pinbelegung vor dem Einschalten durchklingeln.
-- **LRA-Freifläche** (Rückseite, nur Bauteile gesperrt): x = −6 … +6 mm, y = +3 … +9 mm (12 × 6 mm für einen flachen LRA, z. B. Vybronics VL120628H, 12 × 6 × 2,0 mm; Achse und Resonanzfrequenz (ca. 200 Hz, Treiberzeit-Register anpassen) vorher prüfen). Lötpads TP1 (LRA+) und TP2 (LRA−) bei x = −12,3 mm, y = −3,0 / −0,4 mm wie v1. Unter dem LRA liegen nur das GND-Gitter, Leiterbahnen und einzelne Vias unter Lötstopplack.
-- Bauteile auf der Rückseite: 0402-Teile 0,5 mm, C5 (0603) 0,8 mm, U1 VQFN 0,85 mm (nominal), **U2 DRV2605L im VSSOP-10 ca. 1,1 mm** und J1 1,0 mm liegen **über der Vorgabe 0,8 mm**; U2 sitzt außerhalb der LRA-Fläche, die Gesamtdicke der Rückseite wird dort von U2 (0,8 + 1,1 = 1,9 mm) und vom LRA (0,8 + 2,0 = 2,8 mm) bestimmt, nicht von J1. Das DSBGA-9-Gehäuse (DRV2605LYZFR, 0,5 mm Raster, ca. 0,6 mm hoch) wäre flacher, wurde aber nicht umgesetzt (Hand- und Routingaufwand; ungeprüft). Vorderseite: nur Kupferflächen unter Lötstopplack, keine Bauteile (der SMD-Taster entfällt, die Platine ist vorn glatt).
+- **Stecker J1: Molex 503480-0600** (FFC/FPC 0,5 mm, 6-polig, Easy-On, Dual Contact, 1,0 mm hoch; Molex-Teilenummer bestätigt, DigiKey 5034800600 / 2356622). Lage weiter bei 270° (6-Uhr-Richtung), Mitte bei y = −10,8 mm, Kabel verlässt die Platine nach unten. **Footprint ungeprüft:** KiCad hat keinen 503480-Footprint; `lib/Klickrad.pretty/Molex_503480-0600_...` übernimmt Pad-Maße und Körpertiefe vom Hirose-FH12-6S-0,5-Footprint (gleiches Raster, ähnliche Bauart) und muss vor der Bestellung mit der Molex-Zeichnung abgeglichen werden. Pin 1 (3V3) liegt in der Ansicht von hinten links, von vorn bei x = +1,25 mm. Weil der Stecker **Dual Contact** (Kontakte oben und unten) ist, geht ein Standard-FFC **Typ A und Typ B**; Pin 1 auf Pin 1 hängt nur von der Kabelausrichtung am Gegenstecker der Hauptplatine ab (Gegenstecker zeigt auf deren Vorderseite nach oben): Kabel ohne Verdrehung, ein Kabelende nach oben, das andere nach unten geführt, mit Typ A bleibt Pin 1 gleich. Das ist nicht gemessen, vor dem Einschalten Pin für Pin durchklingeln. **Für den Waveshare-Prototyp:** 6-polige FFC-Breakout-Platine, 0,5 mm Raster, auf 2,54-mm-Stifte (Adapter „FPC 0,5 mm 6P“) und passendes FFC-Kabel 0,5 mm, 6-polig.
+- **LRA-Freifläche** (Rückseite, nur Bauteile gesperrt): x = −8 … +8 mm, y = +3 … +9 mm (16 × 6 mm, Mitte 6 mm oberhalb des Radmittelpunkts), für einen LRA **bis 3,0 mm Höhe**, bevorzugt X-Achse. Die Hauptplatine bekommt dort standardmäßig einen Ausschnitt. Kandidaten (Maße, Achse und Resonanzfrequenz vor der Bestellung im Datenblatt prüfen; Treiberzeit im DRV2605L passend setzen): Vybronics VL120628H (12 × 6 × 2,0 mm, ca. 200 Hz, laut Koordinator), Vybronics VG0832022D (Tangaras BOM-Empfehlung, Maße ungeprüft), 4,5 × 12 × 3,0 (235 Hz) und 8 × 15 × 3,0 (170 Hz) aus `TEILE.md`. Ein 10 × 10 × 1,0-LRA (Vybronics VLV101040J) braucht y = +1 … +11 und passt wegen der Widerstände R3 … R5 bei y ≈ 0 … 1 **nicht** in diese Revision (nicht umgesetzt). Lötpads TP1 (LRA+) und TP2 (LRA−) liegen **auf der Ostseite** bei x = +13,1 mm, y = −2,4 / −4,8 mm (v1: westlich bei x = −12,3): U2 sitzt östlich, die LRA-Leitungen sind so kurz; die Litzen müssen im CAD zur Ostseite geführt werden. Unter dem LRA liegen das GND-Gitter, Leiterbahnen und Vias unter Lötstopplack.
+- Bauteile auf der Rückseite: 0402-Teile 0,5 mm, U1 VQFN 0,85 mm (nominal), **U2 DRV2605L im VSSOP-10 ca. 1,1 mm** und J1 1,0 mm liegen **über der Vorgabe 0,8 mm** (J1 innerhalb der Stecker-Vorgabe ≤ 1,2 mm). Das DSBGA-9-Gehäuse (DRV2605LYZFR, 0,5 mm Raster, ca. 0,6 mm hoch, bei TI als lieferbar gelistet) wäre flacher, wurde aber nicht umgesetzt (Hand- und Routingaufwand; ungeprüft). Vorderseite: nur Kupferflächen unter Lötstopplack, keine Bauteile.
 - Bauteilpositionen für CAD: `fertigung/bauteilpositionen.csv` (Bezug Platinenmitte, mm, y nach oben in der Ansicht von vorn).
 - **Guard und Schrauben:** Die Guard-Bögen halten 2,2 mm Abstand zur Lochmitte (Schraubenkopf Ø 3,5, Abdeckungstasche Ø 4,0), sie reichen bis r = 15,4 mm, also 0,4 mm über den Rand der Abdeckung (Ø 30) hinaus.
 - **Änderungsbedarf in `TEILE.md` / CAD** (nicht Teil dieses Auftrags, deshalb hier gemeldet): 2 statt 4 Lagen; Touch-Ring r = 6,3 … 12,3 mm plus Guard r = 13,5 … 15,4 mm; Mitteltaste kapazitiv statt SMD-Taster (Höhenvorgabe ≤ 1,5 mm entfällt, die Mitteltaste-Kappe Ø 11,0 und das Loch Ø 11,6 in der Abdeckung entfallen); Stecker Pin 5 = CHANGE, Pin 6 = Reserve; I²C-Adresse 0x1C; Wheel-Positions-Konvention.
@@ -152,7 +152,7 @@ Gründe für 2 statt 4 Lagen: (1) Es gibt nur 6 Durchkontaktierungen zur Vorders
 1. Platine mit der Vorderseite auf die Heizplatte oder vorheizen (100 … 120 °C), Rückseite oben.
 2. **U1 AT42QT2120 (VQFN-20, 0,45 mm, Exposed Pad 1,55 mm, bleibt unbeschaltet):** Paste dünn auftragen (Schablone aus dem Paste-Layer oder Spritze), Pin 1 nach der Silkscreen-Marke, Heißluft ca. 240 … 250 °C. Danach Brücken mit Flussmittel entfernen. Flussmittel-Reste anschließend gründlich reinigen (Datenblatt 3.3: Rückstände stören die Touch-Messung).
 3. **U2 DRV2605L (VSSOP-10):** Pin 1 nach der Dreiecksmarke, Schlepplöten oder wie U1.
-4. 0402-Teile und C5 (0603) mit Paste. R8/R9 **nicht** bestücken (DNP).
+4. 0402-Teile mit Paste. R8/R9 **nicht** bestücken (DNP).
 5. J1 zuletzt, wenig Hitze; die Montagefüße (MP) gut anlöten.
 6. Messen: 3V3 gegen GND auf Kurzschluss prüfen, 3V3 anlegen, per I²C auf 0x1C und 0x5A antworten lassen.
 7. LRA mit doppelseitigem Klebeband in die markierte Freifläche kleben, Litzen an TP1/TP2 löten.
@@ -187,7 +187,7 @@ Nicht geprüft:
 
 - **Keine Hardware gebaut oder gemessen.** Touch-Empfindlichkeit, Winkelauflösung, Wheel-Nullpunkt und Drehsinn, Störungen durch den LRA, Haptik-Kalibrierung, Verhalten mit gedruckter Abdeckung: offen.
 - Das Rad liegt unter der typischen Größe des Datenblatts (24,6 mm statt 30 … 50 mm, Ringbreite 6 mm statt 12 mm).
-- Footprints der Standardbibliothek (FH12-6S-0.5SH, VSSOP-10, VQFN-20, 0402/0603) wurden nicht gegen die Herstellerzeichnungen vermessen. Das Exposed Pad von U1 bleibt wie bei Tangara unbeschaltet; das Datenblatt sagt dazu nichts.
+- Footprints der Standardbibliothek (VSSOP-10, VQFN-20, 0402/0603) und der eigene Molex-503480-Footprint (Hirose-Maße) wurden nicht gegen die Herstellerzeichnungen vermessen. Das Exposed Pad von U1 bleibt wie bei Tangara unbeschaltet; das Datenblatt sagt dazu nichts.
 - Höhen von U1/U2/J1 aus dem Datenblatt bzw. aus dem Gedächtnis.
 - Der Router (`tools/route.py`) ist eigener Code; die Leiterbahnen wurden nur über DRC und Bildansicht geprüft, nicht von Hand nachgezogen. Einige Bahnen laufen länger als nötig. Die Guard-Verbindung läuft als lange Bahn über die Rückseite; sie liegt nicht unter den Elektroden einer anderen Funktion, ihre Länge wurde nicht bewertet.
 - Das GND-Gitter erzeugt Kupferinseln; deren Warnungen siehe oben.

@@ -67,6 +67,7 @@ for n_, lst_ in fixedgeo.items():
     for la_, g_, w_ in lst_:
         objs[la_].append((n_, g_))
         terms.setdefault(n_, [])
+        if n_: terms[n_].append((la_, (g_.centroid.x, g_.centroid.y), g_, 'vorverlegt'))
 def raster(geoms):
     out = np.zeros((N, N), dtype=bool)
     for g in geoms:
@@ -227,7 +228,6 @@ def route_net(net, allow_soft):
         rg = Point(0, 0).buffer(GND_RING[1]).difference(Point(0, 0).buffer(GND_RING[0]))
         rc = {c_ for c_ in cells_of(rg, 1, 0.0) if not (hard[1] | soft[1])[c_[2], c_[1]]}
         tree |= rc
-    for la_, g_, w_ in fixedgeo.get(net, []): tree |= cells_of(g_, la_)
     for t_ in list(rest):
         if tcells(t_) & tree: rest.remove(t_); tree |= tcells(t_)
     while rest:
