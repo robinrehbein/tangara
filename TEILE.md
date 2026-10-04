@@ -48,19 +48,21 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 
 DRV2605L-EN fest auf 3V3; Standby per I²C.
 
-## Endgerät: Ziel-Stack-up (Entscheidung nach `docs/DUENNBAU.md`, Variante A)
+## Endgerät: Ziel-Maße (Entscheidung 2026-10-04: größer und dicker, damit die Hauptplatine routbar wird)
+
+Der Entwurf mit 8,5 mm (`docs/DUENNBAU.md`, Variante A) hatte zu wenig Platinenfläche (1648 mm² verfügbar gegen 1824 mm² benötigt) und ließ die Hauptplatine nicht routen. Neues Ziel:
 
 | Punkt | Entscheidung |
 |---|---|
-| Außenmaße | ca. **40 × 90 × 8,5 mm** (8,2 nominal + 0,3 Reserve; Rückfall 9,0) |
-| Display | **2,06" AMOLED 410 × 502, CO5300, QSPI** (ca. 315 ppi). Auflösung beim Händler vor dem Kauf prüfen. |
-| MCU-Modul | ESP32-S31-**WROOM-1** (18 × 25,5 × 3,1) statt WROOM-3, sofern alle benötigten Pins herausgeführt sind (prüfen) |
-| Hauptplatine | 0,8 mm, hohe Teile nur auf der Rückseite (≤ 3,3 mm), ca. 37 × 84 mm |
-| Klinke | SJ-43504-SMT-TR (5,0 mm) in Randausschnitt der Platine (statt SJ-3506, 6,0 mm). Risiko: Überstand nach vorn ungeprüft. |
-| Akku | Pouch 3,0 mm (303450, 500–600 mAh), Fach 34 × 50 × 3,3 |
-| Front/Rückseite | Front 0,8-mm-Acryl oder Glas, Rückwand 1,0 mm gedruckt oder 0,8-mm-FR4 |
-
-Die Maße darunter beschreiben noch den ersten Entwurf (12,2 mm) und werden mit dem neuen CAD ersetzt.
+| Außenmaße | **ca. 44 × 100 × bis 11 mm** (Dicke genau festlegen, wenn die Bauteilhöhen feststehen) |
+| Hauptplatine | ca. 41 × 97 mm, Dicke 1,0 mm (0,8 mm nur, wenn nötig), 4 Lagen, wenn das Routing es nicht verlangt sonst 6 Lagen |
+| Display | **2,06" AMOLED 410 × 502, CO5300, QSPI** (ca. 315 ppi); mit Deckglas, Luft darunter ≥ 1,1 mm |
+| MCU-Modul | ESP32-S31-WROOM-1 (18 × 25,5 × 3,1) oder -WROOM-3, wie es das Layout braucht; **Antenne darf nicht über die Platinenkante hinausragen** |
+| Klinke | SJ-3506-SMT wie Tangara (6,0 mm) oder SJ-43504-SMT-TR (5,0 mm), keine Sonderlösung nötig |
+| Akku | Pouch bis ca. 4,5 mm dick, größte Standardzelle, die neben dem LRA passt (Ziel ≥ 600 mAh) |
+| LRA | X-Achse bis 3,0 mm, Ausschnitt in der Hauptplatine unter dem Klickrad |
+| Klickrad | Platine Ø 32 mm, Abdeckung 0,6-mm-FR4 wie Tangara, Stecker Molex 503480-0600 |
+| Front/Rückseite | Front 0,8-mm-Acryl oder Glas, Rückwand gedruckt oder FR4 |
 
 ## Endgerät (erster Entwurf, siehe `hardware/render/explosionsmodell.html`)
 
