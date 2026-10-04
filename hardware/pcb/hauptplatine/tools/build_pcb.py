@@ -106,6 +106,50 @@ def text(layer, s, x, y, h=0.9, mirror=False, rot_deg=0, bold=False):
     t.SetTextSize(VECTOR2I(FromMM(h), FromMM(h))); t.SetTextThickness(FromMM(max(h / 6, 0.15))); t.SetMirrored(mirror)
     t.SetTextAngleDegrees(rot_deg); board.Add(t)
 
+
+def zone(layer, pts, netname, prio=0, clearance=0.2, minw=0.2, keepout=None, layers=None, holes=(), thermal=False):
+    z = pcbnew.ZONE(board); z.SetLayer(layer)
+    if layers:
+        ls = pcbnew.LSET()
+        for l in layers: ls.AddLayer(l)
+        z.SetLayerSet(ls)
+    if netname and not keepout: z.SetNet(net(netname))
+    o = z.Outline(); o.NewOutline()
+    for x, y in pts: o.Append(FromMM(OX + x), FromMM(OY - y))
+    for h in holes:
+        o.NewHole()
+        for x, y in h: o.Append(FromMM(OX + x), FromMM(OY - y), 0, 0)
+    z.SetAssignedPriority(prio); z.SetMinThickness(FromMM(minw)); z.SetLocalClearance(FromMM(clearance))
+    z.SetPadConnection(pcbnew.ZONE_CONNECTION_THERMAL if thermal else pcbnew.ZONE_CONNECTION_FULL)
+    if thermal:
+        z.SetThermalReliefGap(FromMM(0.25)); z.SetThermalReliefSpokeWidth(FromMM(0.3))
+    z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
+    if keepout:
+        z.SetIsRuleArea(True)
+        z.SetDoNotAllowTracks('tracks' in keepout); z.SetDoNotAllowVias('vias' in keepout)
+        z.SetDoNotAllowPads(False); z.SetDoNotAllowCopperPour('pour' in keepout); z.SetDoNotAllowFootprints('fp' in keepout)
+    board.Add(z); return z
+
+def fp_to_view(ref, x_fp, y_fp):
+    """Footprint-Koordinate (KiCad, y nach unten, Bauteil-Ursprung) -> Ansicht (y oben)."""
+    part = [p for p in netlist.parts() if p['ref'] == ref][0]
+    x, y, th, side = part['at']
+    u, v = x_fp, -y_fp
+    if side == 'B': u = -u
+    a, b = rot(u, v, th)
+    return (x + a, y + b)
+
+def circle_pts(c, r, n=48):
+    return [(c[0] + r * math.cos(2 * math.pi * i / n), c[1] + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
+
+def board_pts(inset=0.0, n=8):
+    W, H, R = layout.BOARD_W / 2 - inset, layout.BOARD_H / 2 - inset, max(layout.BOARD_R - inset, 0.2)
+    pts = []
+    for cx, cy, a0 in ((W - R, H - R, 0), (-W + R, H - R, 90), (-W + R, -H + R, 180), (W - R, -H + R, 270)):
+        for i in range(n + 1):
+            a = math.radians(a0 + 90 * i / n); pts.append((cx + R * math.cos(a), cy + R * math.sin(a)))
+    return pts
+
 def outline():
     W, H, R = layout.BOARD_W, layout.BOARD_H, layout.BOARD_R
     x0, x1, y0, y1 = -W / 2, W / 2, -H / 2, H / 2
@@ -130,6 +174,12 @@ def bsetup():
         outline()
     if MODE == 'place':
         from shapely.geometry import box as sbox
+        # Innenlage 1: GND-Flaeche (Router verbindet GND per Via)
+        zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2, layers=None)
+        # XIAO: unter den freiliegenden Testpads der Modulunterseite kein Kupfer
+        c = [fp_to_view('U1', fx, fy) for fx, fy in ((0.0, -2.9), (9.9, -2.9), (9.9, 2.9), (0.0, 2.9))]
+        zone(B_CU, c, None, keepout={'tracks', 'vias', 'pour'}, prio=0)
+        zone(IN1, c, None, keepout={'pour'}, prio=0) if False else None
         majors = [p for p in netlist.parts() if p.get('at')]
         for part in majors:
             place(part, *part['at'])

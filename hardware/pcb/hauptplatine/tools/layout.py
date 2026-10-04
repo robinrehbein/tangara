@@ -37,8 +37,8 @@ def forbidden(margin=0.5):
     for (x, y) in WHEEL_HOLES: parts.append(Point(x, y).buffer(NUT_R))
     return unary_union(parts)
 
-HALF = {'0402': (1.0, 0.55), '0603': (1.45, 0.8), '0805': (1.8, 1.0), 'tp': (0.9, 0.9)}
-PADOFF = {'0402': 0.51, '0603': 0.825, '0805': 0.95, 'tp': 0.0}
+HALF = {'0402': (1.0, 0.55), '0603': (1.45, 0.8), '0805': (1.8, 1.0), '1206': (2.4, 1.15), 'tp': (0.9, 0.9)}
+PADOFF = {'0402': 0.51, '0603': 0.825, '0805': 0.95, '1206': 1.475, 'tp': 0.0}
 
 def _rot(a, b, deg):
     c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
@@ -64,7 +64,7 @@ def auto_place(netlist_parts, placed, padpos, pad_boxes_fn, anchor_net_fn, log=p
         anet = anchor_net_fn(aref, apin)
         pkg = part.get('pkg') if part.get('pkg') in HALF else ('tp' if part['ref'].startswith('TP') else '0402')
         hx, hy = HALF[pkg]; off = PADOFF[pkg]
-        tall = part.get('pkg') in ('0805',)
+        tall = part.get('pkg') in ('0805', '1206')
         pn = part['pins']
         occ = prep(unary_union(obst[side])) if obst[side] else None
         best = None

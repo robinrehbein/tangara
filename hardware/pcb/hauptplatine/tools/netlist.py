@@ -101,6 +101,7 @@ R402 = 'Resistor_SMD:R_0402_1005Metric'
 C402 = 'Capacitor_SMD:C_0402_1005Metric'
 C603 = 'Capacitor_SMD:C_0603_1608Metric'
 C805 = 'Capacitor_SMD:C_0805_2012Metric'
+C1206 = 'Capacitor_SMD:C_1206_3216Metric'
 
 UNIROYAL = {'0': ('0402WGF0000TCE', 'C17168'), '1k': ('0402WGF1001TCE', 'C11702'), '2.2k': ('0402WGF2201TCE', 'C25879'),
             '4.7k': ('0402WGF4701TCE', 'C25900'), '10k': ('0402WGF1002TCE', 'C25744'), '100k': ('0402WGF1003TCE', 'C25741')}
@@ -113,10 +114,10 @@ def res(ref, val, n1, n2, near=None, at=None, desc='', **kw):
 CAPS = {   # Wert -> (Footprint, Hersteller, MPN, LCSC, Paket, Beschreibung)
     '100nF': (C402, 'Samsung', 'CL05B104KO5NNNC', 'C1525', '0402', '100 nF X7R 16 V'),
     '1uF':   (C402, 'Samsung', 'CL05A105KA5NQNC', 'C52923', '0402', '1 uF X5R 6,3 V'),
-    '4.7uF': (C603, 'Samsung', 'CL10A475KO8NNNC', '', '0603', '4,7 uF X5R 16 V'),
+    '4.7uF': (C603, 'Samsung', 'CL10A475KO8NNNC', 'C19666', '0603', '4,7 uF X5R 16 V'),
     '10uF':  (C603, 'Samsung', 'CL10A106KP8NNNC', 'C19702', '0603', '10 uF X5R 10 V'),
-    '22uF':  (C805, 'Samsung', 'CL21A226MAQNNNE', '', '0805', '22 uF X5R 25 V'),
-    '100uF': (C805, 'Samsung', 'CL21A107MQYNNNE', '', '0805', '100 uF X5R 6,3 V'),
+    '22uF':  (C805, 'Samsung', 'CL21A226MAQNNNE', 'C45783', '0805', '22 uF X5R 25 V'),
+    '100uF': (C1206, 'Samsung', 'CL31A107MQHNNNE', 'C15008', '1206', '100 uF X5R 6,3 V'),
 }
 def cap(ref, val, n1, n2, near=None, at=None, desc='', **kw):
     fp, mfr, mpn, lcsc, pkg, d = CAPS[val]
@@ -126,8 +127,8 @@ def cap(ref, val, n1, n2, near=None, at=None, desc='', **kw):
 # ============================================================================ Module / ICs
 xp = {k: v[2] for k, v in XIAO_PINS.items()}
 add('U1', 'XIAO ESP32S3 Plus', 'Tangara:XIAO_ESP32S3_Plus', 'Tangara:XIAO-ESP32-S3-Plus-SMD', xp,
-    at=(6.2, 32.65, 270, 'B'), mfr='Seeed Studio', mpn='113991120 (XIAO ESP32S3 Plus)', pkg='Modul 21 x 17,8',
-    desc='ESP32-S3R8 16 MB Flash, 8 MB PSRAM, USB-C, LiPo-Lader; SMD-Montage ueber Randpads', lcsc='', dk='1597-113991120-ND (laut Hersteller-Distributorliste, vor Bestellung pruefen)')
+    at=(6.2, 32.65, 270, 'B'), mfr='Seeed Studio', mpn='102010671 (Seeed SKU, XIAO ESP32S3 Plus)', pkg='Modul 21 x 17,8',
+    desc='ESP32-S3R8 16 MB Flash, 8 MB PSRAM, USB-C, LiPo-Lader; SMD-Montage ueber Randpads', lcsc='', dk='')
 
 add('U2', 'TLV320DAC3100', 'Tangara:TLV320DAC3100', 'Package_DFN_QFN:Texas_RHB0032E_VQFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm',
     {'1': 'GND', '2': '3V3', '3': 'DVDD', '4': None, '5': 'I2S_DOUT', '6': 'I2S_WS', '7': 'I2S_BCLK', '8': 'GND', '9': 'SDA',
@@ -138,10 +139,10 @@ add('U2', 'TLV320DAC3100', 'Tangara:TLV320DAC3100', 'Package_DFN_QFN:Texas_RHB00
     desc='Stereo-DAC mit Kopfhoerertreiber, I2S + I2C 0x18, PLL aus BCLK')
 add('U3', 'TPS7A2030PDBVR', 'Tangara:LDO_SOT23_5', 'Package_TO_SOT_SMD:SOT-23-5',
     {'1': '3V3', '2': 'AGND', '3': '3V3', '4': None, '5': 'AVDD'}, at=(-7.0, 18.0, 0, 'B'),
-    mfr='Texas Instruments', mpn='TPS7A2030PDBVR', lcsc='', dk='', pkg='SOT-23-5', desc='LDO 3,0 V 300 mA, 7 uVrms (Analogversorgung)')
+    mfr='Texas Instruments', mpn='TPS7A2030PDBVR', lcsc='C963429', dk='296-TPS7A2030PDBVRCT-ND', pkg='SOT-23-5', desc='LDO 3,0 V 300 mA, 7 uVrms (Analogversorgung)')
 add('U4', 'TLV75518PDBVR', 'Tangara:LDO_SOT23_5', 'Package_TO_SOT_SMD:SOT-23-5',
     {'1': '3V3', '2': 'GND', '3': '3V3', '4': None, '5': 'DVDD'}, at=(-7.0, 8.0, 0, 'B'),
-    mfr='Texas Instruments', mpn='TLV75518PDBVR', lcsc='', dk='', pkg='SOT-23-5', desc='LDO 1,8 V 500 mA (DVDD des Codecs)')
+    mfr='Texas Instruments', mpn='TLV75518PDBVR', lcsc='C2877863', dk='296-50410-1-ND', pkg='SOT-23-5', desc='LDO 1,8 V 500 mA (DVDD des Codecs)')
 add('U5', 'MAX17048G+T10', 'Tangara:MAX17048', 'Package_DFN_QFN:TDFN-8-1EP_2x2mm_P0.5mm_EP0.8x1.2mm',
     {'1': 'GND', '2': 'VBAT', '3': 'VBAT', '4': 'GND', '5': 'FG_ALRT', '6': 'GND', '7': 'SCL', '8': 'SDA', '9': 'GND'},
     at=(-9.0, -15.0, 0, 'B'), mfr='Analog Devices (Maxim)', mpn='MAX17048G+T10', lcsc='C2682616', dk='MAX17048G+T10CT-ND', pkg='TDFN-8 2x2',
@@ -152,18 +153,18 @@ add('J1', 'AXE534124', 'Tangara:FPC_34', 'Tangara:FPC-AXE534124', dict(FPC_PINS)
     mfr='Panasonic', mpn='AXE534124', lcsc='', dk='', pkg='FPC 34 Pol 0,4 mm', desc='Display-FPC-Buchse (wie Waveshare ESP32-S3-Touch-AMOLED-1.8, Landmuster ungeprueft)')
 add('J2', 'SM06B-SRSS-TB', 'Connector_Generic:Conn_01x06', 'Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal',
     {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'WHEEL_INT', '6': 'WHEEL_BTN'}, at=(7.2, -10.0, 0, 'B'),
-    mfr='JST', mpn='SM06B-SRSS-TB(LF)(SN)', lcsc='C160405', dk='455-1796-1-ND', pkg='JST-SH 6 Pol', desc='Klickrad-Modul (3V3, GND, SDA, SCL, INT, BTN)')
+    mfr='JST', mpn='SM06B-SRSS-TB(LF)(SN)', lcsc='C160405', dk='455-SM06B-SRSS-TBCT-ND', pkg='JST-SH 6 Pol', desc='Klickrad-Modul (3V3, GND, SDA, SCL, INT, BTN)')
 add('J3', 'SM02B-SRSS-TB', 'Connector_Generic:Conn_01x02', 'Connector_JST:JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal',
     {'1': 'VBAT', '2': 'GND'}, at=(15.5, -14.0, 180, 'B'),
-    mfr='JST', mpn='SM02B-SRSS-TB(LF)(SN)', lcsc='C160402', dk='455-1794-1-ND', pkg='JST-SH 2 Pol', desc='LiPo-Anschluss (Pin 1 = +, Polung des Akkus pruefen!)')
+    mfr='JST', mpn='SM02B-SRSS-TB(LF)(SN)', lcsc='C160402', dk='455-SM02B-SRSS-TBCT-ND', pkg='JST-SH 2 Pol', desc='LiPo-Anschluss (Pin 1 = +, Polung des Akkus pruefen!)')
 add('J4', 'SJ-3524-SMT', 'Tangara:Jack3_SwitchT', 'Connector_Audio:Jack_3.5mm_CUI_SJ-3524-SMT_Horizontal',
     {'T': 'HPL_J', 'R': 'HPR_J', 'S': 'AGND', 'TN': 'JACK_SW'}, at=(-12.55, 35.5, 0, 'B'),
     mfr='CUI Devices', mpn='SJ-3524-SMT-TR', lcsc='', dk='CP-3524SJCT-ND', pkg='3,5 mm Klinke SMD', desc='3,5-mm-Stereo-Klinke mit Schliesser an der Spitze (Steckererkennung)')
 add('J5', 'microSD', 'Tangara:MicroSD', 'Connector_Card:microSD_HC_Molex_104031-0811',
     {'1': 'SD_D2', '2': 'SD_D3', '3': 'SD_CMD', '4': '3V3', '5': 'SD_CLK', '6': 'GND', '7': 'SD_D0', '8': 'SD_D1', '9': None, '10': None, '11': 'GND'},
-    at=(-12.3, -5.0, 270, 'B'), mfr='Molex', mpn='104031-0811', lcsc='', dk='', pkg='microSD Push-Push', desc='microSD-Halter, Push-Push, 1-Bit-SDMMC')
+    at=(-12.3, -5.0, 270, 'B'), mfr='Molex', mpn='104031-0811', lcsc='', dk='WM6357DKR-ND', pkg='microSD Push-Push', desc='microSD-Halter, Push-Push, 1-Bit-SDMMC')
 add('SW1', 'B3U-3000P', 'Switch:SW_Push', 'Button_Switch_SMD:SW_SPST_B3U-3000P', {'1': 'PWR_BTN', '2': 'GND'},
-    at=(8.0, 42.8, 0, 'T'), mfr='Omron', mpn='B3U-3000P', lcsc='', dk='SW1020CT-ND', pkg='3,0 x 2,5 x 1,2 seitlich', desc='Ein/Aus-Taster, seitlich betaetigt (Weckpin)')
+    at=(8.0, 42.8, 0, 'T'), mfr='Omron', mpn='B3U-3000P', lcsc='C963349', dk='', pkg='3,0 x 2,5 x 1,2 seitlich', desc='Ein/Aus-Taster, seitlich betaetigt (Weckpin)')
 
 # ============================================================================ Passive: Busse, Pull-ups
 res('R1', '2.2k', '3V3', 'SDA', near=('U5', '8', -3.0, -3.0, 0), desc='I2C Pull-up SDA')
