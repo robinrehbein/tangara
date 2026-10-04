@@ -14,7 +14,7 @@ Quellen: Blogartikel „A Deep Dive Into the Design of Tangara's Touchwheel“ (
 
 | Teil | Status | Tangara-Faceplate | Klickrad v2 |
 |---|---|---|---|
-| Touch-Controller | **übernommen** | AT42QT2120, VQFN-20 (`VQFN-20-1EP_3x3mm_P0.45mm_EP1.55x1.55mm`), Comms-Modus (MODE an GND), I²C 0x1C, Exposed Pad unbeschaltet | gleich (Symbol aus `faceplate-symbols.kicad_sym`, nur Footprint-/Datenblattfeld ergänzt) |
+| Touch-Controller | **übernommen** | AT42QT2120, VQFN-20 (`VQFN-20-1EP_3x3mm_P0.45mm_EP1.55x1.55mm`), Comms-Modus (MODE an GND), I²C 0x1C, Exposed Pad hier auf GND (Abweichung) | gleich (Symbol aus `faceplate-symbols.kicad_sym`, nur Footprint-/Datenblattfeld ergänzt) |
 | Tastenbelegung | **übernommen** | KEY0–2 = Wheel, KEY3 = Mitteltaste, KEY4 = Guard, KEY5–11 unbenutzt | gleich (Firmware-Treiber `touchwheel.cpp` läuft unverändert) |
 | Serienwiderstände | **übernommen** (Bauform angepasst) | 10 kΩ 0603 in jeder Elektrodenleitung (R1–R3 Wheel, R5 Taste, R6 Guard) | 10 kΩ **0402** (R1–R3 Wheel, R4 Taste, R5 Guard); Datenblatt 3.1: 4,7 … 20 kΩ |
 | Cs-Kondensatoren | **entfällt wie bei Tangara** | keine | keine (Datenblatt: „no external Cs required“) |
@@ -150,7 +150,7 @@ Gründe für 2 statt 4 Lagen: (1) Es gibt nur 6 Durchkontaktierungen zur Vorders
 ## Bestückung (Handlötung)
 
 1. Platine mit der Vorderseite auf die Heizplatte oder vorheizen (100 … 120 °C), Rückseite oben.
-2. **U1 AT42QT2120 (VQFN-20, 0,45 mm, Exposed Pad 1,55 mm, bleibt unbeschaltet):** Paste dünn auftragen (Schablone aus dem Paste-Layer oder Spritze), Pin 1 nach der Silkscreen-Marke, Heißluft ca. 240 … 250 °C. Danach Brücken mit Flussmittel entfernen. Flussmittel-Reste anschließend gründlich reinigen (Datenblatt 3.3: Rückstände stören die Touch-Messung).
+2. **U1 AT42QT2120 (VQFN-20, 0,45 mm, Exposed Pad 1,55 mm, auf GND):** Paste dünn auftragen (Schablone aus dem Paste-Layer oder Spritze), Pin 1 nach der Silkscreen-Marke, Heißluft ca. 240 … 250 °C. Danach Brücken mit Flussmittel entfernen. Flussmittel-Reste anschließend gründlich reinigen (Datenblatt 3.3: Rückstände stören die Touch-Messung).
 3. **U2 DRV2605L (VSSOP-10):** Pin 1 nach der Dreiecksmarke, Schlepplöten oder wie U1.
 4. 0402-Teile mit Paste. R8/R9 **nicht** bestücken (DNP).
 5. J1 zuletzt, wenig Hitze; die Montagefüße (MP) gut anlöten.
@@ -181,15 +181,20 @@ Bestückung durch den Hersteller ist nicht vorgesehen. Stückliste: `klickrad_bo
 
 Geprüft (mit `kicad-cli` 9.0.9):
 
-@@PRUEFUNG@@
+- **ERC** (`kicad-cli sch erc`): 0 Fehler, 0 Warnungen.
+- **DRC** (`kicad-cli pcb drc --schematic-parity --all-track-errors`) auf der fertigen `klickrad.kicad_pcb`: 0 Fehler, 0 nicht verbundene Anschlüsse, Schaltplan-Abgleich ohne Abweichung. Es bleiben 5 Warnungen `courtyards_overlap` (C1/C2, R8/R9 und U1 mit R3/R4/R5): Die Kondensator- und Widerstandspaare sitzen absichtlich dicht (0402, Pads berühren sich nur im gleichen Netz bzw. mit >= 0,127 mm Abstand), die Courtyards der 0402-Teile sind größer als nötig. Löten und Bestücken von Hand bleibt möglich, kein elektrischer Fehler.
+- Rechnerprüfung `tools/pruefe_vorderseite.py`: alle Vorderseiten-Leiterbahnen liegen innerhalb des Rings, keine außerhalb.
+- Gerber-ZIPs für JLCPCB und PCBWay, Abdeckung (Gerber-ZIP), Schaltplan-PDF, Vorschaubilder und 3D-Renderings wurden erzeugt; das Gerber-Bild wurde nicht in einem fremden Viewer (z. B. Hersteller-Vorschau) gegengeprüft.
+- Das Exposed Pad von U1 (Pad 21) liegt auf GND und ist mit den freien Pins 8/10 verbunden (**Abweichung von Tangara**, wo es unbeschaltet bleibt; Datenblatt-Empfehlung ungeprüft).
+- Die letzte offene Verbindung des Routers (SCL an U1 Pin 14) wurde von Hand gezogen und GND-Stummel wurden von Hand entfernt, danach DRC wiederholt.
 
 Nicht geprüft:
 
 - **Keine Hardware gebaut oder gemessen.** Touch-Empfindlichkeit, Winkelauflösung, Wheel-Nullpunkt und Drehsinn, Störungen durch den LRA, Haptik-Kalibrierung, Verhalten mit gedruckter Abdeckung: offen.
 - Das Rad liegt unter der typischen Größe des Datenblatts (24,6 mm statt 30 … 50 mm, Ringbreite 6 mm statt 12 mm).
-- Footprints der Standardbibliothek (VSSOP-10, VQFN-20, 0402/0603) und der eigene Molex-503480-Footprint (Hirose-Maße) wurden nicht gegen die Herstellerzeichnungen vermessen. Das Exposed Pad von U1 bleibt wie bei Tangara unbeschaltet; das Datenblatt sagt dazu nichts.
+- Footprints der Standardbibliothek (VSSOP-10, VQFN-20, 0402/0603) und der eigene Molex-503480-Footprint (Hirose-Maße) wurden nicht gegen die Herstellerzeichnungen vermessen. Das Exposed Pad von U1 liegt auf GND (anders als bei Tangara).
 - Höhen von U1/U2/J1 aus dem Datenblatt bzw. aus dem Gedächtnis.
-- Der Router (`tools/route.py`) ist eigener Code; die Leiterbahnen wurden nur über DRC und Bildansicht geprüft, nicht von Hand nachgezogen. Einige Bahnen laufen länger als nötig. Die Guard-Verbindung läuft als lange Bahn über die Rückseite; sie liegt nicht unter den Elektroden einer anderen Funktion, ihre Länge wurde nicht bewertet.
+- Der Router (`tools/route.py`) ist eigener Code; die Leiterbahnen wurden nur über DRC und Bildansicht geprüft; SCL an U1 Pin 14 ist von Hand ergänzt. Einige Bahnen laufen länger als nötig. Die Guard-Verbindung läuft als lange Bahn über die Rückseite; sie liegt nicht unter den Elektroden einer anderen Funktion, ihre Länge wurde nicht bewertet.
 - Das GND-Gitter erzeugt Kupferinseln; deren Warnungen siehe oben.
 - Stromaufnahme: Der LRA wird aus der 3V3-Schiene des Waveshare-Boards versorgt, deren Belastbarkeit ungeprüft ist. Spannungseinbruch bei der Auto-Kalibrierung beobachten.
 - LCSC-Verfügbarkeit und Preise (Stand 2026-10-04, U1 nicht auf Lager).

@@ -8,10 +8,16 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 |---|---|---|---|
 | A1 | Hauptplatine nicht geroutet (DRC 955 Meldungen, 34 von 408 Verbindungen offen); `NICHT_BESTELLEN_ungeroutet_gerber.zip` liegt im Repo | in Arbeit (Agent, neues Layout ca. 41 × 97 mm) | DRC 0 Fehler, 0 offene Verbindungen, Zip umbenannt/ersetzt |
 | A2 | Kein Opus-Design-Review der Hauptplatine (Schaltplan gegen Datenblatt-Pins, Einschaltreihenfolge, ungetestete S31-Teile) | offen | Review-Bericht in `docs/`, Befunde abgearbeitet |
-| A3 | Klickrad-Platine v2 (AT42QT2120, 0,8 mm, Molex-FFC) unfertig; v1-Dateien werden überschrieben | in Arbeit (Agent) | ERC/DRC 0 Fehler, Gerber und BOM vorhanden, README aktuell |
+| A3 | Klickrad-Platine v2 (AT42QT2120, 0,8 mm, Molex-FFC) | erledigt (ERC/DRC 0 Fehler, Gerber/BOM vorhanden); Restpunkte siehe A7–A10 | v1 nur noch in der Git-Historie |
 | A4 | Nichts davon wurde je auf Hardware getestet (Firmware, Platinen, Haptik) | offen | Messprotokoll nach Phase 1 |
 | A5 | Unbelegte Teile: LCSC-Nummern, Jack-Höhe/STEP-Ursprung, WROOM-1-Pinbelegung, Auflösung des 2,06"-Displays (Listing widersprüchlich) | offen | Je Teil Datenblatt oder Händlerseite verlinkt |
 | A6 | CS43131: Lieferzeit ca. 20 Wochen bei Digi-Key, Verfügbarkeit unklar | offen | Bestellbar bestätigt oder Plan B (CS43198 + OPA1622) gewählt |
+| A7 | Molex-503480-0600-Footprint ist Kopie des Hirose-FH12 und nicht gegen die Molex-Zeichnung geprüft | offen | Footprint gegen Datenblatt geprüft |
+| A8 | AT42QT2120 (LCSC C617900) am 2026-10-04 nicht auf Lager; keine LCSC-Nummer für den Molex; CPL-Drehwinkel nicht gegen JLCPCB geprüft | offen | Bestand/Alternativen geklärt, Vorschau bei JLCPCB geprüft |
+| A9 | Klickrad: Rad kleiner als im Datenblatt empfohlen (24,6 mm statt 30–50 mm), GND-Gitter bei 0,8 mm näher an den Elektroden als bei Tangara (1,6 mm); Empfindlichkeit unbekannt. Rückseitenbauteile 1,1 mm statt 0,8 mm | offen | Touch-Messung am Aufbau; Platine ggf. 1,6 mm |
+| A10 | Klickrad: SCL von Hand gezogen, Pin 6 offen, Exposed Pad von U1 auf GND (Tangara lässt es offen), C5 und 10-µF am DRV2605L entfallen | offen | Review gegen Datenblatt (Teil von A2) |
+| A11 | Klickrad-Stecker: FFC-Pin 1 auf Pin 1 ungeprüft (Kurzschlussgefahr), vor Einschalten durchklingeln | offen | Durchgangsprüfung am Kabel |
+| A12 | `TEILE.md` hatte Klickrad-Widersprüche (4 Lagen/MPR121-Angaben); jetzt Abschnitt „Klickrad v2 (Stand)“, Rest oben noch v1-Text; CAD und Firmware-Wheel-Konvention müssen angepasst werden | offen | Angaben bereinigt, CAD/Firmware angepasst |
 
 ## B. Technische Risiken
 
@@ -26,7 +32,7 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 | B7 | CS43131: PLL gegen zweiten Quarz, Ausgangsimpedanz, Rauschen der Ladungspumpe ungemessen | offen | Messung nach Aufbau |
 | B8 | Haptik: DRV2605L-Tuning, Latenz < 10 ms, Verträglichkeit LRA-Brummen mit Audio ungeprüft | offen | Logic-Analyzer-Messung, Hörtest |
 | B9 | Klickrad: Segment-Zuordnung und Winkel-Offset (105°) nur berechnet, nicht am echten Rad geprüft | offen | Test am Aufbau, Wert in Kconfig angepasst |
-| B10 | 4 Lagen beim Klickrad statt geplanter 2 (nicht routbar); höhere Kosten | bekannt | Kosten in `docs/KOSTEN.md` stimmen |
+| B10 | Klickrad v2 hat jetzt 2 Lagen (v1 hatte 4); Kosten in `docs/KOSTEN.md` und Einkaufsliste prüfen | offen | Kosten stimmen |
 
 ## C. Mechanik und CAD
 

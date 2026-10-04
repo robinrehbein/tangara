@@ -17,7 +17,7 @@ Gemeinsame Grundlage für Firmware, CAD und Platinen. Maße in mm. Werte mit „
 Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt direkt auf der Rückseite, damit der Tick genau unter dem Daumen spürbar ist.
 
 **Mechanik**
-- Platine rund, **Ø 32 mm**, Dicke 1,0 mm, **4 Lagen** (auf 2 Lagen nicht sauber routbar; In1 = GND-Gitter unter dem Ring, In2 = 3V3)
+- Platine rund, **Ø 32 mm**, Dicke 1,0 mm, **4 Lagen** (v1; **v2: 2 Lagen, 0,8 mm**, siehe Abschnitt „Klickrad v2 (Stand)“)
 - Touch-Segmente vorne: Ring von **r = 6,5 bis r = 12,8 mm**, 8–12 Segmente
 - Mitteltaste vorne: SMD-Taster mittig, max. 4 × 4 mm, Höhe ≤ 1,5 mm
 - 3 Befestigungslöcher Ø 2,2 mm auf **r = 14,6 mm** bei 90°, 210° und 330° (0° = rechts, gegen den Uhrzeigersinn)
@@ -106,3 +106,15 @@ Nicht übernommen: SAMD21-Co-Prozessor und SD-Multiplexer (der S31 hat selbst US
 Noch nichts bestellt.
 
 **Dicke (Entscheidung):** Ziel **bis 10 mm** (statt 11 mm). Stapel: Front 0,8 + Display ca. 1,3 + Luft ≥ 1,1 + Platine 1,0 + Akku + Rückwand ca. 1 mm. Dafür Akku eher ≤ 4,0 mm und Klinke 5,0 mm (SJ-43504-SMT-TR). Prüfen, sobald die Bauteilhöhen feststehen; reicht es nicht, wird das hier begründet geändert.
+
+## Klickrad v2 (Stand 2026-10-04, ersetzt widersprüchliche Angaben oben)
+
+Fertig in `hardware/pcb/klickrad/` (ERC 0, DRC 0 Fehler, nichts gebaut oder gemessen). Maßgeblich gegenüber den v1-Angaben im Abschnitt „Klickrad-Modul“:
+
+- Ø 32 mm, **2 Lagen, 0,8 mm** (v1: 4 Lagen, 1,0 mm)
+- Touch **AT42QT2120, I²C 0x1C**, Wheel-Modus: Key 0–2 Wheel, Key 3 kapazitive Mitte (r 2,5 mm), Key 4 Guard. Wheel-Position 0 oben, steigend gegen den Uhrzeigersinn; Stecker bei 270° = Position 128 (aus Tangara-Footprint gerechnet, nicht gemessen). **Firmware-Konvention und Segment-Offset daran anpassen.**
+- Haptik DRV2605L (0x5A), LRA-Freifläche 16 × 6 mm, Mitte 6 mm über der Radmitte, LRA bis 3,0 mm; LRA-Pads TP1/TP2 auf der **Ostseite**
+- Stecker Molex 503480-0600 auf der Rückseite bei 270°, Pin 6 offen, I²C-Pull-ups nicht bestückt
+- Rückseitenbauteile bis 1,1 mm (U2 DRV2605L VSSOP-10), Stecker 1,0 mm; damit über der 0,8-mm-Vorgabe
+- Abdeckung: eigenes Projekt `abdeckung/`, 0,6 mm FR4, Ø 30
+- Ein 10 × 10 × 1,0-LRA passt in dieser Revision nicht
