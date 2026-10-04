@@ -327,7 +327,7 @@ add('J21', 'FH12-6S-0.5SH(55)', 'CONN', 'Connector_FFC-FPC:Hirose_FH12-6S-0.5SH_
     mpn='FH12-6S-0.5SH(55)', mfr='Hirose', pkg='FFC 6 Pin 0,5 mm, 1,0 mm hoch',
     desc='Klickrad-Modul v2 (AT42QT2120 0x1C + DRV2605L 0x5A), gleicher Stecker wie auf hardware/pcb/klickrad (J1); Pin 5 = CHANGE, Pin 6 = Reserve')
 res('R136', '10k', '3V3', 'WHEEL_INT', 'Pull-up CHANGE (open drain, aktiv low)')
-for i, (hx, hy) in enumerate(((-16.0, 40.0), (16.0, 40.0), (16.2, -39.5), (-16.8, 24.5))):
+for i, (hx, hy) in enumerate(((17.4, 41.0), (16.2, -41.0), (17.4, 22.0))):
     add(f'H{i+1}', 'M1.6', 'H', 'Hauptplatine:MountingHole_1.8mm', {}, 'neu', nobom=True, hole_at=(hx, hy),
         desc='Gehaeuse-Befestigung M1,6 (NPTH 1,8 mm), Position zur Abstimmung mit dem CAD')
 

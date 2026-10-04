@@ -20,7 +20,7 @@ CLR = 0.13
 VIA_D, VIA_DR = 0.6, 0.3
 WIDTH = {'GND': 0.2, '3V3': 0.2, 'LRA_P': 0.2, 'LRA_N': 0.2}
 DEFW = 0.15
-F_RMIN, F_RMAX = 3.5 + 0.15, 6.3 - 0.15
+F_RMIN, F_RMAX = 2.5 + 0.15, 6.3 - 0.15
 import os
 ORDER = ['3V3', 'SDA', 'K2', 'KB', 'KG', 'K1', 'K0', 'E0', 'E1', 'E2', 'EB', 'EG', 'SCL', 'CHANGE', 'EN', 'REG', 'RESET', 'LRA_P', 'LRA_N', 'GND']
 if os.environ.get('ORDER'): ORDER = os.environ['ORDER'].split(',')
@@ -114,7 +114,7 @@ def astar(starts, goals, blk, vblk, soft=None, allow_via=True):
     cnt = itertools.count()
     for s in starts:
         best[s] = 0; heapq.heappush(pq, (h(s[1], s[2]), next(cnt), 0, s)); prev[s] = None
-    VIA_COST = 60
+    VIA_COST = 12
     while pq:
         f, _, g, cur = heapq.heappop(pq)
         if g > best.get(cur, 1e18): continue

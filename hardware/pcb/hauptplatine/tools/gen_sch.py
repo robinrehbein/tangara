@@ -173,7 +173,7 @@ grp('audio', ['U17', 'U3', 'J1', 'FB1', 'X1', 'X2', 'R240', 'R241', 'R242', 'R24
 grp('power', ['BT1', 'U10', 'U4', 'C24', 'C25', 'C27', 'C29', 'R34', 'R35', 'R36', 'R37', 'R38', 'R39', 'R41', 'R43', 'R1', 'TP7', 'SW1', 'R4', 'R200', 'R201', 'R202', 'D4', 'R7', 'U22', 'C104', 'R122'])
 grp('usb', ['J6', 'U5', 'U12', 'Q1', 'Q10', 'Q11', 'D10', 'C37', 'R110', 'R111', 'R112', 'R113', 'R114', 'R115', 'C110', 'U20', 'L20', 'U21', 'R116', 'R117', 'R118', 'R119', 'C111', 'C112', 'C113', 'C114'])
 grp('sd', ['J4', 'U16', 'R9', 'R11', 'R12', 'R57', 'R61', 'C42', 'C23'])
-grp('wheel', ['J21', 'R136', 'H1', 'H2', 'H3', 'H4'])
+grp('wheel', ['J21', 'R136', 'H1', 'H2', 'H3'])
 ORIGIN = {'mcu': (20, 20), 'display': (230, 20), 'audio': (400, 20), 'power': (20, 330), 'usb': (400, 300), 'sd': (230, 330), 'wheel': (640, 20)}
 TITLE = {'mcu': 'ESP32-S31-WROOM-1 (Espressif-Beschaltung)', 'display': 'AMOLED 2,06 Zoll 410 x 502 (CO5300, QSPI): FPC 30 Pol, Belegung wie Waveshare ESP32-S3-Touch-AMOLED-2.06',
          'audio': 'Audio: CS43131 (22,5792-MHz-Quarz, I2S-Master), 1,8-V-LDO, Pegelwandler, Klinke SJ-43504 + ESD (Tangara)', 'power': 'Power: MCP73871 + TLV75733 + Akku + Power-Latch (von Tangara, angepasst), Fuel Gauge MAX17048',

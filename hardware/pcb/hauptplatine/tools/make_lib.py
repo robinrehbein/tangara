@@ -6,7 +6,7 @@
    fehlt dieses Modul (nur WROOM-3 vorhanden). Pads: 40 Randpads 1,5 x 0,9 (Raster 1,27), im Feld 20 kleine Pads 0,4 x 0,8 (Raster 0,8, Pins 42-61) und
    3 x 3 Masse-Pads 0,9 x 0,9 (Pin 41, Raster 1,4). Antennenzone: Sperrfläche (alle Kupferlagen) 18,6 x 7,6 mm.  UNGEPRUEFT gegen die Espressif-Zeichnung.
 2. X2QFN-12-RWB (TUSB320, TI RWB0012A) - Landmuster nach TI-Beispiel.
-3. CUI_SJ-43504-SMT-TR (Tangara-Bibliothek, CERN-OHL-S-2.0) - Pads auf 1,45 mm verschmaelert, Zapfenloecher entfernt (liegen im Randausschnitt).
+3. CUI_SJ-43504-SMT-TR (Tangara-Bibliothek, CERN-OHL-S-2.0) - Pads auf 1,35 mm verschmaelert, Zapfenloecher entfernt (liegen im Randausschnitt).
 4. GCT_USB4510-03-1-A_REVA, SOT65P210X110-6N (Tangara, unveraendert).
 5. BATT_PADS_3 (Akkulitzen), MountingHole_1.8mm (M1,6).
 """
@@ -108,8 +108,9 @@ def jack():
     t = re.sub(r'  \(pad "" np_thru_hole[^\n]*\n', '', t)
     def fix(m):
         num, x, y = m.group(1), float(m.group(2)), m.group(3)
-        nx = -0.15 if x < 1 else 8.5
-        return '(pad "%s" smd rect (at %s %s) (size 1.45 2)' % (num, nx, y)
+        nx = -0.2 if x < 1 else 8.55
+        if num == '2': return '(pad "2" smd rect (at %s -6.6) (size 1.35 1.5)' % nx     # Abstand zur Entlastungsbohrung des Zapfens
+        return '(pad "%s" smd rect (at %s %s) (size 1.35 2)' % (num, nx, y)
     t = re.sub(r'\(pad "([1-6])" smd rect \(at ([-0-9.]+) ([-0-9.]+)\) \(size 1\.75 2\)', fix, t)
     return t
 

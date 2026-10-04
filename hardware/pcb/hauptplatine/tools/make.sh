@@ -19,7 +19,7 @@ if [ -z "$SKIPROUTE" ]; then
 import pcbnew; b=pcbnew.LoadBoard("$T/r.kicad_pcb"); pcbnew.ExportSpecctraDSN(b,"$T/r.dsn")
 P
   rm -f $T/r.ses
-  java -jar ${FREEROUTING:-$T/fr.jar} -de $T/r.dsn -do $T/r.ses -mp ${MAXPASSES:-40} > $T/fr.log 2>&1 || true
+  java -jar ${FREEROUTING:-$T/fr.jar} -de $T/r.dsn -do $T/r.ses -mp ${MAXPASSES:-16} > $T/fr.log 2>&1 || true
   python3 - <<P 2>&1 | grep -v swig || true
 import pcbnew; b=pcbnew.LoadBoard("$T/r.kicad_pcb"); pcbnew.ImportSpecctraSES(b,"$T/r.ses"); b.Save("$T/routed.kicad_pcb")
 P
@@ -28,3 +28,4 @@ fi
 MODE=finish LOADFROM=$D/routed_freerouting.kicad_pcb python3 $D/build_pcb.py 2>&1 | grep -v swig || true
 python3 $D/gen_sch.py | grep -v swig
 python3 $D/export.py | grep -v swig
+python3 $D/gen_readme.py

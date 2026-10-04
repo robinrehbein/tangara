@@ -22,7 +22,7 @@ R_IN, R_OUT = 6.3, 12.3          # Tangara 7,9 ... 19,9 (Breite 12 mm -> hier 6 
 RINGS = 3                        # wie Tangara
 SEP = 0.25                       # Tangara 0,3 mm; hier 0,25 (Fertigung >= 0,127 mm)
 DEAD = 1.5                       # Tangara 2,0 mm, nach Umfang skaliert
-BTN_R = 3.5                      # Tangara 2,5 mm (Ø 5); hier größer, weil Abdeckungsmarke Ø 11,6
+BTN_R = 2.5                      # wie Tangara (r = 2,5 mm, Ø 5)
 GUARD_R_IN, GUARD_R_OUT = 13.5, 15.4   # Tangara: Ring r = 22,2 (Linie 1 mm), 2,35 mm vom Rad entfernt
 HOLE_R, HOLE_ANG, HOLE_D = 14.6, (90, 210, 330), 2.2
 GUARD_LINK_R, GUARD_LINK_W, GUARD_LINK_SPAN = 12.82, 0.2, 10.5   # Stege zwischen den Guard-Bögen

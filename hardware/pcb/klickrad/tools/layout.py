@@ -35,6 +35,15 @@ if MODE == 'place':
     exec(open(os.path.join(ROOT, 'tools', 'placement.py')).read())
     for ref, (x, y, r) in POS.items():
         place(PARTS[ref], x, y, 'B', r)
+    # Paare, deren 3V3-Pads sich berühren (spart Leiterbahnen: gleiches Netz, Pads überlappen um 0,3 mm): (A, B) -> B wird um 180 Grad gedreht an A angesetzt
+    for a_, b_, lb_ in (('C1', 'C2', 0.48), ('R8', 'R9', 0.48), ('C3', 'C5', 0.775)):
+        fa, fb = placed[a_], placed[b_]
+        pa = [p for p in fa.Pads() if p.GetNetname() == '3V3'][0]
+        ca, pp = fa.GetPosition(), pa.GetPosition()
+        dx, dy = ToMM(pp.x - ca.x), ToMM(pp.y - ca.y); L = math.hypot(dx, dy); ux, uy = dx / L, dy / L
+        fb.SetOrientationDegrees(fa.GetOrientationDegrees() + 180)
+        s_ = L + lb_ + 0.3
+        fb.SetPosition(VECTOR2I(ca.x + FromMM(ux * (0 + s_)) , ca.y + FromMM(uy * s_)))
     for fp in board.GetFootprints(): fp.Value().SetVisible(False); fp.Reference().SetVisible(False)
     for net_, lay, pts_, w_ in PRE_TRACKS: track(net_, B_CU if lay == 'B' else F_CU, pts_, w_)
     for net_, x_, y_ in PRE_VIAS: via(net_, x_, y_)

@@ -20,7 +20,7 @@ main = lab == (1 + int(np.argmax(sizes)))
 goals = {(0, c, r) for r, c in zip(*np.nonzero(main))}
 # GND-Ring auf F.Cu (r = 4,2 ... 5,4 mm zwischen Taste und Rad): zusätzliche Ziele, erreichbar über Vias
 fcu_other = [g for n, g in objs[1] if n != 'GND'] + [g for n, lst in fixedgeo.items() if n != 'GND' for la, g, w_ in lst if la == 1]
-ringg = Point(0, 0).buffer(5.4).difference(Point(0, 0).buffer(4.2)).difference(unary_union(fcu_other + [Point(0, 0)]).buffer(0.35)) if fcu_other else Point(0, 0).buffer(5.4).difference(Point(0, 0).buffer(4.2))
+ringg = Point(0, 0).buffer(5.4).difference(Point(0, 0).buffer(3.3)).difference(unary_union(fcu_other + [Point(0, 0)]).buffer(0.35)) if fcu_other else Point(0, 0).buffer(5.4).difference(Point(0, 0).buffer(3.3))
 ringm = raster([ringg])
 # nur Via-taugliche Zellen (Via darf dort stehen, d.h. Via-Pad bleibt im Ring)
 okv = ndimage.binary_erosion(ringm, iterations=int(0.33 / RES))

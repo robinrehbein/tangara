@@ -76,13 +76,16 @@ def anchor_of(ref):
     return None
 
 movable = [r for r in PARTS if r not in FIXED and PARTS[r]['kind'] != 'H']
+allmov = list(movable)
+if os.environ.get('MOVE'):
+    movable = [r for r in movable if r in os.environ['MOVE'].split(',')]
 state = {}
 for r, st in FIXED.items(): state[r] = tuple(st)
 
 HEIGHT = {r: layout.height(PARTS[r]) for r in PARTS}
 def top_allowed(ref):
     return HEIGHT[ref] <= layout.TOP_MAX_H
-TOPABLE = {r for r in movable if top_allowed(r)}
+TOPABLE = {r for r in allmov if top_allowed(r)}
 
 BOARD = layout.board_poly()
 BOARD_IN = BOARD.buffer(-0.7)
@@ -139,6 +142,7 @@ def part_cost_static(ref, st):
         if ref not in TOPABLE and ref not in FIXED: pen += 100
     if PARTS[ref].get('tht') and not tht_ok(ref, st): pen += 80
     if ref not in FIXED and pen > 0: pen += pull_cost(st)
+    if side == 'B' and ref in TOPABLE and ref not in FIXED: pen += 12   # Rueckseite ist knapp: flache Teile moeglichst nach oben
     return pen
 
 def ncost():
@@ -172,7 +176,7 @@ def anchor_cost(ref):
         if num == a[1]:
             ax, ay = to_view(state[a[0]], x, y)
             st = state[ref]
-            return 1.5 * (abs(st[0] - ax) + abs(st[1] - ay))
+            return (6.0 if ref in layout.STRONG else 1.5) * (abs(st[0] - ax) + abs(st[1] - ay))
     return 0.0
 
 ANCH = {r: anchor_of(r) for r in movable if anchor_of(r)}
@@ -226,11 +230,11 @@ def rand_state(ref):
     for _ in range(200):
         x = random.uniform(-17, 17); y = random.uniform(-40, 40)
         th = random.choice((0, 90, 180, 270))
-        side = 'B'
+        side = 'T' if ref in TOPABLE else 'B'
         return (x, y, th, side)
-for r in movable: state[r] = rand_state(r)
+for r in allmov: state[r] = rand_state(r)
 # Teile mit Ankern starten in der Naehe
-for r in movable:
+for r in allmov:
     a = ANCH.get(r)
     if a and a[0] in state:
         g = fpgeom(SPEC[a[0]])
@@ -274,7 +278,7 @@ N = int(os.environ.get('ITER', '60000'))
 T0, T1 = float(os.environ.get('T0', '12.0')), 0.05
 if os.environ.get('INIT'):
     for r_, v_ in json.load(open(os.environ['INIT'])).items():
-        if r_ in state and r_ not in FIXED: state[r_] = (v_[0], v_[1], v_[2], v_[3])
+        if r_ in state and r_ not in FIXED: state[r_] = (v_[0], v_[1], v_[2], 'T' if (r_ in TOPABLE and not os.environ.get('KEEPSIDE')) else v_[3])
 cur = None
 for it in range(N):
     T = T0 * (T1 / T0) ** (it / N)
@@ -282,7 +286,7 @@ for it in range(N):
     old = state[ref]
     sig = 6.0 * (1 - it / N) + 0.3
     if random.random() < 0.05:        # Sprung in die erlaubte Flaeche (Teile ueberqueren sonst gesperrte Zonen nicht)
-        side = old[3] if random.random() < 0.8 or ref not in TOPABLE else ('T' if old[3] == 'B' else 'B')
+        side = old[3]
         area = ALLOW_B if side == 'B' else ALLOW_T
         bx0, by0, bx1, by1 = area.bounds
         for _ in range(40):
@@ -305,8 +309,7 @@ for it in range(N):
         if mv < 0.7: new = (old[0] + random.gauss(0, sig), old[1] + random.gauss(0, sig), old[2], old[3])
         elif mv < 0.9: new = (old[0], old[1], (old[2] + random.choice((90, 180, 270))) % 360, old[3])
         else:
-            if ref in TOPABLE: new = (old[0], old[1], old[2], 'T' if old[3] == 'B' else 'B')
-            else: new = old
+            new = old
     if new == old: continue
     c0 = local_cost(ref, old)
     c1 = local_cost(ref, new)

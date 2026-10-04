@@ -6,7 +6,7 @@ from shapely.geometry import box, Point, Polygon
 from shapely.ops import unary_union
 from shapely import affinity
 
-BOARD_W, BOARD_H, BOARD_R = 37.0, 86.0, 5.0
+BOARD_W, BOARD_H, BOARD_R = 37.0, 86.0, 4.0
 BOARD_T = 0.8
 WHEEL_Y = -25.0                       # Mitte des Klickrads (Gehaeuse-Abstimmung: Display unten bei y ca. -6, Rad Ø32 darunter)
 WHEEL_R_TOP = 16.3                    # Oberseite: Klickrad-Platine liegt ueber diesem Kreis, Luft zwischen den Platinen nur 1,2 mm
@@ -15,20 +15,28 @@ BATT = (-17.0, -29.4, 17.0, 20.6)     # Akkufach auf der Rueckseite 34 x 50 (Pou
 DOMES = []                            # keine Domes ueber der Platine: Verschraubung in den Rahmen-Seitenwaenden (DUENNBAU.md 5)
 
 # Befestigungsloecher M1,6 (NPTH 1,8): Positionen zur Abstimmung mit dem CAD
-HOLES = [(-13.0, 41.8), (17.4, 41.0), (16.2, -41.0), (17.4, 22.0)]
+HOLES = [(17.4, 41.0), (16.2, -41.0), (17.4, 22.0)]
 
 # feste Bauteile: ref -> (x, y, Drehung, Seite)
 FIXED = {
-    'J4': (-12.5, 31.5, 270, 'B'),     # microSD, Einschubrichtung nach links (Plattenkante)
+    'U5': (-3.2, -33.0, 0, 'B'),       # Rueckseiten-Teile >1,0 mm im Streifen zwischen Akkufach und USB-C/Klickrad-Stecker (handplatziert)
+    'D10': (1.4, -33.0, 0, 'B'),
+    'Q1': (6.2, -33.0, 0, 'B'),
+    'SW1': (12.8, -32.8, 0, 'B'),      # Ein/Aus-Taster rechts neben dem Akkufach, unten
+    'D4': (-12.5, 26.1, 0, 'B'),       # Streifen zwischen Akkufach, Akkuanschluss und microSD
+    'C29': (-6.9, 26.2, 0, 'B'),
+    'U16': (-9.0, 22.6, 0, 'B'),
+    'J4': (-12.1, 35.2, 270, 'B'),     # microSD, Einschubrichtung nach links (Plattenkante)
     'U15': (6.0, 33.75, 0, 'B'),       # Modul: Antenne (obere 6 mm) ragt 5 mm ueber die Oberkante (y = 42) hinaus
     'J1': (-7.825, -40.25, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
     'J6': (9.0, -41.4, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
-    'BT1': (-11.0, 22.5, 0, 'B'),      # Akku-Loetpads am oberen Akkuende (Akkuanschluss oben)
+    'BT1': (-14.6, 22.5, 0, 'B'),      # Akku-Loetpads am oberen Akkuende (Akkuanschluss oben)
     'J20': (0.0, 3.0, 0, 'T'),         # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
-    'J21': (-1.5, -38.8, 0, 'B'),      # Klickrad-FFC auf der Rueckseite, Mundloch an der Unterkante (Kabel laeuft um die Plattenkante)
+    'J21': (-2.1, -38.8, 0, 'B'),      # Klickrad-FFC auf der Rueckseite, Mundloch an der Unterkante (Kabel laeuft um die Plattenkante)
 }
 OVERHANG = {'U15'}
-EDGE_PREF = {'SW1': 3.0}               # Teile, die moeglichst am Plattenrand sitzen sollen (Gewicht je mm Randabstand)
+EDGE_PREF = {}
+STRONG = {'U3', 'NT1', 'NT2'}          # Anker mit hoher Gewichtung (ESD und Referenz-Netties direkt an der Klinke)               # Teile, die moeglichst am Plattenrand sitzen sollen (Gewicht je mm Randabstand)
 
 # ------------------------------------------------------------------ Randausschnitte (Klinke, USB) aus den Footprint-Daten
 def _b_to_view(pos, pts):
@@ -45,8 +53,8 @@ def jack_slot():
 def usb_pocket():
     """Randausschnitt fuer GCT USB4510 (Kontur aus dem Tangara-Footprint: 9,24 breit, Boden bei y_fp = -4,6, Ecken r 0,4)."""
     pos = FIXED['J6']
-    r = box(-4.62, -4.6, 4.62, 3.5).buffer(-0.4, 8).buffer(0.4, 8)
-    r = unary_union([r, box(-4.62, -4.0, 4.62, 3.5)])
+    r = box(-4.62, -4.4, 4.62, 3.5).buffer(-0.4, 8).buffer(0.4, 8)
+    r = unary_union([r, box(-4.62, -3.8, 4.62, 3.5)])
     return Polygon(_b_to_view(pos, list(r.exterior.coords)))
 
 FFC_SLOT = (-1.5, -30.2, 5.4, 1.4)    # Schlitz fuer das Klickrad-Flachkabel (Mitte x, y, Breite, Hoehe)

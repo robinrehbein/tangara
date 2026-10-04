@@ -18,7 +18,7 @@ def pad_points():
         pts[('W', k)] = G.inner_point(b['wheel'][k], 6.5, 12.0, want[k], margin=0.33, span=100, taken=taken)
         assert pts[('W', k)], k
         taken.append(pts[('W', k)])
-    pts[('B', 0)] = (0.45, 3.1)                       # Mitteltaste: Via oberhalb von U1/R4 (r = 2,98 < 3,5 - 0,3)
+    pts[('B', 0)] = (-1.0, 1.4)                       # Mitteltaste: Via oberhalb von U1/R4 (r = 2,98 < 3,5 - 0,3)
     return pts
 
 def poly_pad(num, cx, cy, poly, name_layer='F.Cu'):
