@@ -56,6 +56,7 @@ menu "Nano-Player"
             default -90 if NANO_WHEEL_QT2120
             default 105
             help
+                AT42QT2120 laut Tangara-Code: Position 0 = oben (-90 Grad).
                 MPR121 (Klickrad v1): ELE0 liegt unten leicht links, die Elektrodennummern steigen im
                 Uhrzeigersinn. Daraus ergibt sich 105.
                 AT42QT2120: Winkel der Wheel-Position 0. Der Wert -90 ist ein Platzhalter; er haengt von
@@ -64,7 +65,12 @@ menu "Nano-Player"
 
         config NANO_WHEEL_CLOCKWISE
             bool "Segmentnummern bzw. Wheel-Position steigen im Uhrzeigersinn"
+            default n if NANO_WHEEL_QT2120
             default y
+            help
+                AT42QT2120 laut Tangara-Code (input_touch_wheel.cpp): Position 0 = oben, 64 = links,
+                128 = unten, 192 = rechts, die Position steigt also gegen den Uhrzeigersinn. Das gilt fuer
+                die Elektrodenlage der Tangara-Platine; fuer unser Modul am echten Rad pruefen.
 
         config NANO_WHEEL_DETENT_DEG
             int "Rasterschritt in Grad"
