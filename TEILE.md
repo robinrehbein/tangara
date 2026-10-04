@@ -29,7 +29,7 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 - 12 Segmente à 30°. Zuordnung (Mittenwinkel gegen den Uhrzeigersinn ab rechts, von vorne gesehen): ELE8 15°, ELE7 45°, ELE6 75°, ELE5 105°, ELE4 135°, ELE3 165°, ELE2 195°, ELE1 225°, ELE0 255°, ELE11 285°, ELE10 315°, ELE9 345°. Firmware: Segment 0 bei 105° (Bildschirmkonvention, im Uhrzeigersinn). Am echten Rad prüfen.
 
 **Elektrik**
-- Touch-Controller: MPR121 (I²C, **Adresse 0x5B**, ADDR an VDD), damit die Rohwerte der Segmente für eine feine Winkelberechnung gelesen werden können. Alternativen erlaubt, wenn sie Rohwerte liefern.
+- Touch-Controller: **v2: AT42QT2120 (I²C 0x1C, Wheel-Modus) nach Tangara-Vorbild**; v1 nutzte MPR121 (0x5B)
 - Haptik-Treiber: DRV2605L (I²C, Adresse 0x5A fest), LRA-Modus
 - Mitteltaste: nach GND, Pull-up auf der MCU-Seite
 
@@ -41,7 +41,7 @@ Runde Platine, die Touch-Rad, Mitteltaste und Haptik vereint. Der LRA sitzt dire
 | 2 | GND |
 | 3 | SDA |
 | 4 | SCL |
-| 5 | INT (MPR121 IRQ, open drain, aktiv low) |
+| 5 | INT / CHANGE (AT42QT2120 bzw. MPR121, open drain, aktiv low) |
 | 6 | BTN (Mitteltaste, aktiv low) |
 
 DRV2605L-EN fest auf 3V3; Standby per I²C.
@@ -65,15 +65,23 @@ DRV2605L-EN fest auf 3V3; Standby per I²C.
 
 ## Hauptplatine Endgerät: festgelegte Chips
 
-| Funktion | Chip |
-|---|---|
-| MCU, WLAN 6, Bluetooth Classic + LE Audio, USB-HS-OTG | ESP32-S31-WROOM-3 |
-| DAC + Kopfhörerverstärker (Klinke, Hi-Res) | Cirrus Logic CS43131 |
-| USB-C-Rollenumschaltung (Laden und USB-Audio-Host) | TI TUSB320LAI |
-| 5 V für USB-Host | TI TPS61023 + TI TPS2553 |
-| LiPo-Lader mit Power-Path | TI BQ24074 |
-| Akkustand | MAX17048 (I²C 0x36) |
-| 3V3 | TI TPS63802 (Buck-Boost) |
+Grundsatz: so viel wie möglich vom Vorbild Tangara übernehmen (Hardware CERN-OHL-S-2.0, Firmware GPL-3.0; lokale Kopie für die Arbeit unter `/home/user/tangara-ref/`, nicht im Repo).
+
+| Funktion | Chip | Herkunft |
+|---|---|---|
+| MCU, WLAN 6, Bluetooth Classic + LE Audio, USB-HS-OTG | ESP32-S31-WROOM-3 | neu (Tangara: ESP32-WROVER-E) |
+| DAC (Klinke, bis 24 Bit/192 kHz) | WM8523 | Tangara |
+| Kopfhörerverstärker | INA1620, ±5 V aus TPS65133/TPS65135 | Tangara |
+| Klinkenbuchse | SJ-3506-SMT | Tangara |
+| LiPo-Lader mit Power-Path | MCP73871 | Tangara |
+| 3V3 | TLV75533 | Tangara |
+| USB-C-Buchse | USB4510-03-1-A | Tangara |
+| USB-Audio-Host (Rollenumschaltung, 5 V) | TUSB320LAI, TPS61023, TPS2553 | neu |
+| Akkustand | MAX17048 (I²C 0x36) | neu (bei Tangara über den SAMD21) |
+| Touch-Rad (Klickrad-Modul v2) | AT42QT2120 (I²C 0x1C) | Tangara |
+| Haptik (Klickrad-Modul) | DRV2605L (I²C 0x5A) | Tangara |
+
+Nicht übernommen: SAMD21-Co-Prozessor und SD-Multiplexer (der S31 hat selbst USB), Display ST7735 (wir nutzen das 1,8"-AMOLED).
 
 ## Bestellstatus
 
