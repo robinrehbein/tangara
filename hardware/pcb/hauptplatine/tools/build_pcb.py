@@ -181,7 +181,7 @@ def run_place():
         r = part['ref']
         if part['kind'] == 'H':
             hx, hy = part['hole_at']; place(part, hx, hy, 0, 'T'); continue
-        x, y, th, side = pl[r]
+        x, y, th, side = layout.FIXED.get(r) or pl[r]
         place(part, x, y, th, side)
     zone(IN1, board_pts(0.3), 'GND', prio=1, clearance=0.2)
     edge_ring()

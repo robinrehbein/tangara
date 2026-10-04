@@ -15,13 +15,13 @@ PRE_TRACKS = [
  ('GND', 'B', [(0.75, -8.95), (0.75, -10.3), (5.8, -10.3), (5.8, -8.6)], 0.2),     # J1-Pin 2 (GND) unter dem Steckerkörper nach Osten
 
  # U1 Pin 8/9/10 (GND, 3V3, GND) liegen im Abstand 0,45 mm: gerade Ausführung nach Osten, damit 3V3 nicht eingeschlossen wird
- ('GND', 'B', [(1.45, -1.5), (2.2, -1.5), (2.75, -1.05)], 0.15),
+ ('GND', 'B', [(1.1, -1.5), (0.6, -1.5)], 0.15),                                  # U1 Pin 8 -> Exposed Pad (GND), Pin 8 und 10 sind so verbunden
  ('3V3', 'B', [(1.45, -1.95), (2.2, -1.95)], 0.15),
- ('GND', 'B', [(1.45, -2.4), (2.2, -2.4), (2.75, -2.9)], 0.15),
+ ('GND', 'B', [(1.1, -2.4), (0.75, -2.25), (0.6, -2.0)], 0.15),                    # U1 Pin 10 (MODE) -> Exposed Pad
 
  # U2 Pin 8 (GND) liegt zwischen OUT+ und OUT-: gerade nach Osten herausführen, die LRA-Leitungen laufen nach außen zu TP1/TP2
- ('GND', 'B', [(10.7, -3.6), (11.7, -3.6)], 0.15),
+ ('GND', 'B', [(10.7, -3.6), (14.5, -3.6)], 0.15),
  ('LRA_P', 'B', [(10.7, -3.1), (11.9, -3.1), (12.5, -2.4), (13.1, -2.4)], 0.2),
  ('LRA_N', 'B', [(10.7, -4.1), (11.9, -4.1), (12.5, -4.8), (13.1, -4.8)], 0.2),
 ]
-PRE_VIAS = [('GND', 2.75, -1.05), ('GND', 2.75, -2.9)]   # U1-GND-Vias zum F.Cu-GND-Ring (zwischen Taste und Rad)
+PRE_VIAS = []

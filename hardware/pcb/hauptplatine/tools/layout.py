@@ -28,7 +28,7 @@ FIXED = {
     'J1': (-7.825, -45.75, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
     'J6': (9.0, -46.9, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
     'J20': (0.0, -0.5, 0, 'T'),        # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
-    'J21': (0.0, -45.8, 180, 'T'),     # Klickrad-FFC, Vorderseite, Mundloch nach oben zum Klickrad-Stecker
+    'J21': (-1.5, -45.8, 180, 'T'),     # Klickrad-FFC, Vorderseite, Mundloch nach oben zum Klickrad-Stecker
 }
 OVERHANG = {'U15'}
 EDGE_PREF = {}

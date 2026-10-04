@@ -47,6 +47,7 @@ def place(part, x, y, side='B', rot=0):
             nm = part['pins'][num]
             if nm is None: nm = f"unconnected-({part['ref']}-{pn[num]}-Pad{num})"
             pad.SetNet(net(nm))
+        elif num == '21' and part['ref'] == 'U1': pad.SetNet(net('GND'))   # Exposed Pad an GND (Abweichung von Tangara: dort offen)
     if part.get('dnp'): fp.SetDNP(True)
     if part.get('nobom'): pass
     for item in (fp.Reference(), fp.Value()):

@@ -32,7 +32,7 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 
 | Nr | Problem | Status | Prüfung am Ende |
 |---|---|---|---|
-| C1 | CAD-Gehäuse noch für 8,5 mm (v2) bzw. 12,2 mm; Ziel ist jetzt ca. 44 × 100 × bis 11 mm | offen (wartet auf Platinenmaße) | Neues Gehäuse, STL kollisionsfrei, Maße = `TEILE.md` |
+| C1 | CAD-Gehäuse noch für 8,5 mm (v2) bzw. 12,2 mm; Ziel ist jetzt ca. 44 × 100 × bis 10 mm | offen (wartet auf Platinenmaße) | Neues Gehäuse, STL kollisionsfrei, Maße = `TEILE.md` |
 | C2 | Oberschale ohne Schraubdome, Halt über Rastnasen: ungeprüft | offen | Probedruck |
 | C3 | Klickrad-Platine nur mit Distanzring und Klebeband befestigt, Verschraubung offen | offen | Entscheidung in `TEILE.md` |
 | C4 | Ein/Aus-Taste auf z = 9,2 statt 10,3 (Abweichung) | bekannt | Neu bewerten bei neuer Dicke |
@@ -44,7 +44,7 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 
 | Nr | Problem | Status | Prüfung am Ende |
 |---|---|---|---|
-| D1 | `TEILE.md` und `KONZEPT.md` führen Altes und Neues nebeneinander (8,5 / 12,2 / 44 × 100 × 11 mm; Hauptplatine „WROOM-3→-1“; „Hauptplatine nicht bestellbereit“) | offen | Nach Abschluss bereinigt |
+| D1 | `TEILE.md` und `KONZEPT.md` führen Altes und Neues nebeneinander (8,5 / 12,2 / 44 × 100 × 10 mm; Hauptplatine „WROOM-3→-1“; „Hauptplatine nicht bestellbereit“) | offen | Nach Abschluss bereinigt |
 | D2 | `docs/DUENNBAU.md` und `docs/duennbau/stackup.svg` sind überholt | offen | Als „Referenz“ markiert oder aktualisiert |
 | D3 | Preise in `docs/EINKAUFSLISTE.md` und `docs/KOSTEN.md` aus dem Gedächtnis, nicht verifiziert; Muss+Soll hat nur 5 € Reserve; Waveshare-Board oft teurer | offen | Preise gegen Händler geprüft |
 | D4 | Einkaufsliste noch auf JST-SH und MPR121 (v1), Klickrad ist jetzt v2 (Molex-FFC, QT2120) | offen | Liste auf v2 angepasst |

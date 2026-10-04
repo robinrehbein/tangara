@@ -54,7 +54,7 @@ Der Entwurf mit 8,5 mm (`docs/DUENNBAU.md`, Variante A) hatte zu wenig Platinenf
 
 | Punkt | Entscheidung |
 |---|---|
-| Außenmaße | **ca. 44 × 100 × bis 11 mm** (Dicke genau festlegen, wenn die Bauteilhöhen feststehen) |
+| Außenmaße | **ca. 44 × 100 × bis 10 mm** (Dicke genau festlegen, wenn die Bauteilhöhen feststehen) |
 | Hauptplatine | ca. 41 × 97 mm, Dicke 1,0 mm (0,8 mm nur, wenn nötig), 4 Lagen, wenn das Routing es nicht verlangt sonst 6 Lagen |
 | Display | **2,06" AMOLED 410 × 502, CO5300, QSPI** (ca. 315 ppi); mit Deckglas, Luft darunter ≥ 1,1 mm |
 | MCU-Modul | ESP32-S31-WROOM-1 (18 × 25,5 × 3,1) oder -WROOM-3, wie es das Layout braucht; **Antenne darf nicht über die Platinenkante hinausragen** |
@@ -104,3 +104,5 @@ Nicht übernommen: SAMD21-Co-Prozessor und SD-Multiplexer (der S31 hat selbst US
 ## Bestellstatus
 
 Noch nichts bestellt.
+
+**Dicke (Entscheidung):** Ziel **bis 10 mm** (statt 11 mm). Stapel: Front 0,8 + Display ca. 1,3 + Luft ≥ 1,1 + Platine 1,0 + Akku + Rückwand ca. 1 mm. Dafür Akku eher ≤ 4,0 mm und Klinke 5,0 mm (SJ-43504-SMT-TR). Prüfen, sobald die Bauteilhöhen feststehen; reicht es nicht, wird das hier begründet geändert.

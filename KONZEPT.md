@@ -20,7 +20,7 @@ Hobbyprojekt. Vorbild: [Tangara](https://cooltech.zone/tangara/) (Open Hardware,
 | Audio über Kabel | **3,5-mm-Klinke mit Hi-Res-DAC und USB-C-Audio (Host, UAC2)** | beste Qualität über Kabel; Bluetooth auf dem ESP32 nur SBC bzw. LC3 |
 | Musikquellen (Prototyp) | gekaufte, DRM-freie Dateien (z. B. Bandcamp, Qobuz) | einfach und legal |
 | Gehäuse | 3D-Druck (PETG oder Resin, steif wegen Haptik) | |
-| Leitziele Endgerät | **kompakt (ca. 44 × 100 × bis 11 mm, bewusst größer als die Dünnbau-Studie)**, **hochauflösendes Display**, **Top-Hi-Fi über Kabel** | Nutzervorgabe; Umsetzung in `docs/DUENNBAU.md` und `docs/AUDIO.md` |
+| Leitziele Endgerät | **kompakt (ca. 44 × 100 × bis 10 mm, bewusst größer als die Dünnbau-Studie)**, **hochauflösendes Display**, **Top-Hi-Fi über Kabel** | Nutzervorgabe; Umsetzung in `docs/DUENNBAU.md` und `docs/AUDIO.md` |
 
 ## Prototyp 1: Haptik und Scrollen
 
@@ -70,5 +70,5 @@ Mit der App in [`android-emulator/`](android-emulator/README.md) ermitteln und h
 - **Budget:** Gesamt grob 360–625 € (Phase 1 plus Endgerät mit PCBA), siehe `docs/KOSTEN.md`. Das ursprüngliche Budget von 100–150 € deckt nur Phase 1.
 - **Hauptplatine nicht bestellbereit (Stand 2026-10-04):** platziert, aber nicht geroutet (DRC 955 Meldungen, 34 von 408 Verbindungen offen). Die Fläche reicht bei 37 × 86 mm nicht (1648 mm² verfügbar gegen 1824 mm² benötigt). Das Layout braucht einen Menschen in KiCad oder eine Abspeckung des Umfangs. Nichts bestellen, bevor das geklärt ist. Details: `hardware/pcb/hauptplatine/README.md`.
 - **Hauptplatine: Akkugröße gegen LRA-Ausschnitt:** Mit dem Standard-Ausschnitt für den LRA schrumpft der Akku auf ca. 30 × 35 mm (ca. 300 mAh) oder das Gehäuse wird länger.
-- **Entscheidung:** Das Gerät wird größer und dicker (ca. 44 × 100 × bis 11 mm), damit die Hauptplatine mit allen Funktionen Platz hat und routbar ist. Die Dünnbau-Studie bleibt als Referenz (`docs/DUENNBAU.md`).
+- **Entscheidung:** Das Gerät wird größer und dicker (ca. 44 × 100 × bis 10 mm), damit die Hauptplatine mit allen Funktionen Platz hat und routbar ist. Die Dünnbau-Studie bleibt als Referenz (`docs/DUENNBAU.md`).
 - **S31-Build-Test (aus `docs/S31-BUILDTEST.md`, nur Build, nichts auf Hardware getestet):** A2DP Source, CO5300 + LVGL, I²S-Slave, USB-UAC/MSC und die Firmware-Kopie bauen mit ESP-IDF v6.1 für `esp32s31` (Preview-Target: `idf.py --preview set-target esp32s31`). IDF auf v6.1 pinnen. Größtes Risiko: Bluetooth-Kopfhörer (Controller als Binärbibliothek im Preview-Stand). Vor der Endplatine ein ESP32-S31-DevKitC-1 beschaffen und A2DP, USB-UAC und PSRAM testen. Fallback bei Problemen: externes Bluetooth-Modul. USB: nur ein OTG-Port, Host (UAC) und Device (MSC) schließen sich aus.
