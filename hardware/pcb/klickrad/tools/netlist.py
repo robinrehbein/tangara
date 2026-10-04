@@ -35,13 +35,12 @@ def parts():
     res('R1', '75k', ('REXT', 'GND'), 'MPR121 REXT 1 %')
     res('R2', '4.7k', ('3V3', 'SDA'), 'I2C Pull-up SDA, DNP (Hauptboard hat 2,2k)', True)
     res('R3', '4.7k', ('3V3', 'SCL'), 'I2C Pull-up SCL, DNP', True)
-    res('R4', '10k', ('3V3', 'INT'), 'IRQ Pull-up, DNP (MCU-Seite)', True)
     add('SW1', 'B3U-1000P', 'Switch:SW_Push', 'Button_Switch_SMD:SW_SPST_B3U-1000P', {'1': 'BTN', '2': 'GND'},
         mpn='B3U-1000P', mfr='Omron', desc='Taster 3x2.5x1.2 mm Mitteltaste')
     add('J1', 'SM06B-SRSS-TB', 'Connector_Generic:Conn_01x06', 'Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal',
         {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'INT', '6': 'BTN'}, mpn='SM06B-SRSS-TB(LF)(SN)', mfr='JST', desc='JST-SH 6-pol. seitlich')
-    add('TP1', 'LRA+', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_P'}, desc='Lötpad LRA Litze +')
-    add('TP2', 'LRA-', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_N'}, desc='Lötpad LRA Litze -')
+    add('TP1', 'LRA+', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_P'}, desc='Lötpad LRA Litze +', nobom=True)
+    add('TP2', 'LRA-', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_N'}, desc='Lötpad LRA Litze -', nobom=True)
     for k in range(12):
         add(f'SEG{k+1}', f'Touch{k+1}', 'Connector:TestPoint', f'Klickrad:SEG{k+1}', {'1': f'ELE{sm[k]}'}, nobom=True)
     return P

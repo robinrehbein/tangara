@@ -1,0 +1,19 @@
+** Drc report for klickrad.kicad_pcb **
+** Created on 2026-10-04T10:41:59+0000 **
+** Report includes: Errors, Warnings, Exclusions **
+
+** Found 2 DRC violations **
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; warning
+    @(92.8000 mm, 106.6000 mm): Footprint C5
+    @(91.9000 mm, 108.5000 mm): Footprint U2
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; warning
+    @(89.8000 mm, 106.3000 mm): Footprint C4
+    @(91.9000 mm, 108.5000 mm): Footprint U2
+
+** Found 0 unconnected pads **
+
+** Found 0 Footprint errors **
+
+** End of Report **

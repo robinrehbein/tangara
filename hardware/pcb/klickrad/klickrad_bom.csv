@@ -1,0 +1,13 @@
+Referenzen,Anzahl,Wert,Footprint,Hersteller,Herstellerteilenummer,LCSC,Bestückung,Höhe_mm,Hinweis
+J1,1,SM06B-SRSS-TB,JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal,JST,SM06B-SRSS-TB(LF)(SN),C160405,ja,">1,5 (Datenblatt prüfen)","SH 1,0 mm, 6-pol., seitlich; höher als 1,5 mm (Datenblatt prüfen)"
+U1,1,MPR121QR2,QFN-20_3x3mm_P0.4mm_noEP,NXP,MPR121QR2,C91322,ja,"ca. 0,8","QFN-20 3x3 mm, Raster 0,4 mm"
+U2,1,DRV2605LDGSR,MSOP-10_3x3mm_P0.5mm,Texas Instruments,DRV2605LDGSR,C527464,ja,"ca. 1,1",VSSOP/MSOP-10
+"C1, C2",2,0.1uF,C_0402_1005Metric,Samsung,CL05B104KO5NNNC,C1525,ja,"0,5","X7R 16 V, 0402"
+"C3, C4, C5",3,1uF,C_0402_1005Metric,Samsung,CL05A105KA5NQNC,C52923,ja,"0,5","X5R 6,3 V, 0402"
+C6,1,10uF,C_0603_1608Metric,Samsung,CL10A106KP8NNNC,C19702,ja,"0,8","X5R 10 V, 0603, Höhe ca. 0,8 mm"
+R1,1,75k,R_0402_1005Metric,UNI-ROYAL,0402WGF7502TCE,,ja,"0,4","1 %, 0402; LCSC-Nummer nicht geprüft"
+"R2, R3",2,4.7k,R_0402_1005Metric,UNI-ROYAL,0402WGF4701TCE,C25900,DNP (nicht bestücken),"0,4","1 %, 0402, nur DNP-Option"
+SW1,1,B3U-1000P,SW_SPST_B3U-1000P,Omron,B3U-1000P,C231329,ja,"1,2 (Vorderseite)","3,0 x 2,5 x 1,2 mm, SMD-Taster"
+"TP1, TP2",2,LRA+/LRA-,SolderWirePad_1x01_SMD_1x2mm,,,,Pads (kein Bauteil),0,Lötpads für die LRA-Litzen
+SEG1-SEG12,12,Touch,Klickrad:SEG1..12,,,,Kupferfläche (kein Bauteil),0,Touch-Segmente vorn
+(extern),1,LRA (X-Achse),,,,,"aufkleben, Litzen an TP1/TP2",,nicht Teil der Platine; Typ und Maße siehe TEILE.md und Einkaufsliste
