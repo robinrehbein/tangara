@@ -39,6 +39,19 @@ Worauf es beim Haptik-Gefühl ankommt:
 
 Ausbaustufen: Cirrus CS40L2x oder Awinic AW862xx für eigene Wellenformen; BLDC-Motor mit Software-Rastung (Projekt „SmartKnob“).
 
+## Werte aus dem Emulator
+
+Mit der App in [`android-emulator/`](android-emulator/README.md) ermitteln und hier eintragen. Der Ablauf steht in [PLAN.md](PLAN.md).
+
+| Parameter | Wert |
+|---|---|
+| Display | _offen_ |
+| Rasterschritt (Grad) | _offen_ |
+| Haptik-Typ | _offen_ |
+| Stärke | _offen_ |
+| Mindestabstand zwischen Ticks (ms) | _offen_ |
+| Anschlag am Listenende | _offen_ |
+
 ## Offene Punkte
 
 - **Spotify:** Offline ist nicht möglich (DRM, nur offizielle Apps). Streaming wäre über `cspot` (inoffiziell, Spotify Connect) denkbar. Erst nach dem Prototyp wieder aufgreifen.
