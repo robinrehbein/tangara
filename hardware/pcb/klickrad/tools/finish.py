@@ -16,7 +16,7 @@ text(pcbnew.B_SilkS, 'QT2120 0x1C  DRV 0x5A', 0, -13.0, 0.8, mirror=True)
 for i, s in enumerate(('3V3', 'GND', 'SDA', 'SCL', 'CHG', '(6)')):
     text(pcbnew.B_SilkS, s, 1.25 - 0.5 * i, -5.6 if i % 2 == 0 else -7.0, 0.8, mirror=True, rot=90)
 text(pcbnew.B_SilkS, 'LRA+', 13.1, -0.4, 0.8, mirror=True)
-text(pcbnew.B_SilkS, 'LRA-', 13.1, -6.8, 0.8, mirror=True)
+text(pcbnew.B_SilkS, 'LRA-', 12.0, -7.8, 0.8, mirror=True)
 text(pcbnew.F_Fab, '0 Grad', 11.5, 0, 0.8)
 # Referenzen auf Fab-Lagen (keine Silk-Überlappung), Werte ausblenden
 for fp in board.GetFootprints():

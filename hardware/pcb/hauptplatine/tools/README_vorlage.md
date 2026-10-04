@@ -1,5 +1,12 @@
 # Hauptplatine Endgerät (Nano-Player), Rev. 2
 
+> **STATUS: NICHT BESTELLBEREIT. Menschliche Prüfung und Entscheidung vor jeder Bestellung zwingend.**
+> - Die Platine ist **nicht fertig geroutet** (Freerouting: 34 von 408 Verbindungen offen, Ergebnis nicht verwertbar). `fertigung/NICHT_BESTELLEN_ungeroutet_gerber.zip` ist nur eine Ansicht der Platzierung. DRC: 274 unverbundene Verbindungen, dazu Silkscreen-Hinweise, 62 Abstandsfehler und 21 Randabstandsfehler (Regel 0,5 mm in der Projektdatei statt 0,2 mm, ungeklärt). ERC: 0 Meldungen.
+> - **Nach der Platzierung kamen zwei verbindliche Festlegungen**, die **nicht umgesetzt** sind: (1) Klickrad-Stecker Molex 503480-0600 statt Hirose FH12-6S (Platine hat noch FH12-6S auf der Rückseite, Footprint/LCSC-Nummer nicht verifiziert); (2) Standard-Ausschnitt für den LRA (ca. 14 × 10 mm um (0, −16), darunter keine Bauteile und kein Akku).
+> - **Rechnerische Folge von (2)** (Schätzung, nicht per CAD geprüft): Von der Unterkante (y = −43) belegen Klinke 14 mm (bis −29), der LRA-Ausschnitt −21...−11. Ein Akku 34 × 50 beginnt dann bei etwa −10,5 und endet bei +39,5; das WROOM-1 (auch gedreht 18 mm) braucht danach +39,5...+57,5. Die Platine müsste ca. **37 × 100 mm** (Gehäuse ca. 104 mm) werden, oder der Akku auf etwa 30 × 35 mm (z. B. 302535, ca. 300 mAh) schrumpfen, wenn 86 mm bleiben. Das ist eine Entscheidung (Offene Punkte in `KONZEPT.md`), keine Rateaufgabe.
+> - **Kabeltyp Klickrad:** Stecker Rückseite der Klickrad-Platine (zeigt nach unten) und Gegenstecker Vorderseite der Hauptplatine (zeigt nach oben), beide mit Kontakten unten: gerades Kabel berührt dann entgegengesetzte Kabelseiten, es braucht **Typ B** (Kontakte an den Enden auf gegenüberliegenden Seiten), Typ A nur bei Schlaufe um die Kante wie im jetzigen Entwurf. In die Stückliste aufnehmen, wenn so gebaut wird.
+> - Der Abstand zwischen den Platinen ist nur 1,5 mm (5,3 bis 6,8), beide Stecker ca. 1,0 mm: sie dürfen sich in der Draufsicht nicht überdecken.
+
 4-Lagen-Leiterplatte **37 × 86 × 0,8 mm** (Ecken r = 4), Bestückung beidseitig, bestellfertig für PCBWay (Leiterplatte plus PCBA). KiCad 9, Schaltplan und Platine werden aus Python-Skripten erzeugt (`tools/`).
 Grundlage: `docs/DUENNBAU.md` (Dünnbau, Display), `docs/AUDIO.md` (Audio-Kette), `TEILE.md` (Chipliste, Ziel-Stack-up). Rev. 1 (WROOM-3, WM8523-Kette, 38 × 89 × 1,0) ist durch diese Revision ersetzt.
 
