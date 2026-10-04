@@ -235,3 +235,105 @@ PLATZHALTER_V2 = [
     "E2_PWR_*: Ein/Aus-Taster (Typ offen, Attrappe 2,1 x 2,0 x 1,5)",
     "E2_SCREWS, E2_SCREW_PILOT_D: Schraubenlage und Kernloch fuer M1,6 UNGEPRUEFT",
 ]
+
+# ============================================ ENDGERAET v3 (44 x 100 x 10, Hauptplatine Rev. 3)
+# Quelle: TEILE.md (Abschnitte "Endgeraet: Ziel-Masse", "Klickrad v2", "Hauptplatine Endgeraet: Stand 2026-10-04")
+# und hauptplatine/README.md (Abschnitt "Mechanik und Uebergabe an das CAD"). Alle Ortsangaben in
+# BOARD-Koordinaten (Platinenmitte = Geraetemitte = 0, Blick von vorn, x rechts, y oben).
+# Z: Rueckseite aussen = 0, Front aussen = V3_T. Nichts davon ist an Hardware geprueft.
+V3_W, V3_L, V3_T = 44.0, 100.0, 10.0
+V3_PCB_W, V3_PCB_L, V3_PCB_T, V3_PCB_R = 41.0, 97.0, 1.0, 4.0
+V3_WALL = 1.2                               # Seitenwand (3 Perimeter)
+V3_RIM = 0.8                                # sichtbarer Randsteg an Front/Rueck-Falz
+V3_FIT = 0.1                                # Spiel Platte <-> Falz je Seite
+V3_FIT_PCB = 0.3                            # Spiel Platine <-> Innenwand je Seite ((44-41)/2 = 1,5 = WALL + FIT_PCB)
+V3_R = V3_PCB_R + V3_WALL + V3_FIT_PCB      # 5,5 Aussenradius, konzentrisch zur Platine
+
+# --- Hoehenstapel (von vorn nach hinten, siehe README "Endgeraet v3") ----------
+V3_FRONT_T = 0.8                            # Frontplatte Acryl/Glas
+V3_GLUE = 0.1                               # Klebefilm (OCA/VHB). In hauptplatine/README.md NICHT enthalten
+V3_DISP_T = 2.05                            # Display-Modul mit Touch (2,06")
+V3_DISP_AIR = 1.1                           # Luft Display -> Platinenvorderseite (Vorgabe >= 1,1)
+V3_BACK_T = 1.0                             # Rueckwand gedruckt
+V3_FRONT_Z0 = V3_T - V3_FRONT_T             # 9,2 Frontplatte Unterseite
+V3_DISP_Z1 = V3_FRONT_Z0 - V3_GLUE          # 9,1
+V3_DISP_Z0 = V3_DISP_Z1 - V3_DISP_T         # 7,05
+V3_PCB_Z1 = V3_DISP_Z0 - V3_DISP_AIR        # 5,95 Platine Vorderseite
+V3_PCB_Z0 = V3_PCB_Z1 - V3_PCB_T            # 4,95 Platine Rueckseite
+V3_REAR_ZONE = V3_PCB_Z0 - V3_BACK_T        # 3,95 Rueckzone (README Platine: 4,05 ohne Klebefilm)
+
+# --- Platine: Ausschnitte (aus hauptplatine/README.md) --------------------------
+V3_JACK_X = -12.0                           # Klinke SJ-43504, Randschlitz 6,8 mm breit
+V3_JACK_SLOT = (6.8, 12.75)                 # B x Tiefe ab Unterkante (y -48,5 ... -35,75)
+V3_JACK_BODY = (9.0, 14.0)                  # Koerper hinten B x T (Platinen-README: "ca. 9 x 14")
+V3_JACK_BACK, V3_JACK_FRONT = 3.1, 0.9      # hinter / vor der Platine (STEP-Versatz, UNGEPRUEFT)
+V3_USB_X = 9.0                              # USB-C GCT USB4510, Ausschnitt 9,24 x 6,0
+V3_USB_NOTCH = (9.24, 6.0)
+V3_USB = (11.54, 7.2, 3.18)                 # B x T x H; Annahme: komplett HINTER der Platine (README: Aufteilung ungeprueft)
+V3_USB_OPEN_W = 9.4                         # Wandoeffnung Breite
+V3_LRA_CUT = (14.0, 10.0, 1.0)              # LRA-Ausschnitt B x H x Eckenradius, Mitte (0,-19)
+V3_LRA_CUT_Y = -19.0
+V3_ESP = (25.5, 18.0, 3.1)                  # WROOM-1 Rueckseite, gedreht; Mitte (6,5; 37,5)
+V3_ESP_C = (6.5, 37.5)
+V3_ANT_KEEP = (12.7, 20.7, 28.0, 47.0)      # Antennen-Keepout x0,x1,y0,y1 (Platinen-README; TEILE.md: 12,9...20,5 / 28,2...46,8)
+V3_SD_C = (-13.7, 37.5)                     # microSD Mitte, Einschub von links
+V3_SD = (13.0, 14.0, 1.9)                   # Hüllkoerper X x Y x Z  PLATZHALTER (Molex 104031-0811, Maße nicht gelesen)
+V3_SD_OPEN = (12.0, 2.3)                    # Wandoeffnung links (Y x Z)
+V3_SW1 = (15.0, -30.0)                      # Taster B3U-3000P Rueckseite, von hinten zu druecken
+V3_SW1_BODY = (3.0, 2.5, 1.2)               # X x Y x Z (Datenblatt-Annahme)
+V3_C29 = (3.6, -27.9)                       # C29 1210 auf der Rueckseite, 2,7 hoch (aus .kicad_pcb gelesen)
+V3_C29_BODY = (2.5, 3.2, 2.7)
+V3_BATT_FACH = (-16.0, 16.0, -12.0, 26.5)   # x0,x1,y0,y1 Akkufach Rueckseite
+V3_BATT_AIR = 0.3                           # Luft Zelle -> Platine
+V3_BATT_H = V3_REAR_ZONE - V3_BATT_AIR      # 3,65 groesste Zelle (Zelle liegt auf der Rueckwand)
+V3_SCREWS = [(-18.2, 46.2), (18.2, -46.2), (-18.2, -46.2)]   # Befestigungsloecher Ø1,8 (M1,6)
+V3_HOLE_D = 1.8
+
+# --- Display 2,06" AMOLED (Modulmaße wie v2, Lage ANNAHME) -------------------------
+V3_DISP_MOD = (34.8, 43.1)
+V3_DISP_ACTIVE = (33.1, 40.5)
+V3_DISP_TOP = 41.0                          # Modul-Oberkante (Platinen-README: ueber y > 41 hoehere Teile erlaubt)
+V3_DISP_Y = V3_DISP_TOP - V3_DISP_MOD[1] / 2   # 19,45
+V3_WIN_MARGIN = 0.4
+V3_WIN_R = 1.5
+
+# --- Klickrad (v2: Ø32, 0,8 mm, 2 Lagen) -------------------------------------------
+V3_WHEEL_Y = -25.0
+V3_WHEEL_D = 32.0
+V3_WHEEL_PCB_T = 0.8
+V3_WHEEL_REAR_H = 1.1                       # Rueckseitenbauteile (U2 DRV2605L), Lage unbekannt -> Vollscheibe
+V3_WHEEL_COVER_D, V3_WHEEL_COVER_T = 30.0, 0.6
+V3_WHEEL_OPEN_D = 30.6
+V3_WHEEL_PCB_Z1 = V3_DISP_Z1                # Platine liegt mit Klebefilm unter der Frontplatte
+V3_WHEEL_PCB_Z0 = V3_WHEEL_PCB_Z1 - V3_WHEEL_PCB_T
+V3_LRA = (12.0, 6.0, 3.0)                   # Kandidat VL120628H-Klasse (12 x 6), Hoehengrenze 3,0; 16 x 6 passt NICHT in 14 mm Ausschnitt
+V3_LRA_DY = 6.0                             # Mitte 6 mm ueber Radmitte (= y -19)
+
+# --- Befestigung ------------------------------------------------------------------
+V3_STANDOFF_D = 3.2                         # hinterer Steg Rueckwand -> Platinenrueckseite (Klinkenkoerper endet bei x -16,5)
+V3_POST_D = 4.0                             # vorderer Dom Platinenvorderseite -> Frontplatte
+V3_PILOT_D = 1.4                            # Kernloch selbstschneidend  UNGEPRUEFT
+V3_CSK_D = 3.2                              # Senkung aussen
+V3_SCREW_LEN = 8.0                          # M1,6 x 8 Senkkopf
+V3_SCREW_CORE_D = 1.3
+V3_RIB_T, V3_RIB_H = 2.4, 1.2               # Rippe Dom -> Wand
+
+# --- Lippe der Frontplatte (wie v2) ----------------------------------------------------
+V3_LIP_H, V3_LIP_INSET, V3_LIP_CH = 0.8, 1.6, 0.4
+
+# --- Ein/Aus-Taste: Biegezunge in der Rueckwand -----------------------------------------
+V3_TAB = (5.0, 12.0)                        # Breite x Laenge, Gelenk am +y-Ende
+V3_TAB_SLOT = 0.6
+V3_TAB_PIN_D = 1.8
+V3_TAB_PIN_GAP = 0.2                        # Luft Stoessel -> Taster
+
+PLATZHALTER_V3 = [
+    "V3_USB*: Aufteilung vorn/hinten der Platine ungeprueft (Annahme: komplett hinten)",
+    "V3_JACK_BACK/FRONT, V3_JACK_BODY: STEP-Versatz ungeprueft; Koerper hinten 9 breit, im Schlitz 6,8",
+    "V3_SD*: Huellkoerper microSD Platzhalter, Öffnung links 12 x 2,3",
+    "V3_LRA: 12 x 6 x 3,0 statt 16 x 6 (Klickrad-README) wegen 14 mm Ausschnitt",
+    "V3_DISP_TOP: Lage des Moduls auf der Platine Annahme (Zone -6,5 ... 40,5 im Platinen-README)",
+    "V3_WHEEL_REAR_H: Bauteile auf der Radrueckseite bis 1,1 mm, Lage unbekannt (Vollscheibe angenommen)",
+    "V3_BATT_H: 3,65 mm (README Platine nennt 3,7, ohne Klebefilm)",
+    "V3_PILOT_D, V3_SCREW_LEN: M1,6 selbstschneidend in ASA/PETG UNGEPRUEFT",
+]

@@ -1,6 +1,6 @@
 # 3D-Druck-Teile (CadQuery)
 
-Alle Teile sind parametrisch in `params.py` definiert (Maße in mm). Quellen: `prototyp.py` (Phase 1), `endgeraet.py` (Konzeptgehäuse laut Render/`TEILE.md`), `build.py` (Export, Vorschau, Prüfung).
+**Aktueller Stand für die Hauptplatine Rev. 3: Endgerät v3 (44 × 100 × 10 mm), siehe Abschnitt „Endgerät v3“ am Ende.** Alle Teile sind parametrisch in `params.py` definiert (Maße in mm). Quellen: `prototyp.py` (Phase 1), `endgeraet.py` (Konzeptgehäuse laut Render/`TEILE.md`), `build.py` (Export, Vorschau, Prüfung).
 
 ```
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
@@ -232,3 +232,116 @@ Die Reserve von 0,3 gegenüber den nominal 8,2 mm steckt im 0,25-mm-Luftspalt un
 - Mitteltaste entfällt als Bauteil (kapazitiv), keine mechanische Taste im Modell.
 - Platine liegt nur auf vier 0,8-mm-Auflagern; Andruck von vorn (Schaumstoffband) offen.
 - Hauptplatine braucht Sperrzonen: Schraubdome (Ø 3,6 an 5 Stellen, Rückseite), Rückseite der Klickrad-Platine über der Klinke (x −16,5 … −7,5, y −43 … −29).
+
+
+# Endgerät v3 (44 × 100 × 10 mm, für Hauptplatine Rev. 3)
+
+Grundlage: `TEILE.md` (Ziel-Maße, Klickrad v2, Hauptplatine Stand 2026-10-04) und `hardware/pcb/hauptplatine/README.md` (Abschnitt „Mechanik und Übergabe an das CAD“). Quellen: `endgeraet_v3.py` (Geometrie), `params.py` (Block ENDGERAET v3, Präfix `V3_`), `build_v3.py` (Export, DXF, Vorschau, Prüfung). v1 und v2 bleiben unverändert (v2 gilt für die alte 37 × 84-Platine und ist damit überholt).
+
+```
+.venv/bin/python build_v3.py   # schreibt stl/endgeraet_v3/, dxf/endgeraet_v3/, vorschau/endgeraet_v3_*.png; Exitcode 1 bei Fehler (ca. 30 s)
+```
+
+Koordinaten = Board-Koordinaten des Platinen-README (Platinenmitte = Gerätemitte = 0, Blick von vorn, x rechts, y oben). Z: Rückseite außen = 0, Front außen = 10,0. STL liegen in Einbaulage = Druckausrichtung (Rückseite auf dem Bett).
+
+## Dicke 10,0 mm (Herleitung)
+
+| Schicht (von hinten) | von … bis | Dicke |
+|---|---|---|
+| Rückwand (gedruckt) | 0,00 … 1,00 | 1,00 |
+| Rückzone (Akku, Modul, USB-C, Klinke hinten, microSD, C29) | 1,00 … 4,95 | **3,95** |
+| Hauptplatine | 4,95 … 5,95 | 1,00 |
+| Luft (Display-Abstand, Vorgabe ≥ 1,1) | 5,95 … 7,05 | 1,10 |
+| Display-Modul mit Touch | 7,05 … 9,10 | 2,05 |
+| Klebefilm OCA/VHB | 9,10 … 9,20 | 0,10 |
+| Frontplatte Acryl/Glas | 9,20 … 10,00 | 0,80 |
+
+`build_v3.py` rechnet diese Summe nach und bricht ab, wenn sie nicht 10,00 ergibt oder die Luft unter 1,1 fällt. Engste Anforderung hinten: USB-C 3,18, Modul 3,10, Klinke 3,10 (alle passen in 3,95); der Akku darf höchstens 3,95 − 0,3 Luft = **3,65 mm** dick sein.
+
+**Abweichung zur Hauptplatine/TEILE.md:** Dort steht Rückzone 4,05 mm und Zelle ≤ 3,7 mm. Der Wert 4,05 ergibt sich nur ohne den 0,1-mm-Klebefilm zwischen Display und Frontplatte (hat v2 auch). Bei „bis 10 mm“ bleiben mit Klebefilm 3,95 mm. Wer die 4,05/3,7 halten will, braucht 10,1 mm Gerätedicke (`V3_T = 10.1`, alles andere rechnet sich mit) oder verzichtet auf den Klebefilm (Rahmen-Klebung der Frontplatte allein, Display lose). Vorschlag für TEILE.md: „Rückzone 3,95 mm, Zelle ≤ 3,65 mm“ (nicht geändert, da TEILE.md tabu).
+
+## Teile
+
+| Teil | Datei | Fertigung | Maß (B × L × H) |
+|---|---|---|---|
+| Rahmen | `stl/endgeraet_v3/rahmen.stl` | Druck, ASA (Voron) oder PETG (SV06 Ace) | 44 × 100 × 10, Ecken R 5,5 (Platine R 4 + 1,5), Wand 1,2, Randsteg 0,8; Öffnungen Klinke, USB-C, microSD (links); 3 vordere Dome mit Rippen |
+| Rückwand | `rueckwand.stl` | Druck, ASA/PETG | 42,2 × 98,2 × 1,0 (+ 3 Stege bis z 4,95, Akku-Haltestege 1,0 hoch, Biegezunge für SW1 mit Stößel bis z 3,55) |
+| Frontplatte | `dxf/endgeraet_v3/frontplatte.dxf` (STL nur zur Prüfung) | Zuschnitt Acryl/PC 0,8 oder Glas | 42,2 × 98,2, Klickrad-Ausschnitt Ø 30,6 bei (0, −25), Ecken R 4,6 |
+| Display-Druckmaske | Layer `DRUCKMASKE_FENSTER` derselben DXF | Rückdruck schwarz außerhalb | 33,9 × 41,3 (aktive Fläche 33,1 × 40,5 + 2 × 0,4), Mitte y = 19,45 (ANNAHME) |
+| Klickrad-Abdeckung | `dxf/endgeraet_v3/klickrad_abdeckung.dxf` | FR4 0,6 | Ø 30 |
+| Schrauben | – | 3 × M1,6 × 8 Senkkopf, selbstschneidend in Ø 1,4 | |
+| Klebefilm 0,1 | – | Frontplatte↔Rahmenlippe, Display↔Frontplatte, Klickrad-Platine↔Frontplatte, Abdeckung↔Klickrad-Platine | |
+
+**Kein DXF für die Rückwand:** Sie trägt die hinteren Stege, die Akku-Haltestege und die Taste, eine FR4-Variante wie in v2 geht damit nicht. Die DXF für Frontplatte (mit Druckmaske) und Abdeckung sind sinnvoll und enthalten (Layer `SCHNITT`, `DRUCKMASKE_FENSTER`, `INFO`; `INFO`-Text vor dem Versand entfernen).
+
+## Umsetzung der Vorgaben aus TEILE.md / Platinen-README
+
+| Vorgabe | Umsetzung |
+|---|---|
+| Klinke SJ-43504, x = −12, Randschlitz 6,8 | Wandöffnung 9,6 breit im Boden, von Rückwand-Oberkante bis Klinke oben + 0,1 (z 1,0 … 6,95), oben R 1,5 |
+| USB-C x = +9, Ausschnitt 9,24 × 6 | Wandöffnung 9,4 breit, z 1,0 … 5,1 (Annahme: Buchse komplett hinter der Platine) |
+| microSD (−13,7; 37,5), Einschub von links | Öffnung linke Wand 12,0 × 2,3 (z 2,85 … 5,15), Mitte y = 37,5 |
+| SW1 (15; −30), Rückseite | **Biegezunge in der Rückwand** (5 × 12 mm, U-Schlitz 0,6, Gelenk am +y-Ende), Stößel Ø 1,8 bis 0,2 mm unter den Taster; Federrate grob 7 N/mm, Randfaser 1,4 % (Rechnung im Build, UNGEPRÜFT) |
+| Antennen-Keepout nicht durch Metall/Kohle | Im Keepout (x 12,7 … 20,7, y 28 … 47, volle Innenhöhe) liegt nur Kunststoff (Wand/Lippe); Schrauben, Akku, Taste, Stege sind ausgeschlossen (Build prüft per Boolean). Druck mit **normalem ASA/PETG, kein Carbon-/Metallic-/Kupferfilament**, Frontplatte Acryl oder Glas |
+| LRA-Ausschnitt 14 × 10 um (0, −19) | in der Platinen-Attrappe; LRA-Attrappe 12 × 6 × 3,0 ragt 0,65 mm in den Ausschnitt, 4,3 mm Luft zur Rückwand |
+| Klickrad Ø 32, Mitte (0, −25), Abdeckung Ø 30 / 0,6 FR4 | Platine 8,30 … 9,10 per Klebefilm unter der Front, Abdeckung 9,2 … 9,8 im Ausschnitt (0,2 unter der Frontfläche) |
+| Display-Fenster 2,06" | Modul 34,8 × 43,1 (Maße aus v2, **nicht** an der Zeichnung des gekauften Moduls geprüft), Oberkante y = 41,0, Luft nach hinten 1,1 |
+| Akkufach x −16 … 16, y −12 … 26,5 | Attrappe 32 × 38,5 × 3,65 auf der Rückwand; Haltestege 0,8 × 1,0 außerhalb (0,2 Spiel), Litzenlücke bei BT1 (x −12,5) |
+| 3 Befestigungslöcher Ø 1,8 | siehe nächster Abschnitt |
+| Display-Luft ≥ 1,1 | genau 1,10 (Assertion im Build) |
+
+## Befestigung (3 Schrauben, Platine wird geklemmt)
+
+Von hinten: M1,6 × 8 Senkkopf (Senkung Ø 3,2 in der Rückwand) → **hinterer Steg** Ø 3,2 (Rückwand, z 1,0 … 4,95, Bohrung Ø 1,8) → Platinenloch → **vorderer Dom** Ø 4,0 (Rahmen, z 5,95 … 9,2, Kernloch Ø 1,4, 2,5 tief). Rückwand und Platine werden in einem Zug zwischen Steg und Dom geklemmt; der Dom hängt über eine 2,4 × 1,2 mm Rippe an der Seitenwand und stützt die Frontplatte. Steg-Durchmesser 3,2 (nicht 4,0), weil der Klinkenkörper hinten bei x = −16,5 beginnt (Steg bei x = −18,2 endet bei −16,6).
+
+- **Eingriff nur 2,05 mm** (1,3 × Ø), unter dem Richtwert 2 × Ø für Kunststoff. M1,6 × 10 stieße an die Frontplatte. Falls es nicht hält: Gewindeeinsatz M1,6 (Dom bis 9,2 hoch, Loch Ø 2,4) oder eine Schraube mit Gewindefurchung (z. B. PT/Delta) für Kunststoff. UNGEPRÜFT.
+- **Vierte Ecke (+18,2; +46,2) hat kein Loch** (Antennen-Keepout), die Rückwand ist dort nur im Falz geführt: Klebepunkt oder Rastnase wäre nötig, falls sie klappert. Offen.
+- Die Platine liegt sonst nur mit 0,3 mm Spiel in der Wand; Biegung der 1,0-mm-Platine zwischen den Ecken (z. B. beim Stecken des USB-Kabels) nicht bewertet.
+
+## Prüfergebnis v3 (`build_v3.py`, zuletzt gelaufen: ALLES OK, 1 Hinweis)
+
+- 4 STL wasserdicht (trimesh), Bounding-Boxen stimmen (±0,05). Gesamtmaß laut Modell **44,00 × 100,00 × 10,00**.
+- Höhenstapel nachgerechnet (Summe 10,00, Luft 1,10). Rückseite: Akku 3,65 (liegt auf der Rückwand, 0,3 Luft zur Platine), USB-C 3,18, Modul 3,10, Klinke 3,10, microSD 1,90, C29 2,70 (Position aus `hauptplatine.kicad_pcb` gelesen), SW1 1,20.
+- **Kollisionen:** 19 Körper (2 gedruckte Teile, Frontplatte, Abdeckung, 15 Attrappen: Platine mit Ausschnitten, Display, Akku, Klinke, USB-C, Modul, microSD, SW1, C29, Klickrad-Platine, Rad-Rückseitenbauteile als Vollscheibe, LRA, 3 Schrauben), 43 Paare per Boolean geprüft: keine Überschneidung > 0,02 mm³.
+- **Engste Stelle:** Klinke oben (z 6,85) → Rad-Rückseitenbauteile (Unterkante 7,20): **0,35 mm**, wenn die Radrückseite als Vollscheibe mit 1,1 mm Bauteilhöhe angenommen wird (Lage der Teile nicht bekannt; real nur an einzelnen Stellen). Zweitengste: USB-C zur Rückwand 0,77, Modul/Klinke 0,85.
+- **Antennen-Keepout:** kein Metall, Akku, Schraube oder Taste darin. **Hinweis (kein Gehäusefehler):** Das Display-Modul (34,8 × 43,1, Oberkante y = 41) überlappt den Keepout (x 12,7 … 17,4, y 28 … 41). Das gilt auch für das Platinen-README (Display-Zone x ±18,5). Wie stark das die Antenne bedämpft, ist offen und gehört in die Platinenprüfung. Der Akku liegt 1,5 mm unterhalb (in y) des Keepouts, aber unter dem Antennenbereich in x.
+- Wandsondierung: Rahmen ohne Auflagesteg alle Stichproben ≥ 0,8 mm; der Auflagesteg der Frontplatte ist ein Keil (0,4 mm hoch an der Innenkante), wie in v2. Rückwand ≥ 0,7 mm (Wand um die Stegbohrung).
+- Maße: Rahmen 44 × 100 × 10 und Rückwand 42,2 × 98,2 × 4,95 passen auf den SV06 Ace (220 × 220) und den Voron.
+
+## Druck (Einbaulage = Ausrichtung, Rückseite z = 0 auf dem Bett)
+
+| Teil | Material | Schicht | Wände/Infill | Stützen |
+|---|---|---|---|---|
+| Rahmen | ASA (Voron) bevorzugt, sonst PETG; **kein Carbon/Metallic** (Antenne) | 0,12 … 0,16 | 3 Perimeter, 100 % (Wände sind zu dünn für Infill) | **ja, lokal:** unter den 3 vorderen Domen mit Rippen (z 5,95; Rippe überbrückt 0,6 … 1,3 mm von der Wand). Alternativ ohne Stützen drucken und die 1-mm-Brücke akzeptieren |
+| Rückwand | wie Rahmen | 0,2 | 5 Schichten oben/unten, 100 % | nein (Senkungen sind 45°-Kegel) |
+
+Brücken/Überhänge in Einbaulage (aus `build_v3.py`): Öffnungen Klinke (7 mm im Scheitel, R 1,5), USB-C (9,4), microSD (12,0 breit, 12-mm-Brücke, an der Grenze), Stufe Wand/Randsteg bei z = 1,0 (0,4 mm), Dome/Rippen bei z = 5,95 (siehe oben), 45°-Keil unter der Lippe (z 8,4 … 8,8). Elefantenfuß-Kompensation 0,1 an der Rückwand aktivieren (sie sitzt im Falz, Spiel 0,1 je Seite). ASA-Schrumpf 0,3 … 0,5 %: Probedruck von Rahmen und Rückwand zuerst. Biegezunge: Schichtlinien liegen in der Ebene der Zunge (günstig), Probedruck nötig.
+
+## Montage
+
+1. Frontplatte mit der Innenseite nach oben: Display mit Klebefilm einkleben (Fenster zentrieren, FPC nach unten), Klickrad-Platine (LRA bereits auf der Rückseite) und Abdeckung aufkleben.
+2. Frontplatte mit Display in den vorderen Falz des Rahmens kleben (Lippe).
+3. Hauptplatine von hinten einsetzen (Klinke/USB-C in die Wandöffnungen, die 3 Löcher über den vorderen Domen), Display-FPC und Klickrad-FFC anschließen, Akku-Litzen an BT1.
+4. Akku (≤ 3,65 mm) zwischen die Haltestege der Rückwand legen, Rückwand in den hinteren Falz setzen, 3 × M1,6 × 8 anziehen (nicht überdrehen).
+
+Die FFC-/FPC-Verlegung (J20 Display-FPC, J21 Klickrad-FFC) ist **nicht modelliert**; zwischen Platinenvorderseite (5,95) und Rad-Rückseite (8,30, Bauteile bis 7,20) bleiben 1,25 … 2,35 mm.
+
+## Abweichungen und Vorschläge (TEILE.md/Platinen-Ordner nicht geändert)
+
+1. **Rückzone 3,95 statt 4,05, Zelle ≤ 3,65 statt ≤ 3,7** (Klebefilm 0,1, s. o.). Vorschlag: in TEILE.md übernehmen oder Gerätedicke 10,1 mm festlegen.
+2. **LRA:** Klickrad-README nennt die Freifläche 16 × 6 mm (x ±8), der Ausschnitt in der Hauptplatine ist nur 14 mm breit (x ±7, Platinen-README/TEILE.md). Ein 16 mm breiter LRA ragt über den Ausschnitt in die Platine. Das Modell nimmt einen 12 × 6 × 3,0-LRA (Klasse VL120628H); Vorschlag: Ausschnitt auf ≥ 16,5 × 6,5 vergrößern (Antennen-/Routing-Folgen prüfen) oder nur LRAs ≤ 13 mm Länge zulassen. Ein 3,0-mm-LRA reicht von z 5,3 bis 8,3 und taucht 0,65 mm in den Ausschnitt.
+3. **Antennen-Keepout:** TEILE.md nennt x 12,9 … 20,5 / y 28,2 … 46,8, das Platinen-README x 12,7 … 20,7 / y 28 … 47. Das CAD nimmt die größere Fläche. Display überlappt, s. o.
+4. **Klickrad-Mitte (0, −25)** statt −22 (v2). Der Steg zwischen Display-Fenster (unten y = −1,2) und Rad-Ausschnitt (oben y = −9,7) ist 8,5 mm.
+5. **Klickrad-Platine nur geklebt** (Ring 0,7 mm zwischen Ø 32 und Ø 30,6): Das Klickrad-README nennt 3 Befestigungslöcher in der Platine, sie werden hier nicht genutzt. Vorschlag: Haltefüße vom Rahmen oder Klickrad-Halter später.
+6. Nur 3 Schrauben, Eingriff 2,05 mm (s. o.).
+7. Ein/Aus-Taste hinten als Biegezunge statt Seitentaste (SW1 sitzt laut Platine auf der Rückseite bei (15; −30), v1/v2 hatten eine Seitentaste).
+8. Rahmen-Außenradius 5,5 (Platine 4,0 + 1,5), nicht 7 oder 4,5 wie v1/v2.
+
+## Nicht geprüft (v3)
+
+- Alles Physische: Passung an echten Teilen, Slicer, Steifigkeit der 1,0-mm-Rückwand und der 0,8-mm-Frontplatte, Biegezunge und Taster-Hub, Schrauben-Eingriff/Auszugskraft, Brücken im Druck, Touch durch die Abdeckung, Haptik.
+- Mechanik der Steckverbinder: Klinke (STEP-Versatz +1,9 / −3,1, Körper hinten 9 breit, im Schlitz 6,8 breit als Annahme; Stecker-Zugang durch 1,5 mm tiefen Wandkanal, dicke Stecker passen evtl. nicht) und USB-C (Annahme „komplett hinten“; wenn die Buchse in der Platinenebene sitzt, muss die Öffnung `USB_OPEN_TOP` höher, dann Wandrest über der Öffnung prüfen), microSD (Hüllkörper 13 × 14 × 1,9 ist Platzhalter, Öffnung 12 × 2,3, Karte ragt aus der Wand).
+- Lage von Display und aktiver Fläche (FPC-Seite) und damit das Druckfenster; Bauteile auf der Radrückseite (Vollscheibe = Worst Case).
+- Rückseitenbauteile der Hauptplatine außer C29, Modul, Klinke, USB-C, microSD, SW1 sind nicht einzeln modelliert (alle ≤ 1,5 mm, Haltestege nur 1,0 hoch; gegen die KiCad-Positionen gelesen: kein B.Cu-Bauteil steht auf den Haltestegen, z. B. R37 bei (17,2; −13,0) liegt außerhalb).
+- Antennenverstimmung durch Display, Akku, Schrauben, Wand: nicht gemessen.
+- FPC-/FFC-Führung, Litzen, Kleberdicken in der Praxis (±0,05 beeinflussen die Luft von 1,10 direkt).

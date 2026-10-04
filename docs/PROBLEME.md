@@ -52,6 +52,12 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 | C5 | Akku gegen LRA-Ausschnitt: Platz knapp (Ziel ≥ 600 mAh) | offen | Akkumaße im CAD, Kapazität bestätigt |
 | C6 | 3D-Explosionsmodell zeigt noch das alte 12,2-mm-Design (JST, MPR121, Ø26-Ausschnitt) | offen | Modell zeigt aktuelles Design |
 | C7 | Passung von Druckteilen (Toleranzen SV06 Ace / Voron) ungeprüft | offen | Probedruck |
+| C8 | Display-Modul überlappt den Antennen-Keepout (x 12,7–17,4, y 28–41); Display-Position ist eine Annahme | offen | Display-Maße/Position gegen Datenblatt, ggf. WROOM-1 oder Display verschieben |
+| C9 | Rückzone 3,95 mm statt 4,05 (Klebefilm 0,1 mm): Akku höchstens 3,65 mm, sonst Gerät 10,1 mm | offen | Akku gewählt, Dicke festgelegt |
+| C10 | LRA-Freifläche: Klickrad-README 16 × 6 mm, Platinen-Ausschnitt nur 14 mm breit; Modell nimmt 12 × 6 × 3,0 an; Keepout-Maße in TEILE.md und Platinen-README weichen leicht ab | offen | Ausschnitt oder LRA-Auswahl angepasst, Maße vereinheitlicht |
+| C11 | Schrauben M1,6 × 8: Eingriff im Dom nur 2,05 mm (zu wenig für Kunststoff); vierte Ecke ohne Loch; Klickrad nur geklebt | offen | Gewindeeinsatz/furchende Schraube oder Konstruktion geändert |
+| C12 | Druck: Dome brauchen Stützen, microSD-Öffnung überbrückt 12 mm, Biegezunge für SW1 nur gerechnet; kein Carbon-/Metall-Filament wegen Antenne | offen | Probedruck |
+| C13 | Engste Stelle: Klinke zu Klickrad-Rückseite 0,35 mm; Stecker- und microSD-Maße im CAD sind Platzhalter | offen | Echte STEP-Modelle/Teile gemessen |
 
 ## D. Dokumentation und Konsistenz
 
