@@ -1,0 +1,13 @@
+(footprint "SEG7"
+	(version 20241229)
+	(generator "make_lib.py")
+	(layer "F.Cu")
+	(descr "Touch-Segment 7, Mitte 195 Grad, Kupfer ohne Lötstopplack-Öffnung")
+	(attr smd exclude_from_pos_files exclude_from_bom)
+	(property "Reference" "SEG7" (at 0 0 0) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+	(property "Value" "Touch" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+	(property "Footprint" "" (at 0 0 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+	(pad "1" smd custom (at 0 0) (size 0.6 0.6) (layers "F.Cu")
+		(options (clearance outline) (anchor circle))
+		(primitives (gr_poly (pts (xy -5.4537 -1.7670) (xy 0.8462 -1.7670) (xy 0.8499 -1.6268) (xy 0.8766 -1.2876) (xy 0.9210 -0.9502) (xy 0.9830 -0.6156) (xy 1.0625 -0.2847) (xy 1.1591 0.0416) (xy 1.2727 0.3624) (xy 1.4029 0.6768) (xy 1.5494 0.9839) (xy 1.6163 1.1072) (xy -3.8395 4.2571) (xy -4.0638 3.8440) (xy -4.3523 3.2392) (xy -4.6087 2.6201) (xy -4.8324 1.9884) (xy -5.0227 1.3458) (xy -5.1792 0.6942) (xy -5.3013 0.0353) (xy -5.3888 -0.6291) (xy -5.4414 -1.2971)) (width 0) (fill yes))))
+)

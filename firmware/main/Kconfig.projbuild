@@ -1,0 +1,129 @@
+menu "Nano-Player"
+
+    choice NANO_PANEL
+        prompt "Display-Variante des Waveshare-Boards"
+        default NANO_PANEL_CO5300
+        help
+            Waveshare liefert seit 30.05.2026 nur noch V2 (CO5300 + CST820). V1 hatte SH8601 + FT3168.
+
+        config NANO_PANEL_CO5300
+            bool "V2: CO5300 (Standard)"
+        config NANO_PANEL_SH8601
+            bool "V1: SH8601"
+    endchoice
+
+    config NANO_DISPLAY_BRIGHTNESS
+        int "Helligkeit (0-255)"
+        range 1 255
+        default 200
+
+    menu "Klickrad"
+        config NANO_WHEEL_SEPARATE_I2C
+            bool "Eigener I2C-Bus fuer das Klickrad (Pins in board_config.h, pruefen)"
+            default n
+
+        config NANO_WHEEL_SEGMENTS
+            int "Anzahl Touch-Segmente im Ring (MPR121 ELE0..)"
+            range 3 12
+            default 12
+
+        config NANO_WHEEL_FIRST_SEGMENT_DEG
+            int "Winkel von Segment 0 in Grad (0 = rechts, im Uhrzeigersinn, -90 = oben)"
+            range -180 180
+            default -90
+
+        config NANO_WHEEL_CLOCKWISE
+            bool "Segmentnummern steigen im Uhrzeigersinn"
+            default y
+
+        config NANO_WHEEL_DETENT_DEG
+            int "Rasterschritt in Grad"
+            range 3 90
+            default 15
+            help
+                Emulator-Standard 15 Grad. Kleiner = mehr Ticks pro Umdrehung.
+
+        config NANO_WHEEL_POLL_MS
+            int "Abtastintervall beim Beruehren (ms)"
+            range 2 20
+            default 5
+            help
+                Der MPR121 liefert alle ca. 4 ms einen neuen gefilterten Wert.
+
+        config NANO_WHEEL_TOUCH_ON
+            int "Touch-Schwelle (Signalstaerke in Rohwert-Einheiten)"
+            default 40
+
+        config NANO_WHEEL_TOUCH_OFF
+            int "Loslass-Schwelle"
+            default 20
+
+        config NANO_WHEEL_NOISE_FLOOR
+            int "Rauschgrenze pro Segment"
+            default 8
+
+        config NANO_WHEEL_TAP_SLOP_DEG
+            int "Bewegung in Grad, ab der es Drehen statt Tippen ist"
+            default 20
+
+        config NANO_WHEEL_LOG_RAW
+            bool "Rohwerte der Segmente periodisch loggen (Kalibrierung)"
+            default n
+    endmenu
+
+    menu "Haptik"
+        config NANO_TICK_MIN_INTERVAL_MS
+            int "Mindestabstand zwischen Ticks (ms), Rate-Limit"
+            range 0 500
+            default 20
+
+        config NANO_ENDSTOP_MIN_INTERVAL_MS
+            int "Mindestabstand fuer den Anschlag (ms)"
+            range 0 1000
+            default 80
+
+        config NANO_EFFECT_TICK
+            int "DRV2605L-Effekt fuer Raster-Tick (1 = Strong Click 100 %, 4 = Sharp Click 100 %)"
+            range 1 123
+            default 1
+
+        config NANO_EFFECT_CLICK
+            int "Effekt fuer Mitteltaste/Tipp (4 = Sharp Click 100 %)"
+            range 1 123
+            default 4
+
+        config NANO_EFFECT_ENDSTOP
+            int "Effekt am Listenende (10 = Double Click 100 %, 14 = Strong Buzz 100 %)"
+            range 1 123
+            default 10
+
+        config NANO_LRA_FREQ_HZ
+            int "LRA-Resonanzfrequenz (Hz) - Datenblatt pruefen"
+            default 175
+
+        config NANO_LRA_RATED_MVRMS
+            int "LRA-Nennspannung (mV RMS) - Datenblatt pruefen"
+            default 1800
+
+        config NANO_LRA_OVERDRIVE_MVPEAK
+            int "LRA-Overdrive-Grenze (mV Spitze) - Datenblatt pruefen"
+            default 2500
+
+        config NANO_HAPTIC_AUTOCAL
+            bool "Auto-Kalibrierung beim Start (ca. 1 s, LRA brummt kurz)"
+            default y
+    endmenu
+
+    menu "Debug"
+        config NANO_LATENCY_PROBE
+            bool "Latenz-Messpunkte (GPIO-Toggle) fuer Logic Analyzer"
+            default y
+            help
+                PROBE_STEP_GPIO toggelt beim Erkennen eines Rasterschritts, PROBE_HAPTIC_GPIO direkt
+                nach dem I2C-Befehl an den DRV2605L. Pins in board_config.h.
+
+        config NANO_I2C_SCAN
+            bool "Beim Start I2C-Bus scannen und loggen"
+            default y
+    endmenu
+endmenu

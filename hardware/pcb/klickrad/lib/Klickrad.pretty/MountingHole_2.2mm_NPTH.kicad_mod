@@ -1,0 +1,9 @@
+(footprint "MountingHole_2.2mm_NPTH"
+	(version 20241229)
+	(generator "make_lib.py")
+	(layer "F.Cu")
+	(attr exclude_from_pos_files exclude_from_bom)
+	(property "Reference" "H" (at 0 -2 0) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+	(property "Value" "M2" (at 0 2 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+	(pad "" np_thru_hole circle (at 0 0) (size 2.2 2.2) (drill 2.2) (layers "*.Cu" "*.Mask"))
+)
