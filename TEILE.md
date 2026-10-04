@@ -85,10 +85,10 @@ Grundsatz: so viel wie möglich vom Vorbild Tangara übernehmen (Hardware CERN-O
 
 | Funktion | Chip | Herkunft |
 |---|---|---|
-| MCU, WLAN 6, Bluetooth Classic + LE Audio, USB-HS-OTG | ESP32-S31-WROOM-3 | neu (Tangara: ESP32-WROVER-E) |
-| DAC (Klinke, bis 24 Bit/192 kHz) | WM8523 | Tangara |
-| Kopfhörerverstärker | INA1620, ±5 V aus TPS65133/TPS65135 | Tangara |
-| Klinkenbuchse | SJ-3506-SMT | Tangara |
+| MCU, WLAN 6, Bluetooth Classic + LE Audio, USB-HS-OTG | ESP32-S31-WROOM-1 (3,1 mm hoch, 16 MB PSRAM; Pins prüfen), sonst WROOM-3 | neu (Tangara: ESP32-WROVER-E) |
+| DAC + Kopfhörerverstärker (Class H) | **Cirrus CS43131** (QFN-40, 0,8 mm hoch), 22,5792-MHz-Quarz am DAC, DAC ist I²S-Master; Plan B: CS43198 + OPA1622 | neu, Begründung in `docs/AUDIO.md` (125 dB Dynamik statt ca. 105 dB, ca. 70 mW weniger Ruheverbrauch) |
+| 1,8 V für den DAC | LDO, ca. 60 mA Reserve | neu |
+| Klinkenbuchse | SJ-43504-SMT-TR (5,0 mm hoch), in Randausschnitt der Platine; ESD D5V0L2B3T-7 wie Tangara | angepasst (Tangara: SJ-3506-SMT, 6,0 mm) |
 | LiPo-Lader mit Power-Path | MCP73871 | Tangara |
 | 3V3 | TLV75533 | Tangara |
 | USB-C-Buchse | USB4510-03-1-A | Tangara |

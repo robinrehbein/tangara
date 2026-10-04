@@ -63,3 +63,6 @@ Mit der App in [`android-emulator/`](android-emulator/README.md) ermitteln und h
 - **Akku:** Größe und Laufzeit, Verbrauch im WLAN-Betrieb messen
 - **ESP32-S31:** Wie reif sind ESP-IDF, Bluetooth Classic und die Devboards?
 - **Onion Omega2+:** nur als Testgerät nutzbar (kein Bluetooth, schwache CPU)
+- **Audio (aus `docs/AUDIO.md`):** Bauhöhe der Klinke am echten Teil messen; PLL-Betrieb des CS43131 gegen zweiten Quarz (24,576 MHz) messen; maximale BCLK des S31 im I²S-Slave-Betrieb prüfen; Ausgangsimpedanz und Rauschen der Ladungspumpe am Aufbau messen; CS43131 hat lange Lieferzeit (Digi-Key ca. 20 Wochen), rechtzeitig bestellen
+- **Dünnbau (aus `docs/DUENNBAU.md`):** Überstand der Klinke SJ-43504 nach vorn prüfen (entscheidet 8,5 gegen 9,0 mm); Pins des ESP32-S31-WROOM-1 prüfen; 2,06"-Panel-Auflösung beim Händler prüfen
+- **Devialet Phantom Reactor:** Steuerung und Wiedergabe über UPnP/DLNA als Idee für Phase 4 (nicht bestätigt)
