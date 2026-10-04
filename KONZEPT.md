@@ -20,6 +20,7 @@ Hobbyprojekt. Vorbild: [Tangara](https://cooltech.zone/tangara/) (Open Hardware,
 | Audio über Kabel | **3,5-mm-Klinke mit Hi-Res-DAC und USB-C-Audio (Host, UAC2)** | beste Qualität über Kabel; Bluetooth auf dem ESP32 nur SBC bzw. LC3 |
 | Musikquellen (Prototyp) | gekaufte, DRM-freie Dateien (z. B. Bandcamp, Qobuz) | einfach und legal |
 | Gehäuse | 3D-Druck (PETG oder Resin, steif wegen Haptik) | |
+| Leitziele Endgerät | **so dünn wie möglich (Ziel ≤ 9 mm)**, **hochauflösendes Display**, **Top-Hi-Fi über Kabel** | Nutzervorgabe; Umsetzung in `docs/DUENNBAU.md` und `docs/AUDIO.md` |
 
 ## Prototyp 1: Haptik und Scrollen
 
