@@ -1,0 +1,49 @@
+# Konzept: Musikplayer (inspiriert von Tangara)
+
+Hobbyprojekt. Vorbild: [Tangara](https://cooltech.zone/tangara/) (Open Hardware, GPL-Firmware).
+
+## Ziele
+
+- Besseres Display als Tangara (dort: 1,8" TFT mit 160×128)
+- Hochwertiges haptisches Feedback beim Scrollen, Richtung Apple Taptic Engine
+- Lokale Wiedergabe (FLAC/MP3 von SD-Karte), Bluetooth-Kopfhörer, Klinke
+- Streaming über WLAN
+
+## Entscheidungen
+
+| Thema | Entscheidung | Begründung |
+|---|---|---|
+| Plattform | **A: Mikrocontroller**, B (Linux) als Rückfalloption | Akku, sofort an, volle Kontrolle über UI und Haptik |
+| SoC | **ESP32-S31** | WLAN 6 + Bluetooth Classic (A2DP) + LE Audio in einem Chip, 320 MHz RISC-V, PSRAM, 2D-Beschleuniger (PPA), Touch-Kanäle für ein Scrollrad |
+| Firmware-Basis | Fork der Tangara-Firmware (ESP-IDF, LVGL, Lua) | spart sehr viel Arbeit; GPL ist für ein Hobbyprojekt kein Problem |
+| Musikquellen (Prototyp) | gekaufte, DRM-freie Dateien (z. B. Bandcamp, Qobuz) | einfach und legal |
+| Gehäuse | 3D-Druck (PETG oder Resin, steif wegen Haptik) | |
+
+## Prototyp 1: Haptik und Scrollen
+
+Ziel: herausfinden, ob sich das Scrollen „premium“ anfühlt, bevor eine Platine entsteht.
+
+- ESP32-S3- oder ESP32-S31-Devboard
+- AMOLED-Modul, ca. 2", QSPI
+- Haptik-Treiber TI DRV2605L (Breakout) mit **X-Achsen-LRA** (seitlich schwingend wie die Taptic Engine)
+- Eingabe: Magnet-Encoder oder kapazitiver Touch-Ring
+- Software: LVGL-Liste mit 1.000 Einträgen, ein Haptik-Tick pro Eintrag
+
+Worauf es beim Haptik-Gefühl ankommt:
+
+- Latenz unter ca. 10 ms von der Eingabe bis zum Tick
+- kurze, harte Impulse mit Overdrive und aktivem Bremsen statt langer Vibration
+- schnelles Scrollen: Ticks zusammenfassen oder auslassen, sonst „brummt“ es
+- LRA steif mit dem Gehäuse verbinden
+- eigene Stromversorgung für den Haptik-Treiber, damit kein Brummen im Audio landet
+
+Ausbaustufen: Cirrus CS40L2x oder Awinic AW862xx für eigene Wellenformen; BLDC-Motor mit Software-Rastung (Projekt „SmartKnob“).
+
+## Offene Punkte
+
+- **Spotify:** Offline ist nicht möglich (DRM, nur offizielle Apps). Streaming wäre über `cspot` (inoffiziell, Spotify Connect) denkbar. Erst nach dem Prototyp wieder aufgreifen.
+- **Weitere Streaming-Quellen:** Subsonic/Navidrome, Jellyfin, Internetradio
+- **Display:** genaue Größe und Auflösung
+- **Akku:** Größe und Laufzeit, Verbrauch im WLAN-Betrieb messen
+- **ESP32-S31:** Wie reif sind ESP-IDF, Bluetooth Classic und die Devboards?
+- **Onion Omega2+:** nur als Testgerät nutzbar (kein Bluetooth, schwache CPU)
