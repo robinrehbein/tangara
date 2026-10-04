@@ -16,13 +16,13 @@ OX = OY = 100.0
 RES = 0.05            # Rastermaß mm
 HALF = 16.0
 N = int(2 * HALF / RES)
-CLR = 0.15
+CLR = 0.13
 VIA_D, VIA_DR = 0.6, 0.3
 WIDTH = {'GND': 0.2, '3V3': 0.2, 'LRA_P': 0.2, 'LRA_N': 0.2}
 DEFW = 0.15
 F_RMIN, F_RMAX = 3.5 + 0.15, 6.3 - 0.15
 import os
-ORDER = ['GND', '3V3', 'SDA', 'K2', 'KB', 'KG', 'K1', 'K0', 'E0', 'E1', 'E2', 'EB', 'EG', 'SCL', 'CHANGE', 'EN', 'REG', 'RESET', 'LRA_P', 'LRA_N']
+ORDER = ['LRA_P', 'LRA_N', 'GND', '3V3', 'SDA', 'SCL', 'CHANGE', 'K2', 'KB', 'KG', 'K1', 'K0', 'E0', 'E1', 'E2', 'EB', 'EG', 'EN', 'REG', 'RESET']
 if os.environ.get('ORDER'): ORDER = os.environ['ORDER'].split(',')
 
 def bpt(p): return (ToMM(p.x) - OX, OY - ToMM(p.y))
