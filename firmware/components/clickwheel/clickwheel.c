@@ -114,6 +114,12 @@ void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out)
     feed(w, now_touch && valid, angle, strength, out);
 }
 
+void cw_config_wheel_v2(cw_config_t *cfg, float mount_offset_deg, bool mirrored)
+{
+    cfg->first_segment_deg = CW_V2_POS0_DEG + mount_offset_deg;
+    cfg->clockwise = mirrored;
+}
+
 float cw_position_to_angle(const cw_config_t *c, uint8_t position)
 {
     float a = c->first_segment_deg + (c->clockwise ? 1.f : -1.f) * (float)position * (360.f / 256.f);

@@ -44,28 +44,42 @@ int main(void)
     for (int i = 0; i < 8; i++) { finger(&c, -90, s); cw_update(&w, s, &o); }
     memset(s, 0, sizeof s); cw_update(&w, s, &o); tap = o.tap;
     printf("tap oben: %d\n", tap); assert(tap == CW_TAP_MENU);
-    /* Test 5: Wheel-Position des AT42QT2120 (0..255, Position 0 bei -90 Grad = oben, im Uhrzeigersinn) */
-    cw_config_t pc = CW_CONFIG_DEFAULT(); pc.first_segment_deg = -90.f;
+    /* Test 5: Klickrad-v2-Konvention (AT42QT2120): Position 0 oben, steigt gegen den Uhrzeigersinn,
+     * Position 128 = unten = Stecker bei 270 Grad. Finger im Uhrzeigersinn => Position FAELLT. */
+    cw_config_t pc = CW_CONFIG_DEFAULT(); cw_config_wheel_v2(&pc, 0.f, false);
     cw_t pw; cw_init(&pw, &pc);
-    assert(fabsf(cw_position_to_angle(&pc, 0) - (-90.f)) < 0.01f);
-    assert(fabsf(cw_position_to_angle(&pc, 64) - 0.f) < 0.01f);      /* Viertelkreis */
-    assert(fabsf(cw_position_to_angle(&pc, 128) - 90.f) < 0.01f);
+    assert(fabsf(cw_position_to_angle(&pc, 0) - (-90.f)) < 0.01f);    /* oben */
+    assert(fabsf(cw_position_to_angle(&pc, 64) - 180.f) < 0.01f);     /* links */
+    assert(fabsf(cw_position_to_angle(&pc, 128) - 90.f) < 0.01f);     /* unten (Stecker) */
+    assert(fabsf(cw_position_to_angle(&pc, 192) - 0.f) < 0.01f);      /* rechts */
+    /* Im Uhrzeigersinn (oben -> rechts, Position 0 -> 255 -> 192): positive Schritte = nach unten scrollen */
     total = 0;
-    for (int p = 0; p <= 64; p++) { cw_update_position(&pw, true, (uint8_t)p, &o); total += o.steps; }
-    printf("steps pos cw 90deg: %d\n", total); assert(total >= 4 && total <= 6);
-    cw_update_position(&pw, false, 64, &o); assert(!o.touching);
+    for (int p = 256; p >= 192; p--) { cw_update_position(&pw, true, (uint8_t)(p & 255), &o); total += o.steps; }
+    printf("steps v2 cw 90deg (Pos 0->192): %d\n", total); assert(total >= 4 && total <= 6);
+    cw_update_position(&pw, false, 192, &o); assert(!o.touching);
+    /* Gegen den Uhrzeigersinn (rechts -> oben, Position 192 -> 256): negative Schritte = nach oben */
     total = 0;
-    for (int p = 64; p >= 0; p--) { cw_update_position(&pw, true, (uint8_t)p, &o); total += o.steps; }
-    printf("steps pos ccw 90deg: %d\n", total); assert(total <= -4 && total >= -6);
+    for (int p = 192; p <= 256; p++) { cw_update_position(&pw, true, (uint8_t)(p & 255), &o); total += o.steps; }
+    printf("steps v2 ccw 90deg (Pos 192->0): %d\n", total); assert(total <= -4 && total >= -6);
     cw_update_position(&pw, false, 0, &o);
-    /* Rundlauf 255 -> 0 darf keinen Sprung ergeben */
+    /* Rundlauf 0 -> 255 -> 250 (im Uhrzeigersinn ueber oben): kein Sprung */
     total = 0;
-    for (int i = 0; i < 20; i++) { cw_update_position(&pw, true, (uint8_t)((250 + i) & 255), &o); total += o.steps; }
-    printf("steps ueber den Nullpunkt (20 Positionen, ca. 28 Grad): %d\n", total); assert(total >= 1 && total <= 2);
+    for (int i = 0; i < 20; i++) { cw_update_position(&pw, true, (uint8_t)((10 - i) & 255), &o); total += o.steps; }
+    printf("steps ueber den Nullpunkt cw (20 Positionen, ca. 28 Grad): %d\n", total); assert(total >= 1 && total <= 2);
     cw_update_position(&pw, false, 0, &o);
-    /* Tippen oben (Position 0 = -90 Grad) => MENU */
-    for (int i = 0; i < 6; i++) cw_update_position(&pw, true, 0, &o);
-    cw_update_position(&pw, false, 0, &o); printf("tap pos oben: %d\n", o.tap); assert(o.tap == CW_TAP_MENU);
+    /* Tippen: Position 0 = oben = MENU, 128 = unten = PLAY, 64 = links = PREV, 192 = rechts = NEXT */
+    const uint8_t tp[4] = {0, 128, 64, 192};
+    const cw_tap_t te[4] = {CW_TAP_MENU, CW_TAP_PLAY, CW_TAP_PREV, CW_TAP_NEXT};
+    for (int k = 0; k < 4; k++) {
+        for (int i = 0; i < 6; i++) cw_update_position(&pw, true, tp[k], &o);
+        cw_update_position(&pw, false, tp[k], &o); printf("tap pos %d: %d\n", tp[k], o.tap); assert(o.tap == te[k]);
+    }
+    /* Einbau-Offset: Modul um 90 Grad im Uhrzeigersinn gedreht => Position 0 zeigt nach rechts (0 Grad) */
+    cw_config_wheel_v2(&pc, 90.f, false);
+    assert(fabsf(cw_position_to_angle(&pc, 0) - 0.f) < 0.01f);
+    /* gespiegeltes Rad: Position steigt im Uhrzeigersinn */
+    cw_config_wheel_v2(&pc, 0.f, true);
+    assert(fabsf(cw_position_to_angle(&pc, 64) - 0.f) < 0.01f);
     puts("OK");
     return 0;
 }

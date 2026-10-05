@@ -69,14 +69,14 @@ static void input_task(void *arg)
 {
     cw_config_t cc = {
         .num_segments = N,
+        .detent_deg = CONFIG_NANO_WHEEL_DETENT_DEG,
+#if CONFIG_NANO_WHEEL_MPR121
         .first_segment_deg = CONFIG_NANO_WHEEL_FIRST_SEGMENT_DEG,
 #if CONFIG_NANO_WHEEL_CLOCKWISE
         .clockwise = true,
 #else
         .clockwise = false,
 #endif
-        .detent_deg = CONFIG_NANO_WHEEL_DETENT_DEG,
-#if CONFIG_NANO_WHEEL_MPR121
         .touch_on = CONFIG_NANO_WHEEL_TOUCH_ON,
         .touch_off = CONFIG_NANO_WHEEL_TOUCH_OFF,
         .noise_floor = CONFIG_NANO_WHEEL_NOISE_FLOOR,
@@ -84,6 +84,14 @@ static void input_task(void *arg)
         .tap_slop_deg = CONFIG_NANO_WHEEL_TAP_SLOP_DEG,
         .settle_frames = 2,
     };
+#if !CONFIG_NANO_WHEEL_MPR121
+    /* Klickrad-v2-Konvention: Position 0 oben, steigt gegen den Uhrzeigersinn, Stecker unten = 128 */
+#if CONFIG_NANO_WHEEL_V2_MIRRORED
+    cw_config_wheel_v2(&cc, CONFIG_NANO_WHEEL_V2_MOUNT_OFFSET_DEG, true);
+#else
+    cw_config_wheel_v2(&cc, CONFIG_NANO_WHEEL_V2_MOUNT_OFFSET_DEG, false);
+#endif
+#endif
     cw_t wheel;
     cw_init(&wheel, &cc);
 
@@ -208,7 +216,7 @@ esp_err_t input_start(void)
     if (e != ESP_OK) ESP_LOGW(TAG, "weiter ohne Haptik");
 
     gpio_config_t in = {
-        .pin_bit_mask = (1ULL << WHEEL_BTN_GPIO) | (1ULL << WHEEL_INT_GPIO),
+        .pin_bit_mask = (WHEEL_BTN_USED ? (1ULL << WHEEL_BTN_GPIO) : 0) | (1ULL << WHEEL_INT_GPIO),
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_ENABLE,
         .intr_type = GPIO_INTR_ANYEDGE,
@@ -218,7 +226,7 @@ esp_err_t input_start(void)
     BaseType_t ok = xTaskCreatePinnedToCore(input_task, "input", 4096, NULL, 10, &s_task, 1);
     if (ok != pdPASS) return ESP_ERR_NO_MEM;
     gpio_install_isr_service(0);
-    gpio_isr_handler_add(WHEEL_BTN_GPIO, isr, NULL);
+    if (WHEEL_BTN_USED) gpio_isr_handler_add(WHEEL_BTN_GPIO, isr, NULL);
     gpio_isr_handler_add(WHEEL_INT_GPIO, isr, NULL);
     return ESP_OK;
 }

@@ -1,5 +1,21 @@
 menu "Nano-Player"
 
+    choice NANO_BOARD
+        prompt "Board-Profil"
+        default NANO_BOARD_PROTOTYP
+        help
+            Prototyp: Waveshare ESP32-S3-Touch-AMOLED-1.8 (Ziel esp32s3, gebaut).
+            Endgeraet: Hauptplatine Rev. 3b (ESP32-S31-WROOM-1, Pins aus hardware/pcb/hauptplatine/README.md).
+            Das Profil Endgeraet ist nur vorbereitet: der S31 wird von ESP-IDF 5.4 nicht unterstuetzt
+            (Ziel erst ab IDF 6.x), es wurde weder fuer den S31 gebaut noch auf Hardware getestet.
+            Nur Display, Klickrad und Haptik sind in Phase 1 abgedeckt; siehe docs/FIRMWARE-PORTIERUNG.md.
+
+        config NANO_BOARD_PROTOTYP
+            bool "Prototyp: Waveshare ESP32-S3-Touch-AMOLED-1.8"
+        config NANO_BOARD_ENDGERAET
+            bool "Endgeraet: Hauptplatine Rev. 3b, ESP32-S31 (vorbereitet, ungebaut)"
+    endchoice
+
     choice NANO_PANEL
         prompt "Display-Variante des Waveshare-Boards"
         default NANO_PANEL_CO5300
@@ -10,6 +26,7 @@ menu "Nano-Player"
             bool "V2: CO5300 (Standard)"
         config NANO_PANEL_SH8601
             bool "V1: SH8601"
+            depends on NANO_BOARD_PROTOTYP
     endchoice
 
     config NANO_DISPLAY_BRIGHTNESS
@@ -21,6 +38,7 @@ menu "Nano-Player"
         config NANO_WHEEL_SEPARATE_I2C
             bool "Eigener I2C-Bus fuer das Klickrad (Pins in board_config.h, pruefen)"
             default n
+            depends on NANO_BOARD_PROTOTYP
 
         choice NANO_WHEEL_CTRL
             prompt "Touch-Controller des Klickrad-Moduls"
@@ -39,7 +57,9 @@ menu "Nano-Player"
         config NANO_WHEEL_BTN_GPIO
             bool "Mitteltaste zusaetzlich ueber BTN-Pin (Stecker-Pin 6) lesen"
             default y
+            depends on NANO_BOARD_PROTOTYP
             help
+                Nur Prototyp: beim Endgeraet ist Stecker-Pin 6 Reserve (Mitteltaste nur kapazitiv).
                 Beim AT42QT2120-Modul ist die Mitteltaste Taste 3 des Chips (wie Tangara). Der BTN-Pin
                 bleibt zusaetzlich aktiv, falls das Modul eine mechanische Taste daran hat. Ist nichts
                 angeschlossen, haelt der interne Pull-up den Pin auf high.
@@ -51,26 +71,37 @@ menu "Nano-Player"
             depends on NANO_WHEEL_MPR121
 
         config NANO_WHEEL_FIRST_SEGMENT_DEG
-            int "Winkel von Segment 0 bzw. Wheel-Position 0 in Grad (0 = rechts, im Uhrzeigersinn, -90 = oben)"
+            int "MPR121: Winkel von Segment 0 in Grad (0 = rechts, im Uhrzeigersinn, -90 = oben)"
             range -180 180
-            default -90 if NANO_WHEEL_QT2120
             default 105
+            depends on NANO_WHEEL_MPR121
             help
-                AT42QT2120 laut Tangara-Code: Position 0 = oben (-90 Grad).
                 MPR121 (Klickrad v1): ELE0 liegt unten leicht links, die Elektrodennummern steigen im
                 Uhrzeigersinn. Daraus ergibt sich 105.
-                AT42QT2120: Winkel der Wheel-Position 0. Der Wert -90 ist ein Platzhalter; er haengt von
-                der Lage der drei Wheel-Elektroden auf der Platine ab und muss am echten Rad bestimmt werden
-                (NANO_WHEEL_LOG_RAW zeigt die Position). Drehsinn ueber die Option darunter.
 
         config NANO_WHEEL_CLOCKWISE
-            bool "Segmentnummern bzw. Wheel-Position steigen im Uhrzeigersinn"
-            default n if NANO_WHEEL_QT2120
+            bool "MPR121: Segmentnummern steigen im Uhrzeigersinn"
             default y
+            depends on NANO_WHEEL_MPR121
+
+        config NANO_WHEEL_V2_MOUNT_OFFSET_DEG
+            int "QT2120: Drehung des Klickrad-Moduls gegenueber Stecker unten (Grad, im Uhrzeigersinn)"
+            range -180 180
+            default 0
+            depends on NANO_WHEEL_QT2120
             help
-                AT42QT2120 laut Tangara-Code (input_touch_wheel.cpp): Position 0 = oben, 64 = links,
-                128 = unten, 192 = rechts, die Position steigt also gegen den Uhrzeigersinn. Das gilt fuer
-                die Elektrodenlage der Tangara-Platine; fuer unser Modul am echten Rad pruefen.
+                Klickrad-v2-Konvention (TEILE.md, aus dem Tangara-Footprint gerechnet, NICHT gemessen):
+                Wheel-Position 0 oben, steigend gegen den Uhrzeigersinn; der Stecker bei 270 Grad
+                (unten) liegt bei Position 128. Mit Stecker unten ist der Offset 0, Position 0 ergibt
+                -90 Grad (oben). Ist das Modul anders eingebaut, hier die Drehung eintragen; ist die
+                Drehrichtung im UI falsch (Finger im Uhrzeigersinn scrollt nach oben), stimmt die
+                Konvention am echten Rad nicht: dann zuerst "Spiegelverkehrt" pruefen (NANO_WHEEL_LOG_RAW
+                zeigt die Position).
+
+        config NANO_WHEEL_V2_MIRRORED
+            bool "QT2120: Position steigt im Uhrzeigersinn (Rad spiegelverkehrt, Gegenprobe)"
+            default n
+            depends on NANO_WHEEL_QT2120
 
         config NANO_WHEEL_DETENT_DEG
             int "Rasterschritt in Grad"
@@ -179,6 +210,7 @@ menu "Nano-Player"
         config NANO_LATENCY_PROBE
             bool "Latenz-Messpunkte (GPIO-Toggle) fuer Logic Analyzer"
             default y
+            depends on NANO_BOARD_PROTOTYP
             help
                 PROBE_STEP_GPIO toggelt beim Erkennen eines Rasterschritts, PROBE_HAPTIC_GPIO direkt
                 nach dem I2C-Befehl an den DRV2605L. Pins in board_config.h.

@@ -30,7 +30,7 @@ firmware/
 ### Ablauf einer Drehung
 
 1. Input-Task liest alle `NANO_WHEEL_POLL_MS` (5 ms) den Controller in **einer** I2C-Transaktion (QT2120: Register 2..5 = Status, Tasten, Wheel-Position; MPR121: Touch-Status + gefilterte Werte); im Leerlauf schläft er bis zur Flanke von INT (QT2120: CHANGE, Stecker-Pin 5) bzw. BTN.
-2. **QT2120 (Standard):** Der Chip liefert die Position 0..255 selbst; `cw_update_position()` rechnet sie in einen Winkel um (Position 0 = `NANO_WHEEL_FIRST_SEGMENT_DEG`, Drehsinn per Kconfig; Tangara-Konvention: 0 oben, steigt gegen den Uhrzeigersinn). **MPR121 (v1):** Signal pro Segment = Baseline − gefilterter Wert, Winkel = Vektorsumme (gewichteter Schwerpunkt) aus dem stärksten Segment und seinen zwei Nachbarn, Rundlauf wird korrekt behandelt.
+2. **QT2120 (Standard):** Der Chip liefert die Position 0..255 selbst; `cw_update_position()` rechnet sie in einen Winkel um (Klickrad-v2-Konvention, `cw_config_wheel_v2()`: Position 0 oben = -90 Grad, steigt gegen den Uhrzeigersinn, Stecker unten = Position 128; Einbau-Drehung per `NANO_WHEEL_V2_MOUNT_OFFSET_DEG`, Gegenprobe `NANO_WHEEL_V2_MIRRORED`; Finger im Uhrzeigersinn ergibt positive Schritte = nach unten scrollen). **MPR121 (v1):** Signal pro Segment = Baseline − gefilterter Wert, Winkel = Vektorsumme (gewichteter Schwerpunkt) aus dem stärksten Segment und seinen zwei Nachbarn, Rundlauf wird korrekt behandelt.
 3. Winkeldifferenzen werden akkumuliert, jeder volle Rasterschritt (`NANO_WHEEL_DETENT_DEG`, 15 Grad) ergibt einen Schritt. Gedreht wird erst nach `NANO_WHEEL_TAP_SLOP_DEG` Bewegung; vorher zählt Loslassen als Tippen (oben MENU, unten PLAY, rechts NEXT, links PREV, wie `buttonAt` im Emulator).
 4. Der Schritt geht in das Modell (`model_step`), danach **sofort** `haptics_tick()` (DRV2605L, Effekt 1) im selben Task. Das UI liest den Zustand später per LVGL-Timer (10 ms) aus dem Modell. Rate-Limit: Ticks innerhalb von 20 ms werden ausgelassen (die Auswahl bewegt sich trotzdem). Am Listenende: Anschlag-Effekt (Default 10 Double Click), eigenes Limit 80 ms.
 5. Der DRV2605L hat den Effekt als einzigen Eintrag der Wellenform-Sequenz vorgeladen; wiederholte Ticks schreiben nur das GO-Bit (2 Byte).
@@ -81,7 +81,9 @@ Beim ersten Build lädt der Component Manager `esp_lvgl_port` 2.9, `lvgl` 9.3, d
 |---|---|---|
 | Display-Variante | V2 CO5300 | oder V1 SH8601 |
 | Touch-Controller | AT42QT2120 | oder MPR121 (Klickrad v1) |
-| Segmente (nur MPR121) / Winkel Segment 0 bzw. Position 0 / Drehsinn | 12 / -90 (oben) / QT2120: gegen den Uhrzeigersinn (Tangara) | an die Platine anpassen |
+| Board-Profil | Prototyp | Prototyp (Waveshare, gebaut) oder Endgeraet (Hauptplatine Rev. 3b, S31, nur vorbereitet, ungebaut), siehe unten |
+| Segmente / Winkel Segment 0 / Drehsinn (nur MPR121) | 12 / 105 / im Uhrzeigersinn | an die Platine anpassen |
+| `NANO_WHEEL_V2_MOUNT_OFFSET_DEG` / `NANO_WHEEL_V2_MIRRORED` (nur QT2120) | 0 / aus | Einbau-Drehung des Moduls gegenueber Stecker unten; Spiegelung als Gegenprobe |
 | `NANO_WHEEL_DETENT_DEG` | 15 | Rasterschritt |
 | `NANO_WHEEL_TOUCH_ON/OFF/NOISE_FLOOR` | 40 / 20 / 8 | nur MPR121: Schwellen auf der Signalstärke; mit `NANO_WHEEL_LOG_RAW` am echten Rad einstellen |
 | `NANO_WHEEL_TAP_SLOP_DEG` | 20 | Tippen vs. Drehen |
@@ -99,7 +101,7 @@ Beim ersten Build lädt der Component Manager `esp_lvgl_port` 2.9, `lvgl` 9.3, d
 - **Auf dem PC getestet:** `components/clickwheel/test_host/test.c` (Winkel-Rekonstruktion aus Segmenten, Drehen im/gegen den Uhrzeigersinn ergibt 5 Schritte für 90 Grad, Tippen oben ergibt MENU; neu: dieselben Tests mit Wheel-Position 0..255 inkl. Rundlauf 255 -> 0). Aufruf: `gcc -I../include test.c ../clickwheel.c -lm && ./a.out`.
 - **Nicht getestet (keine Hardware):** alles, was Chips anspricht. Insbesondere
   - Display-Init, Panel-Versatz, Helligkeitsbefehl, Farben/Byte-Reihenfolge (`swap_bytes`), Pufferplatz in internem RAM;
-  - AT42QT2120: Init-Sequenz aus Tangara übernommen, am Tangara-Rad bewährt, aber an unserem Modul ungeprüft; ob CHANGE auch bei reiner Positionsänderung auslöst (wir pollen deshalb beim Berühren alle 5 ms); Elektrodenlage/Orientierung (Position 0, Drehsinn); Mitteltaste = Taste 3 und Guard = Taste 4 sind Tangara-Belegung und müssen zur Platine passen (TEILE.md beschreibt noch 12 Segmente);
+  - AT42QT2120: Init-Sequenz aus Tangara übernommen, am Tangara-Rad bewährt, aber an unserem Modul ungeprüft; ob CHANGE auch bei reiner Positionsänderung auslöst (wir pollen deshalb beim Berühren alle 5 ms); Elektrodenlage/Orientierung (Position 0 oben, gegen den Uhrzeigersinn steigend, Stecker = 128: aus dem Footprint gerechnet, nicht gemessen); Mitteltaste = Taste 3 und Guard = Taste 4 sind Tangara-Belegung und müssen zur Platine passen (TEILE.md beschreibt noch 12 Segmente);
   - MPR121 (nur v1): Konfiguration (Auto-Config, Schwellen, Update-Rate 4 ms), Rauschverhalten des Rings;
   - DRV2605L: Register-Formeln (RATED_VOLTAGE korrigiert: sqrt im Zähler, gegen Tangara-Wert 0x46 geprüft, ergibt 68), DRIVE_TIME, Ergebnis der Auto-Kalibrierung und NVS-Ablage; Effekt-IDs 4 und 10 fühlen sich am LRA evtl. anders an als gedacht;
   - Mitteltasten-Entprellung (15 ms), INT-Aufwachen, Zusammenspiel Display-Task (Core 0) und Input-Task (Core 1) auf demselben I2C-Bus;
@@ -110,5 +112,9 @@ Beim ersten Build lädt der Component Manager `esp_lvgl_port` 2.9, `lvgl` 9.3, d
 
 - Gegen das Datenblatt des gewählten LRA: Resonanzfrequenz, Nennspannung, Overdrive; danach Kalibrierwerte (`comp`, `bemf`) im Log notieren und fest eintragen (`use_stored_cal`).
 - Effektstärke: der DRV2605L spielt Bibliothekseffekte in fester Stärke; für einstellbare Intensität wäre RTP-Modus mit eigenen Kurzimpulsen nötig (nächster Schritt, falls der Library-Effekt nicht reicht).
-- Rad-Orientierung (Segment 0, Drehsinn) nach CAD/Platine festlegen.
+- Rad-Orientierung am echten Klickrad v2 pruefen (Konvention ist eingebaut, aber nicht gemessen; Gegenprobe `NANO_WHEEL_V2_MIRRORED`).
 - Audio, SD, Bluetooth und Wiedergabe sind nicht Teil von Phase 1.
+
+## Board-Profil Endgeraet (vorbereitet, ungebaut, ungetestet)
+
+Kconfig `Nano-Player -> Board-Profil -> Endgeraet` waehlt `main/board_config_endgeraet.h` (Pins der Hauptplatine Rev. 3b aus `../hardware/pcb/hauptplatine/README.md`): I2C IO6/IO7, Klickrad-CHANGE IO0, Display 410 x 502 CO5300 mit QSPI IO48/49/11/10/9/51 und LCD_RST IO19, Power-Latch IO4 wird in `board_init()` gehalten. Kein TCA9554, kein BTN-Pin, keine Latenz-Messpunkte, kein eigener Wheel-Bus. Der ESP32-S31 wird von IDF 5.4.2 nicht unterstuetzt: das Profil ist **nicht fuer den S31 gebaut**; es wurde hoechstens als Syntaxpruefung mit dem Ziel esp32s3 uebersetzt (siehe Abschnitt "Board-Profil Endgeraet" in `../docs/FIRMWARE-PORTIERUNG.md` fuer Ergebnis und offene Punkte).

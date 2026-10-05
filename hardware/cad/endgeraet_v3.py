@@ -55,7 +55,7 @@ def _openings():
     return cs
 
 
-def rahmen():
+def rahmen(insert=False):
     f = rbox(W, L, T, R, 0, 0, 0)
     f = f.cut(rbox(W - 2 * RIM, L - 2 * RIM, BACK_T + 1, R - RIM, 0, 0, -1))              # hinterer Falz
     f = f.cut(rbox(W - 2 * WALL, L - 2 * WALL, LIP_Z0 - BACK_T, R - WALL, 0, 0, BACK_T))   # Innenraum
@@ -69,7 +69,10 @@ def rahmen():
         xe = sx * (W / 2 - 0.4)
         rib = bar(x, y, xe, y, P.V3_RIB_T, P.V3_RIB_H, PCB_Z1).intersect(env)
         f = f.union(post).union(rib)
-        f = f.cut(cyl(P.V3_PILOT_D, 2.5, x, y, PCB_Z1 - 0.01))
+        if insert:      # Variante Gewindeeinsatz M1,6 (von hinten einschmelzen)
+            f = f.cut(cyl(P.V3_INSERT_HOLE_D, P.V3_INSERT_HOLE_DEPTH, x, y, PCB_Z1 - 0.01))
+        else:           # Variante furchende Schraube
+            f = f.cut(cyl(P.V3_PILOT_D, 2.5, x, y, PCB_Z1 - 0.01))
     return cut_all(f, _openings())
 
 
@@ -90,6 +93,15 @@ def rueckwand():
         b = b.cut(box(w_, l_, BACK_T + 2, cx, cy, -1))
     pin_h = (SW_ACT_Z - P.V3_TAB_PIN_GAP) - BACK_T
     b = b.union(cyl(P.V3_TAB_PIN_D, pin_h + 0.01, sx, sy, BACK_T - 0.01))
+    # Stiftloecher fuer BOOT (SW2) / EN (SW3) mit Einfuehrtrichter, dazu Gravur (aussen, von hinten lesbar)
+    for (lx, ly) in (P.V3_SW2, P.V3_SW3):
+        b = b.cut(cyl(P.V3_SW23_HOLE_D, BACK_T + 2, lx, ly, -1))
+        b = b.cut(csk(lx, ly, P.V3_SW23_CSK_D, P.V3_SW23_HOLE_D, 0))
+    for txt, (lx, ly) in P.V3_SW23_LABEL.items():
+        # Ansicht von hinten: Lesesicht = -z-Normale, Grundlinie entlang +y (Text laeuft nach oben), rechts vom Loch (zur Mitte hin)
+        pl = cq.Plane(origin=(lx + 3.0, ly, 0), xDir=(0, 1, 0), normal=(0, 0, -1))
+        g = cq.Workplane(pl).text(txt, P.V3_SW23_LABEL_H, -P.V3_SW23_LABEL_DEPTH, combine=False, halign="center", valign="center")
+        b = b.cut(g)
     # Akku-Haltestege: ausserhalb des Fachs, nur 1,0 hoch (unter allen Rueckseitenbauteilen)
     fx0, fx1, fy0, fy1 = P.V3_BATT_FACH
     t, h, g = 0.8, 1.0, 0.2
@@ -115,6 +127,12 @@ def klickrad_abdeckung():
 
 def parts():
     return {"rahmen": rahmen(), "rueckwand": rueckwand()}
+
+
+def pin_channels():
+    """Stiftweg fuer SW2/SW3: Zylinder Ø Loch von aussen bis zur Tasterunterseite (muss frei von allem ausser dem Taster sein)."""
+    zt = PCB_Z0 - P.V3_SW23_BODY[2]
+    return {n: cyl(P.V3_SW23_HOLE_D, zt - 0.0, x, y, 0.0) for n, (x, y) in (("sw2", P.V3_SW2), ("sw3", P.V3_SW3))}
 
 
 def zuschnitt():
@@ -156,11 +174,18 @@ def dummies():
     d["microsd"] = box(sw, sl, sh, P.V3_SD_C[0], P.V3_SD_C[1], PCB_Z0 - sh)
     bx, by, bz = P.V3_SW1_BODY
     d["taster_sw1"] = box(bx, by, bz, P.V3_SW1[0], P.V3_SW1[1], PCB_Z0 - bz)
+    for n, (x, y) in (("taster_sw2", P.V3_SW2), ("taster_sw3", P.V3_SW3)):
+        bx, by, bz = P.V3_SW23_BODY
+        d[n] = box(bx, by, bz, x, y, PCB_Z0 - bz)
+    jx, jy, jw, jd, jh = P.V3_J20
+    d["j20"] = box(jw, jd, jh, jx, jy, PCB_Z1)
+    jx, jy, jw, jd, jh = P.V3_J21
+    d["j21"] = box(jw, jd, jh, jx, jy, PCB_Z1)
     cx, cy, cz = P.V3_C29_BODY
     d["c29"] = box(cx, cy, cz, P.V3_C29[0], P.V3_C29[1], PCB_Z0 - cz)
     d["klickrad_pcb"] = cyl(P.V3_WHEEL_D, P.V3_WHEEL_PCB_T, 0, WY, P.V3_WHEEL_PCB_Z0)
     lraw, lrah, lraz = P.V3_LRA
-    free = box(16.0, 6.0, 5, 0, WY + P.V3_LRA_DY, P.V3_WHEEL_PCB_Z0 - 4)
+    free = box(P.V3_LRA_FREE_KLICKRAD[0], P.V3_LRA_FREE_KLICKRAD[1], 5, 0, WY + P.V3_LRA_DY, P.V3_WHEEL_PCB_Z0 - 4)
     d["klickrad_teile"] = cyl(P.V3_WHEEL_COVER_D, P.V3_WHEEL_REAR_H, 0, WY, P.V3_WHEEL_PCB_Z0 - P.V3_WHEEL_REAR_H).cut(free)
     d["lra"] = box(lraw, lrah, lraz, 0, WY + P.V3_LRA_DY, P.V3_WHEEL_PCB_Z0 - lraz)
     for i, (x, y) in enumerate(P.V3_SCREWS):

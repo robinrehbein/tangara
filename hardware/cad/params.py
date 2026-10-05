@@ -275,12 +275,25 @@ V3_LRA_CUT = (14.0, 10.0, 1.0)              # LRA-Ausschnitt B x H x Eckenradius
 V3_LRA_CUT_Y = -19.0
 V3_ESP = (25.5, 18.0, 3.1)                  # WROOM-1 Rueckseite, gedreht; Mitte (6,5; 37,5)
 V3_ESP_C = (6.5, 37.5)
-V3_ANT_KEEP = (12.7, 20.7, 28.0, 47.0)      # Antennen-Keepout x0,x1,y0,y1 (Platinen-README; TEILE.md: 12,9...20,5 / 28,2...46,8)
+V3_ANT_KEEP = (12.7, 20.7, 28.0, 47.0)      # Antennen-Keepout x0,x1,y0,y1 (Platinen-README); gilt, weil das Groessere (TEILE.md ist darin enthalten)
+V3_ANT_KEEP_TEILE_MD = (12.9, 20.5, 28.2, 46.8)   # nur zur Pruefung im Build (muss in V3_ANT_KEEP liegen)
 V3_SD_C = (-13.7, 37.5)                     # microSD Mitte, Einschub von links
 V3_SD = (13.0, 14.0, 1.9)                   # Hüllkoerper X x Y x Z  PLATZHALTER (Molex 104031-0811, Maße nicht gelesen)
 V3_SD_OPEN = (12.0, 2.3)                    # Wandoeffnung links (Y x Z)
 V3_SW1 = (15.0, -30.0)                      # Taster B3U-3000P Rueckseite, von hinten zu druecken
 V3_SW1_BODY = (3.0, 2.5, 1.2)               # X x Y x Z (Datenblatt-Annahme)
+# Rev. 3b: BOOT-/EN-Taster SW2/SW3 (B3U-3000P hochkant, Pads untereinander -> Koerper 2,5 x 3,0 statt 3,0 x 2,5), Rueckseite
+V3_SW2 = (-18.05, 16.0)                     # SW2 = BOOT (IO61), Platinen-README
+V3_SW3 = (-18.05, 9.0)                      # SW3 = EN (Reset)
+V3_SW23_BODY = (2.5, 3.0, 1.2)              # X x Y x Z (Annahme: hochkant gedreht, Hoehe 1,2 laut README)
+V3_SW23_HOLE_D = 1.8                        # Stiftloch in der Rueckwand (Buero-/SIM-Klammer ca. 0,8...1,0)
+V3_SW23_CSK_D = 3.2                         # Einfuehrungstrichter aussen (45 Grad, 0,7 tief; Rest-Wand 0,3)
+V3_SW23_LABEL = {"BOOT": V3_SW2, "EN": V3_SW3}   # Gravur 0,3 tief neben dem Loch (aussen, lesbar von hinten)
+V3_SW23_LABEL_H, V3_SW23_LABEL_DEPTH = 1.6, 0.3
+# Rev. 3b: Display-FPC-Stecker J20 (Molex 503480-30) und Klickrad-Stecker J21 (Molex 503480-06), Vorderseite
+V3_J20 = (0.0, -0.35, 16.7, 4.1, 1.0)       # Mitte x, y (Koerper-Mitte; Footprint-Ursprung liegt bei y -0,65), Breite (x +-8,35), Tiefe (y -2,4 ... +1,7), Hoehe ueber Platine (Digi-Key 1,00; Toleranz unbekannt)
+V3_J21 = (0.0, -46.2, 4.7, 4.0, 1.0)        # x +-2,35, y -48,2 ... -44,2, 1,0 hoch
+V3_J_CLEAR_MIN = 0.1                        # Mindestluft Steckeroberkante -> Display (Annahme, Toleranz Stecker/Klebefilm offen)
 V3_C29 = (3.6, -27.9)                       # C29 1210 auf der Rueckseite, 2,7 hoch (aus .kicad_pcb gelesen)
 V3_C29_BODY = (2.5, 3.2, 2.7)
 V3_BATT_FACH = (-16.0, 16.0, -12.0, 26.5)   # x0,x1,y0,y1 Akkufach Rueckseite
@@ -307,12 +320,19 @@ V3_WHEEL_OPEN_D = 30.6
 V3_WHEEL_PCB_Z1 = V3_DISP_Z1                # Platine liegt mit Klebefilm unter der Frontplatte
 V3_WHEEL_PCB_Z0 = V3_WHEEL_PCB_Z1 - V3_WHEEL_PCB_T
 V3_LRA = (12.0, 6.0, 3.0)                   # Kandidat VL120628H-Klasse (12 x 6), Hoehengrenze 3,0; 16 x 6 passt NICHT in 14 mm Ausschnitt
+# LRA-Auswahlregel (C10): Klickrad-Freiflaeche ist 16 x 6, aber der Platinenausschnitt nur 14 x 10 (Platinen-README, nicht aenderbar hier).
+# Maßgeblich ist daher das KLEINERE: Laenge <= Ausschnitt - 2 x 0,5 Luft, Hoehe bis 3,0 (taucht 0,65 in den Ausschnitt).
+V3_LRA_MAX = (V3_LRA_CUT[0] - 1.0, V3_LRA_CUT[1] - 1.0, 3.0)     # 13,0 x 9,0 x 3,0
+V3_LRA_FREE_KLICKRAD = (16.0, 6.0)          # Freiflaeche auf der Klickrad-Rueckseite (Klickrad-README), nur fuer die Rueckseitenteile-Attrappe
 V3_LRA_DY = 6.0                             # Mitte 6 mm ueber Radmitte (= y -19)
 
 # --- Befestigung ------------------------------------------------------------------
 V3_STANDOFF_D = 3.2                         # hinterer Steg Rueckwand -> Platinenrueckseite (Klinkenkoerper endet bei x -16,5)
 V3_POST_D = 4.0                             # vorderer Dom Platinenvorderseite -> Frontplatte
 V3_PILOT_D = 1.4                            # Kernloch selbstschneidend  UNGEPRUEFT
+# Variante "Einsatz" (C11): Gewindeeinsatz M1,6 von hinten in den vorderen Dom einschmelzen (Eingriff dann im Metall).
+# Annahme: Einsatz Ø aussen ca. 2,5 x 2,5 lang (Typ/Lieferant NICHT geprueft); Loch Ø 2,4 x 2,7 tief ab Domunterkante.
+V3_INSERT_HOLE_D, V3_INSERT_HOLE_DEPTH = 2.4, 2.7
 V3_CSK_D = 3.2                              # Senkung aussen
 V3_SCREW_LEN = 8.0                          # M1,6 x 8 Senkkopf
 V3_SCREW_CORE_D = 1.3
@@ -335,5 +355,7 @@ PLATZHALTER_V3 = [
     "V3_DISP_TOP: Lage des Moduls auf der Platine Annahme (Zone -6,5 ... 40,5 im Platinen-README)",
     "V3_WHEEL_REAR_H: Bauteile auf der Radrueckseite bis 1,1 mm, Lage unbekannt (Vollscheibe angenommen)",
     "V3_BATT_H: 3,65 mm (README Platine nennt 3,7, ohne Klebefilm)",
-    "V3_PILOT_D, V3_SCREW_LEN: M1,6 selbstschneidend in ASA/PETG UNGEPRUEFT",
+    "V3_PILOT_D, V3_SCREW_LEN: M1,6 selbstschneidend in ASA/PETG UNGEPRUEFT; V3_INSERT_*: Einsatz-Maße Annahme",
+    "V3_SW2/SW3, V3_SW23_BODY: Lage laut Platinen-README Rev. 3b, Körper hochkant 2,5 x 3,0 x 1,2 Annahme (B3U-3000P-Datenblatt nicht gelesen)",
+    "V3_J20/V3_J21: Molex 503480, Höhe 1,00 nur aus Digi-Key-Angabe, Toleranz und FPC-Dicke nicht geprueft",
 ]

@@ -176,6 +176,54 @@ Gesamtschätzung: 30 bis 55 Arbeitstage bis zu einem Gerät, das Tangara im Funk
 - AT42QT2120 im Wheel-Modus: Orientierung und Mitteltaste/Guard-Belegung sind Tangara-Annahmen; unser Modul muss Tasten 0 bis 2 als Wheel, Taste 3 als Mitte und Taste 4 als Guard verdrahten oder die Treiber-Init anpassen. Ungeprüft: ob CHANGE bei reinen Positionsänderungen auslöst (Treiber pollt deshalb beim Berühren).
 - Speicherbedarfe der vergrößerten UI sind Schätzungen.
 
+## 8. Klickrad-v2-Konvention und Board-Profil Endgerät (Stand 2026-10-05, Firmware vorbereitet, alles ungetestet)
+
+Keine Hardware vorhanden: nichts davon wurde an einem Klickrad, einer Hauptplatine oder einem ESP32-S31 geprüft.
+
+### 8.1 Klickrad-Konvention (umgesetzt in `firmware/components/clickwheel`, `firmware/main/input.c`)
+
+- Konvention laut `TEILE.md` („Klickrad v2“, aus dem Tangara-Footprint gerechnet, **nicht gemessen**): Wheel-Position 0 oben, steigend gegen den Uhrzeigersinn (64 links, 128 unten, 192 rechts); Stecker bei 270° (unten) = Position 128.
+- Umsetzung: `cw_config_wheel_v2(cfg, mount_offset_deg, mirrored)` setzt den Bildschirm-Winkel von Position 0 auf −90° + Offset und den Drehsinn auf „gegen den Uhrzeigersinn“. Die Kconfig-Optionen `NANO_WHEEL_FIRST_SEGMENT_DEG`/`NANO_WHEEL_CLOCKWISE` gelten jetzt nur noch für den MPR121 (v1); für den AT42QT2120 gibt es `NANO_WHEEL_V2_MOUNT_OFFSET_DEG` (Default 0 = Stecker unten) und als Gegenprobe `NANO_WHEEL_V2_MIRRORED` (Default aus).
+- Drehrichtung im UI: Finger im Uhrzeigersinn → Bildschirmwinkel steigt → positive Rasterschritte → `model_step(+1)` → Auswahl **nach unten**; Finger gegen den Uhrzeigersinn → nach oben. Tippen: Position 0 = MENU (oben), 128 = PLAY (unten), 64 = PREV (links), 192 = NEXT (rechts).
+- Befund: Der bisherige Default (−90°, gegen den Uhrzeigersinn) stimmte bereits mit dieser Konvention überein; der alte Host-Test (Test 5) prüfte aber ein im Uhrzeigersinn steigendes Rad und damit nicht die tatsächlich gebaute Konfiguration. Der Test ist neu geschrieben (Positionen 0/64/128/192, Drehen in beide Richtungen mit Rundlauf über 0, Tippen in vier Richtungen, Einbau-Offset, Spiegelung) und läuft grün (`gcc -Wall -I../include test.c ../clickwheel.c -lm && ./a.out`).
+- **Ungeprüft:** ob die Elektrodenlage und Verdrahtung des gebauten Klickrads v2 wirklich so liegen. Nach dem Aufbau mit `NANO_WHEEL_LOG_RAW` Position 0/64/128/192 anfahren; läuft das UI falsch herum, zuerst `NANO_WHEEL_V2_MIRRORED`, sonst `NANO_WHEEL_V2_MOUNT_OFFSET_DEG` anpassen. Orientierung in der Hauptplatine: Stecker J21 bei (0; −46,2) unten, passt zu „Stecker unten“.
+
+### 8.2 Vergleich Pin-Tabelle Hauptplatine Rev. 3b ↔ `firmware/main/board_config.h` (Prototyp)
+
+| Thema | Prototyp (Waveshare) | Endgerät Rev. 3b | Folge in der Firmware |
+|---|---|---|---|
+| I²C | SDA IO15 / SCL IO14, Pull-ups auf dem Board | SDA IO6 / SCL IO7, Pull-ups R120/R121 auf der Hauptplatine | Profil. Auf dem Prototyp sind IO14/IO15 der I²C-Bus, am Endgerät frei (kein Konflikt, Pins nicht belegt) |
+| Klickrad CHANGE / BTN | IO17 / IO18 (Testpunkte) | WHEEL_INT = IO0 (LP-GPIO, Weckquelle); **kein BTN** (Stecker-Pin 6 Reserve) | `WHEEL_BTN_USED = 0`, Mitteltaste nur kapazitiv (QT2120-Taste 3) |
+| IO-Expander | TCA9554 0x20 (LCD_RST, Display-Versorgung, Touch-Reset, SD-CS) | entfällt; LCD_RST = IO19, DSI_PWR_EN/TP_RESET fest verdrahtet | `BOARD_HAS_TCA9554 = 0` |
+| Display | 368 × 448 (1,8"), QSPI CS12/SCK11/D0..3 = 4..7, Gap x 0x10 | 410 × 502 (2,06"), CO5300, SCK IO48, CS IO49, D0 IO11, D1 IO10, D2 IO9, D3 IO51, TE IO12, TP_INT IO50 | Auflösung als Makros (Init-Befehle 0x2A/0x2B und `ui.c` folgen `BOARD_LCD_*_RES`); Gap [offen] |
+| Lader-Steuerung | – (AXP2101 0x34) | MCP73871 SEL/PROG2 fest verdrahtet, **keine GPIO**; STAT1 IO13, STAT2 IO16, PG IO17; IO14/IO15 frei | in der Firmware nichts zu steuern; Pins nur als Makros dokumentiert (kein `PowerManager`-Code in Phase 1) |
+| DAC-Reset | – (ES8311) | DAC_RESET = IO20 mit Reset-Sicherung: offen/high = DAC im Reset, low = freigegeben; Q21/Q22 halten Reset ohne 3V3 | Phase 1 lässt IO20 unberührt (DAC bleibt im Reset). Audio-Code später: erst Versorgung stabil, dann IO20 auf low. Reset-Logik ungeprüft (Schaltschwelle, Anlauf) |
+| Power-Latch | – | SYS_PWR_EN = IO4 (LP-GPIO), KEY_LOCK_MCU = IO5 (Taster lesen) | `board_init()` setzt IO4 sofort auf `BOARD_PWR_HOLD_LEVEL` (1, **Aktivpegel [offen]**); IO5 nicht ausgewertet |
+| BOOT / EN | USB-Serial-JTAG des Waveshare-Boards | BOOT = IO61 (SW2), EN (SW3), Rückseite; IO60/IO61 Boot-Modus, IO33/34 USB-Serial/JTAG, IO36/IO37 Strapping | keine Firmware nötig; diese Pins werden nicht belegt |
+| I²C-Adressen | 0x15 CST820, 0x18 ES8311, 0x20 TCA9554, 0x34 AXP2101, 0x51 PCF85063, 0x6B QMI8658 | 0x1C QT2120, 0x5A DRV2605L, 0x36 MAX17048, 0x47 TUSB320LAI, CS43131 0x30..0x33 [?] hinter PCA9306; Display-Touch [offen] | Adressen als Makros; keine Kollision bekannt |
+| PCA_EN | – | Kein GPIO: gemeinsamer Knoten VREF2/EN des PCA9306 (U30), 200 k nach 3V3 + 100 pF | nichts zu tun; Hinweis: solange 1,8 V (U34) fehlt, ist der DAC-Bus getrennt, der I²C-Scan sieht den CS43131 ggf. nicht |
+| I²S / SD | – | I²S BCLK/LRCK/DOUT IO22/23/24 (S31 = Slave, DAC liefert Takt), SDMMC Slot 2 IO35..IO40, SD_CD IO25, SD_VDD_EN IO42 | nur als Makros bzw. Kommentar; Phase 1 hat keinen Ton und keine SD |
+| Latenz-Messpunkte | IO38/IO39 | keine vergeben | Kconfig `NANO_LATENCY_PROBE` nur beim Prototyp |
+
+### 8.3 Board-Profil „Endgerät“ (Kconfig `Board-Profil`)
+
+- Auswahl: `idf.py menuconfig` → Nano-Player → Board-Profil → „Endgeraet“. Datei `firmware/main/board_config_endgeraet.h`; `board_config.h` schaltet per `CONFIG_NANO_BOARD_ENDGERAET` um. Beim Endgerät sind SH8601, eigener Wheel-Bus, BTN-Pin und Latenz-Messpunkte in Kconfig ausgeblendet.
+- **Nicht für den S31 gebaut:** IDF 5.4.2 kennt das Ziel nicht (S31 ab IDF 6.x, „preview“). Als Syntaxprüfung wurde das Profil höchstens mit dem Ziel esp32s3 und eigener Build-Umgebung übersetzt (Ergebnis siehe Abschnitt 8.4); das sagt nichts über Pinzulässigkeit oder Verhalten auf dem S31 aus (IO42, IO48..IO51 existieren beim S3 anders belegt).
+- Gewählt wurde bewusst nur, was die README eindeutig festlegt. 
+
+### 8.4 Offen / TODO für das Profil
+
+1. **Panel-Versatz (Gap x/y) und Init-Sequenz des 2,06"-CO5300** sind nicht ausgewertet (Waveshare-2.06-Beispiel); Gap steht auf 0, Init-Befehle sind die des 1,8"-Moduls mit angepasster Fenstergröße.
+2. **Display-Touch** (Controller, Adresse, Reset/INT-Nutzung) ist nicht geklärt und in Phase 1 nicht im Einsatz (`board_touch_is_v2()` ist beim Endgerät nur ein Platzhalter).
+3. **Aktivpegel Power-Latch SYS_PWR_EN** (IO4) aus dem Schaltplan prüfen; falsche Annahme = Gerät schaltet nach dem Loslassen von SW1 ab oder lässt sich nicht ausschalten. KEY_LOCK_MCU (IO5) und Abschalten fehlen (`PowerManager`, Abschnitt 2).
+4. **Zulässigkeit der Zuordnungen auf dem S31** (SPI-Host-Wahl für QSPI-Display, I²C-Port, GPIO-Matrix, LP-GPIO für IO0/IO4/IO5, SDMMC-Slot 2) ist laut Platinen-README selbst ungeprüft (Datenblatt v0.5); in IDF 6.x gegenprüfen.
+5. **CS43131-Adresse** (0x30..0x33 [?]), Verhalten des PCA9306 ohne 1,8 V und Takt/Quarz-Start: Audio-Phase.
+6. **DAC-Reset-Sicherung** (Q20/Q21/Q22/R250) ungeprüft; Polarität im Code erst beim Audio-Treiber festlegen.
+7. **USB/TUSB320, Host-VBUS (IO2), Lader-STAT/PG, MAX17048:** nur Pin-Makros, keine Treiber.
+8. **Mitteltaste:** beim Endgerät nur kapazitiv (QT2120 Taste 3), Guard Taste 4; Pin 6 am Stecker ist Reserve.
+9. **Klickrad-Stecker/Footprints** (J1 ↔ J21, siehe Platinen-README Review H6/K1) sind ungeprüft; Kabel durchklingeln, bevor die Firmware gegen das Rad läuft.
+10. Schwelle für „Tippen“ (`NANO_WHEEL_TAP_SLOP_DEG`) und Raster (15°) sind für 256 Positionen/360° aus dem Prototyp übernommen, am echten Rad prüfen.
+
 ## Quellen
 
 - Espressif Developer Portal, „ESP32-S31 status“ (Stand 25.09.2026): https://developer.espressif.com/hardware/esp32s31/

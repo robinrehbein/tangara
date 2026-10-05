@@ -152,7 +152,7 @@ def main():
     say(f"Aussenmaß laut Modell: {wd:.2f} x {ln:.2f} x {hi - lo:.2f} (Soll {W} x {L} x {T})", abs(wd - W) < 0.01 and abs(ln - L) < 0.01 and abs(hi - lo - T) < 0.01)
 
     # --- Rückzone / Luftspalte (Zahlen aus den Attrappen)
-    for k in ("akku", "esp_modul", "usb_c", "klinke", "microsd", "c29", "taster_sw1"):
+    for k in ("akku", "esp_modul", "usb_c", "klinke", "microsd", "c29", "taster_sw1", "taster_sw2", "taster_sw3"):
         m = dm[k]; h = P.V3_PCB_Z0 - m.bounds[0][2]
         say(f"Rueckseite {k:10s}: Hoehe unter Platine {h:.2f} mm (Rueckzone {P.V3_REAR_ZONE:.2f}), Luft zur Rueckwand {m.bounds[0][2] - P.V3_BACK_T:.2f} mm",
             m.bounds[0][2] >= P.V3_BACK_T - 1e-6)
@@ -165,6 +165,40 @@ def main():
     lra = dm["lra"]
     say(f"LRA z {lra.bounds[0][2]:.2f} ... {lra.bounds[1][2]:.2f}: unterhalb der Platinenvorderseite {P.V3_PCB_Z1 - lra.bounds[0][2]:.2f} mm im Ausschnitt, Luft zur Rueckwand {lra.bounds[0][2] - P.V3_BACK_T:.2f}", lra.bounds[0][2] > P.V3_BACK_T + 0.5)
     say(f"Wandoeffnung Klinke 9,6 breit vs Klinkenkoerper hinten {P.V3_JACK_BODY[0]} breit; USB-Oeffnung {P.V3_USB_OPEN_W} vs Koerper {P.V3_USB[0]} (Koerper breiter als Oeffnung ist beabsichtigt: Flansch sitzt hinter der Wand, ungeprueft)", True)
+
+    # --- Rev. 3b: J20/J21 (Vorderseite), Display-Luft
+    for k in ("j20", "j21"):
+        m = dm[k]
+        print(f"      {k}: x {m.bounds[0][0]:.2f} ... {m.bounds[1][0]:.2f}, y {m.bounds[0][1]:.2f} ... {m.bounds[1][1]:.2f}, z {m.bounds[0][2]:.2f} ... {m.bounds[1][2]:.2f}")
+    j20 = dm["j20"]; dsp = dm["display"]
+    clr = dsp.bounds[0][2] - j20.bounds[1][2]
+    say(f"J20 (Molex, {P.V3_J20[4]} hoch, Koerper x +-{P.V3_J20[2] / 2:.2f}) -> Display-Unterseite: Luft {clr:.2f} mm (Mindest {P.V3_J_CLEAR_MIN}); Hirose 2,0 haette {P.V3_DISP_AIR - 2.0:.2f} ergeben. Display-Unterkante y {P.V3_DISP_Y - P.V3_DISP_MOD[1] / 2:.2f}, J20 y {j20.bounds[0][1]:.2f} ... {j20.bounds[1][1]:.2f} liegt UNTER dem Display (FPC-Fuehrung nicht modelliert)", clr >= P.V3_J_CLEAR_MIN - 1e-9)
+    if clr < 0.2:
+        warn(f"Luft J20 -> Display nur {clr:.2f} mm: Stecker-Hoehentoleranz (Molex nennt 1,00 nominal), Kleberdicke und FPC-Auslauf koennen sie aufbrauchen. Display-Luft kann NICHT unter 1,1 sinken; Rueckzone/Akku bleiben bei 3,95/3,65")
+    j21 = dm["j21"]
+    say(f"J21 -> Klickrad-Platine (Unterkante z {dm['klickrad_pcb'].bounds[0][2]:.2f}): Luft {dm['klickrad_pcb'].bounds[0][2] - j21.bounds[1][2]:.2f} mm (FFC-Bogen 1,25 ... 2,35 mm, nicht modelliert)", dm['klickrad_pcb'].bounds[0][2] - j21.bounds[1][2] > 1.0)
+    # --- Rev. 3b: SW2/SW3 Stiftzugang
+    pc = E.pin_channels()
+    others = {**printed, **cuts, **{"~" + k: v for k, v in dums.items() if k not in ("taster_sw2", "taster_sw3", "hauptplatine")}}
+    for n, ch in pc.items():
+        hits = []
+        for k, s in others.items():
+            try:
+                v = ch.intersect(s).val().Volume()
+            except Exception:
+                v = 0.0
+            if v > 0.01:
+                hits.append((k, v))
+        # nur die Rueckwand selbst darf im Kanal liegen, wenn das Loch fehlt: Loch ist Ø 1,8 = Kanal, also Volumen 0
+        say(f"Stiftzugang {n.upper()}: Kanal Ø {P.V3_SW23_HOLE_D} von aussen (z 0) bis Taster (z {P.V3_PCB_Z0 - P.V3_SW23_BODY[2]:.2f}) frei" + (f" (Treffer: {hits})" if hits else ""), not hits)
+    sw = dm["taster_sw2"]
+    print(f"      SW2/SW3: Stiftweg {sw.bounds[0][2] - P.V3_BACK_T:.2f} mm ab Rueckwand-Innenseite bis Taster; Taster-Hub nicht modelliert (Klammer/Stift muss >= 3,2 mm lang sein)")
+    say(f"SW2/SW3 liegen im linken Randstreifen (x {sw.bounds[0][0]:.2f} ... {sw.bounds[1][0]:.2f}) ausserhalb des Akkufachs (x ab {P.V3_BATT_FACH[0]}) und des Antennen-Keepouts", sw.bounds[1][0] < P.V3_BATT_FACH[0] + 0.5)
+    # --- Rev. 3b: LRA-Regel und Keepout-Vereinheitlichung
+    lw_, ll_, lh_ = P.V3_LRA
+    say(f"LRA {lw_} x {ll_} x {lh_} innerhalb Auswahlregel {P.V3_LRA_MAX[0]} x {P.V3_LRA_MAX[1]} x {P.V3_LRA_MAX[2]} (Ausschnitt {P.V3_LRA_CUT[0]} x {P.V3_LRA_CUT[1]}, 0,5 Luft je Seite); 16 x 6 (Klickrad-Freiflaeche) ragt {(16.0 - P.V3_LRA_CUT[0]) / 2:.1f} mm je Seite in die Platine und waere NICHT zulaessig", lw_ <= P.V3_LRA_MAX[0] and ll_ <= P.V3_LRA_MAX[1] and lh_ <= P.V3_LRA_MAX[2])
+    k0, k1, k2, k3 = P.V3_ANT_KEEP; t0, t1, t2, t3 = P.V3_ANT_KEEP_TEILE_MD
+    say(f"Antennen-Keepout: README {P.V3_ANT_KEEP} umschliesst TEILE.md {P.V3_ANT_KEEP_TEILE_MD}; es gilt das Groessere (Differenz {t0 - k0:.1f} / {k1 - t1:.1f} / {t2 - k2:.1f} / {k3 - t3:.1f} mm)", k0 <= t0 and k1 >= t1 and k2 <= t2 and k3 >= t3)
 
     # --- Kollisionen
     allp = {**printed, **cuts, **{"~" + k: v for k, v in dums.items()}}
@@ -221,8 +255,15 @@ def main():
         bite = P.V3_SCREW_LEN - P.V3_PCB_Z1
         print(f"      Schraube {i + 1} bei ({x}, {y}): Kopf bei z 0, Spitze z {P.V3_SCREW_LEN}, Eingriff im vorderen Dom {bite:.2f} mm (Dom z {P.V3_PCB_Z1:.2f} ... {E.LIP_Z1:.2f})")
     bite = P.V3_SCREW_LEN - P.V3_PCB_Z1
-    say(f"Schraubeneingriff {bite:.2f} mm im Kunststoff = {bite / 1.6:.1f} x Gewinde-Ø (Richtwert fuer Kunststoff 2 x Ø = 3,2: DARUNTER, Auszugskraft ungeprueft; M1,6 x 9 ist nicht ueblich, x 10 stoesst an die Frontplatte)", bite >= 2.0)
-
+    print(f"      Variante furchende Schraube: Eingriff {bite:.2f} mm = {bite / 1.6:.1f} x Ø im Kunststoff (Richtwert 2 x Ø = 3,2); Dom z {P.V3_PCB_Z1:.2f} ... {E.LIP_Z1:.2f} (3,25 hoch), Kernloch Ø {P.V3_PILOT_D} x 2,5 tief, Spitze bei z {P.V3_SCREW_LEN} laesst {P.V3_PCB_Z1 + 2.5 - P.V3_SCREW_LEN:.2f} mm Loch frei; M1,6 x 10 wuerde bei z 10 die Frontplatte (z {E.LIP_Z1}) treffen")
+    say(f"Schraubeneingriff {bite:.2f} mm im Kunststoff (furchend) = {bite / 1.6:.1f} x Gewinde-Ø: unter 2 x Ø, Auszugskraft ungeprueft -> Variante Einsatz vorgesehen", True)
+    ins_top = P.V3_PCB_Z1 + P.V3_INSERT_HOLE_DEPTH
+    say(f"Variante Einsatz M1,6: Loch Ø {P.V3_INSERT_HOLE_D} x {P.V3_INSERT_HOLE_DEPTH} ab z {P.V3_PCB_Z1:.2f} (bis {ins_top:.2f}), Restdecke zur Frontplatte {E.LIP_Z1 - ins_top:.2f} mm, Domwand {(P.V3_POST_D - P.V3_INSERT_HOLE_D) / 2:.2f} mm, Schraubenspitze z {P.V3_SCREW_LEN} liegt im Einsatz (Eingriff im Metall {P.V3_SCREW_LEN - P.V3_PCB_Z1:.2f} mm)",
+        E.LIP_Z1 - ins_top >= 0.4 and (P.V3_POST_D - P.V3_INSERT_HOLE_D) / 2 >= 0.7 and ins_top >= P.V3_SCREW_LEN)
+    pe = os.path.join(STL, "rahmen_einsatz.stl")
+    export(E.rahmen(insert=True), pe)
+    me = load(pe); bbe = me.bounds[1] - me.bounds[0]
+    say(f"rahmen_einsatz       bbox {bbe[0]:.2f} x {bbe[1]:.2f} x {bbe[2]:.2f} Vol {me.volume:.0f} mm3 wasserdicht={me.is_watertight and me.is_winding_consistent and me.volume > 0}", me.is_watertight and me.is_winding_consistent and me.volume > 0 and abs(bbe[2] - T) < 0.05)
     # --- Wandstaerken und Ueberhaenge
     print("Wandsondierung (Strahlen nach innen, Strecken < 3 mm; Stichprobe, keine Garantie):")
     for k, zm in (("rahmen", None), ("rahmen", E.LIP_Z0 - 0.05), ("rueckwand", None)):
@@ -262,7 +303,23 @@ def previews(meshes, dm):
     render(ex, os.path.join(VOR, f"{NAME}_explosion.png"), f"{NAME}: Explosion (Rueckwand, Rahmen, Frontplatte, Abdeckung)",
            views=((35, -60), (20, -20)), size=6)
     sec_fig(meshes, dm)
+    rear_fig(meshes)
     dxf_fig()
+
+
+def rear_fig(meshes):
+    """Rueckwand von HINTEN (Blick in +z, x gespiegelt): Schnitt bei z = 0,15 zeigt Loecher, Trichter, Gravur BOOT/EN."""
+    m = meshes["rueckwand"]
+    sec = m.section(plane_origin=(0, 0, 0.15), plane_normal=(0, 0, 1))
+    fig, ax = plt.subplots(1, 1, figsize=(5.2, 9.5), dpi=130)
+    for ent in sec.entities:
+        pts = sec.vertices[ent.points]
+        ax.plot(-pts[:, 0], pts[:, 1], color="#1f3a5f", lw=0.8)
+    for n, (x, y) in (("SW2 BOOT", P.V3_SW2), ("SW3 EN", P.V3_SW3)):
+        ax.annotate(n, (-x, y), xytext=(-x - 9, y + 4), fontsize=7, color="#c0392b", arrowprops=dict(arrowstyle="->", color="#c0392b", lw=0.8))
+    ax.set_aspect("equal"); ax.grid(alpha=0.2)
+    ax.set_title("Rueckwand von hinten (Schnitt z = 0,15): Stiftloecher + Gravur", fontsize=8)
+    fig.tight_layout(); fig.savefig(os.path.join(VOR, f"{NAME}_rueckwand_hinten.png")); plt.close(fig)
 
 
 def dxf_fig():
@@ -285,14 +342,16 @@ def dxf_fig():
 def sec_fig(meshes, dm):
     pc = {"rahmen": "#222222", "rueckwand": "#1f6fb2", "frontplatte": "#c0392b", "klickrad_abdeckung": "#d68910"}
     dc = {"hauptplatine": "#1e8449", "display": "#555555", "akku": "#7f8c8d", "klinke": "#e67e22", "usb_c": "#16a085",
-          "esp_modul": "#8e44ad", "microsd": "#34495e", "taster_sw1": "#2c3e50", "c29": "#95a5a6", "klickrad_pcb": "#27ae60",
+          "esp_modul": "#8e44ad", "microsd": "#34495e", "taster_sw1": "#2c3e50", "taster_sw2": "#2c3e50", "taster_sw3": "#2c3e50", "j20": "#b7950b", "j21": "#b7950b", "c29": "#95a5a6", "klickrad_pcb": "#27ae60",
           "klickrad_teile": "#82e0aa", "lra": "#c0392b", "schraube1": "#000000", "schraube2": "#000000", "schraube3": "#000000"}
     cases = [("Schnitt x = -12 (Klinke)", (1, 0, 0), (-12, 0, 0), 1, (-50, -26)),
              ("Schnitt y = -19 (Klickrad, LRA-Ausschnitt)", (0, 1, 0), (0, -19, 0), 0, (-22, 22)),
              ("Schnitt x = 0 (ganze Laenge: Display, Akku, Klickrad)", (1, 0, 0), (0, 0, 0), 1, (-50, 50)),
              ("Schnitt y = 46,2 (Befestigung links oben: Steg, Platine, Dom)", (0, 1, 0), (0, 46.2, 0), 0, (-22, 22)),
-             ("Schnitt x = 15 (Ein/Aus-Zunge SW1)", (1, 0, 0), (15, 0, 0), 1, (-50, -18))]
-    fig, axes = plt.subplots(5, 1, figsize=(12, 17), dpi=105, gridspec_kw={"height_ratios": [1, 1, 0.5, 1, 1]})
+             ("Schnitt x = 15 (Ein/Aus-Zunge SW1)", (1, 0, 0), (15, 0, 0), 1, (-50, -18)),
+             ("Schnitt x = -18,05 (BOOT SW2 / EN SW3, Stiftloecher)", (1, 0, 0), (-18.05, 0, 0), 1, (0, 25)),
+             ("Schnitt x = 0 um J20 (Display-Luft)", (1, 0, 0), (0, 0, 0), 1, (-12, 10))]
+    fig, axes = plt.subplots(7, 1, figsize=(12, 24), dpi=105, gridspec_kw={"height_ratios": [1, 1, 0.5, 1, 1, 1, 1]})
     for ax, (title, nrm, org, axis, (lo, hi)) in zip(axes, cases):
         items = [(k, m, pc[k], 2.0) for k, m in meshes.items()] + [("~" + k, m, dc[k], 1.1) for k, m in dm.items()]
         for k, m, col, lw in items:

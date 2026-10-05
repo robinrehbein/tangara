@@ -11,8 +11,19 @@
  *   [prüfen]    unsicher, nicht verifiziert
  * Alles mit [Vorschlag]/[prüfen] ist nicht an Hardware getestet.
  */
+#include "sdkconfig.h"
 #include "driver/gpio.h"
 #include "driver/i2c_master.h"
+
+/* Zwei Profile (Kconfig "Board-Profil"):
+ *   CONFIG_NANO_BOARD_PROTOTYP   Waveshare ESP32-S3-Touch-AMOLED-1.8 + Klickrad-Modul (gebaut, ungetestet)
+ *   CONFIG_NANO_BOARD_ENDGERAET  Hauptplatine Rev. 3b, ESP32-S31-WROOM-1 (nur vorbereitet: NICHT gebaut,
+ *                                NICHT getestet; Pins aus hardware/pcb/hauptplatine/README.md, ihrerseits
+ *                                "ungeprueft gegen das endgueltige Datenblatt v0.5")
+ */
+#if CONFIG_NANO_BOARD_ENDGERAET
+#include "board_config_endgeraet.h"
+#else
 
 /* ---- Display (QSPI) [geprüft: Waveshare ESP-IDF-Beispiel 13_display_colorbar] ---- */
 #define BOARD_LCD_HOST       SPI2_HOST
@@ -63,6 +74,8 @@
  * ohne weitere Last und auf 1,27-mm-Pads geführt. Zuordnung INT/BTN ist ein Vorschlag [Vorschlag]. */
 #define WHEEL_INT_GPIO       GPIO_NUM_17   /* CHANGE (QT2120) bzw. IRQ (MPR121), open drain, aktiv low (interner Pull-up an) */
 #define WHEEL_BTN_GPIO       GPIO_NUM_18   /* Mitteltaste, aktiv low (interner Pull-up an) */
+#define WHEEL_BTN_USED       1
+#define BOARD_HAS_TCA9554    1
 
 /* Optional: eigener I2C-Bus fürs Klickrad statt des gemeinsamen (Kconfig). Pins [prüfen]. */
 #define WHEEL_I2C_PORT2      I2C_NUM_1
@@ -72,3 +85,4 @@
 /* ---- Latenz-Messpunkte (Logic Analyzer), siehe Kconfig ---- */
 #define PROBE_STEP_GPIO      GPIO_NUM_38   /* toggelt beim Erkennen eines Rasterschritts [Vorschlag; Pad laut Recherche frei] */
 #define PROBE_HAPTIC_GPIO    GPIO_NUM_39   /* toggelt direkt nach dem I2C-Befehl an den DRV2605L [Vorschlag] */
+#endif /* Profil Prototyp */

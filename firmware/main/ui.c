@@ -2,12 +2,13 @@
  * SPDX-License-Identifier: GPL-3.0-only */
 #include <stdio.h>
 #include "ui.h"
+#include "board_config.h"
 #include "haptics.h"
 #include "model.h"
 #include "esp_lvgl_port.h"
 
-#define SCREEN_W 368
-#define SCREEN_H 448
+#define SCREEN_W BOARD_LCD_H_RES
+#define SCREEN_H BOARD_LCD_V_RES
 #define BAR_H 44
 #define ROW_H 58
 #define ROWS ((SCREEN_H - BAR_H) / ROW_H)   /* 6 volle Zeilen */

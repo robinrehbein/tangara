@@ -23,6 +23,7 @@ static esp_err_t new_bus(i2c_port_num_t port, gpio_num_t sda, gpio_num_t scl, i2
     return i2c_new_master_bus(&cfg, out);
 }
 
+#if BOARD_HAS_TCA9554
 static esp_err_t expander_release_resets(void)
 {
     i2c_master_dev_handle_t dev;
@@ -45,13 +46,21 @@ static esp_err_t expander_release_resets(void)
     i2c_master_bus_rm_device(dev);
     return e;
 }
+#endif /* BOARD_HAS_TCA9554 */
 
 esp_err_t board_init(void)
 {
+#if CONFIG_NANO_BOARD_ENDGERAET
+    /* Power-Latch zuerst: SW1 schaltet nur kurz ein, der S31 muss die Versorgung halten (ungeprueft, Pegel [offen]) */
+    gpio_set_direction(BOARD_PWR_HOLD_GPIO, GPIO_MODE_OUTPUT);
+    gpio_set_level(BOARD_PWR_HOLD_GPIO, BOARD_PWR_HOLD_LEVEL);
+#endif
     esp_err_t e = new_bus(BOARD_I2C_PORT, BOARD_I2C_SDA, BOARD_I2C_SCL, &s_bus);
     if (e != ESP_OK) return e;
+#if BOARD_HAS_TCA9554
     e = expander_release_resets();
     if (e != ESP_OK) ESP_LOGE(TAG, "IO-Expander 0x%02X: %s (Display bleibt evtl. im Reset)", BOARD_ADDR_TCA9554, esp_err_to_name(e));
+#endif
 
 #if CONFIG_NANO_WHEEL_SEPARATE_I2C
     ESP_ERROR_CHECK(new_bus(WHEEL_I2C_PORT2, WHEEL_I2C2_SDA, WHEEL_I2C2_SCL, &s_wheel_bus));

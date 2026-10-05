@@ -35,8 +35,8 @@ static const co5300_lcd_init_cmd_t s_init_cmds[] = {
     {0x53, (uint8_t[]){0x20}, 1, 0},
     {0x51, (uint8_t[]){0xFF}, 1, 0},
     {0x63, (uint8_t[]){0xFF}, 1, 0},
-    {0x2A, (uint8_t[]){0x00, 0x00, 0x01, 0x6F}, 4, 0},
-    {0x2B, (uint8_t[]){0x00, 0x00, 0x01, 0xBF}, 4, 0},
+    {0x2A, (uint8_t[]){0x00, 0x00, (BOARD_LCD_H_RES - 1) >> 8, (BOARD_LCD_H_RES - 1) & 0xFF}, 4, 0},
+    {0x2B, (uint8_t[]){0x00, 0x00, (BOARD_LCD_V_RES - 1) >> 8, (BOARD_LCD_V_RES - 1) & 0xFF}, 4, 0},
     {0x11, NULL, 0, 100},
     {0x29, NULL, 0, 0},
 };

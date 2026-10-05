@@ -80,6 +80,18 @@ void cw_update(cw_t *w, const uint16_t *signal, cw_output_t *out);
  */
 void cw_update_position(cw_t *w, bool touched, uint8_t position, cw_output_t *out);
 
+/**
+ * Klickrad-v2-Konvention (TEILE.md "Klickrad v2", Tangara-Footprint, nicht gemessen):
+ * Wheel-Position 0 liegt oben, die Position steigt gegen den Uhrzeigersinn (64 = links, 128 = unten,
+ * 192 = rechts); der Stecker sitzt bei 270 Grad (unten) = Position 128, wenn das Modul mit dem
+ * Stecker nach unten eingebaut ist. Bildschirm-Winkel von Position 0 daher -90 Grad, clockwise = false.
+ * mount_offset_deg: Drehung des Moduls gegenueber "Stecker unten" (positiv = im Uhrzeigersinn gedreht);
+ * mirrored: Rad liegt spiegelverkehrt (Position steigt im Uhrzeigersinn).
+ * Wirkung auf die UI: Finger im Uhrzeigersinn -> Winkel steigt -> positive Schritte -> nach unten scrollen.
+ */
+#define CW_V2_POS0_DEG (-90.f)
+void cw_config_wheel_v2(cw_config_t *cfg, float mount_offset_deg, bool mirrored);
+
 /** Wheel-Position 0..255 in einen Winkel (Bildschirm-Konvention, -180..180] umrechnen. */
 float cw_position_to_angle(const cw_config_t *cfg, uint8_t position);
 
