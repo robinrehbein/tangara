@@ -208,8 +208,8 @@ Keine Hardware vorhanden: nichts davon wurde an einem Klickrad, einer Hauptplati
 ### 8.3 Board-Profil „Endgerät“ (Kconfig `Board-Profil`)
 
 - Auswahl: `idf.py menuconfig` → Nano-Player → Board-Profil → „Endgeraet“. Datei `firmware/main/board_config_endgeraet.h`; `board_config.h` schaltet per `CONFIG_NANO_BOARD_ENDGERAET` um. Beim Endgerät sind SH8601, eigener Wheel-Bus, BTN-Pin und Latenz-Messpunkte in Kconfig ausgeblendet.
-- **Nicht für den S31 gebaut:** IDF 5.4.2 kennt das Ziel nicht (S31 ab IDF 6.x, „preview“). Als Syntaxprüfung wurde das Profil höchstens mit dem Ziel esp32s3 und eigener Build-Umgebung übersetzt (Ergebnis siehe Abschnitt 8.4); das sagt nichts über Pinzulässigkeit oder Verhalten auf dem S31 aus (IO42, IO48..IO51 existieren beim S3 anders belegt).
-- Gewählt wurde bewusst nur, was die README eindeutig festlegt. 
+- **Nicht für den S31 gebaut:** IDF 5.4.2 kennt das Ziel nicht (S31 ab IDF 6.x, „preview“). Als Syntaxprüfung wurde das Profil höchstens mit dem Ziel esp32s3 und eigener Build-Umgebung übersetzt (Ergebnis: Übersetzung bricht erwartungsgemäß bei `GPIO_NUM_49` ab, weil der ESP32-S3 keine GPIO49..51 hat; weitere Fehler wurden nicht untersucht, der Lauf war nur ein Versuch); das sagt nichts über Pinzulässigkeit oder Verhalten auf dem S31 aus (IO42, IO48..IO51 existieren beim S3 anders belegt).
+- Gewählt wurde bewusst nur, was die README eindeutig festlegt; Unklares steht in 8.4.
 
 ### 8.4 Offen / TODO für das Profil
 
