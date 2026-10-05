@@ -102,7 +102,7 @@ S31 = {   # Pad -> Modulname (Datenblatt ESP32-S31-WROOM-1 v0.5, Tabelle 3-1)
 # Signale, die ein freies S31-GPIO bekommen (Zuordnung: tools/gpio_assign.py -> tools/gpio_map.json)
 GPIO_SIGNALS = ['LCD_CS', 'LCD_SCK', 'LCD_D0', 'LCD_D1', 'LCD_D2', 'LCD_D3', 'LCD_RST', 'LCD_TE', 'SDA', 'SCL', 'TP_INT', 'WHEEL_INT',
                 'I2S_BCLK', 'I2S_LRCK', 'I2S_DOUT', 'DAC_RESET', 'DAC_INT', 'SD_CD', 'SD_VDD_EN',
-                'SYS_PWR_EN', 'KEY_LOCK_MCU', 'CHG_STAT1', 'CHG_STAT2', 'CHG_PG', 'CHG_SEL', 'CHG_PROG2', 'TUSB_ID', 'TUSB_INT', 'HOST_EN', 'FG_ALRT']
+                'SYS_PWR_EN', 'KEY_LOCK_MCU', 'CHG_STAT1', 'CHG_STAT2', 'CHG_PG', 'TUSB_ID', 'TUSB_INT', 'HOST_EN', 'FG_ALRT']
 GPIO_MAP = {}   # Signal -> Modulname (IOx)
 _gm = os.path.join(HERE, 'gpio_map.json')
 if os.path.exists(_gm): GPIO_MAP = json.load(open(_gm))
@@ -168,15 +168,25 @@ add('Q20', '2N7002T', 'Q', 'Package_TO_SOT_SMD:SOT-523', {'1': 'DAC_RESET', '2':
     desc='DAC-RESET: S31 setzt DAC_RESET = 0 -> Transistor aus -> RESET hoch (Betrieb); Pull-up am Gate haelt den DAC im Reset, solange der S31 den Pin nicht treibt')
 res('R244', '100k', '3V3', 'DAC_RESET', 'Gate-Pull-up: DAC im Reset bis der S31 ihn loslaesst', src='neu')
 res('R245', '100k', 'SYS_POWER', 'DAC_RESET_N', 'RESET-Pull-up an VP', src='neu')
+# Rev. 3b (Review H1): Reset-Sicherung ohne 3V3. Q22 (Gate an 3V3) haelt den Gate-Knoten RST_G von Q21 nach GND, solange 3V3 vorhanden ist; fehlt 3V3
+# (Geraet aus, 3V3 faellt), zieht R250 RST_G nach VP, Q21 leitet und haelt DAC_RESET_N (CS43131 RESET) low. Vorher ging RESET ohne 3V3 auf high (Q20 sperrt).
+add('Q21', '2N7002T', 'Q', 'Package_TO_SOT_SMD:SOT-523', {'1': 'RST_G', '2': 'GND', '3': 'DAC_RESET_N'}, 'neu', names={'1': 'G', '2': 'S', '3': 'D'},
+    mpn='2N7002T-7-F', mfr='Diodes Inc.', pkg='SOT-523', qtype='N',
+    desc='Haelt DAC_RESET_N (CS43131 RESET) low, wenn 3V3 fehlt (parallel zu Q20); leitet nur, wenn Q22 gesperrt ist')
+add('Q22', '2N7002T', 'Q', 'Package_TO_SOT_SMD:SOT-523', {'1': '3V3', '2': 'GND', '3': 'RST_G'}, 'neu', names={'1': 'G', '2': 'S', '3': 'D'},
+    mpn='2N7002T-7-F', mfr='Diodes Inc.', pkg='SOT-523', qtype='N',
+    desc='3V3-Waechter: Gate an 3V3, zieht RST_G nach GND solange 3V3 vorhanden ist (Vgs(th) 2N7002T max. ca. 2,5 V: bei 3V3 unter ca. 1-2,5 V gilt "3V3 fehlt")')
+res('R250', '100k', 'SYS_POWER', 'RST_G', 'Gate-Pull-up von Q21 an VP: Q21 leitet (RESET low), wenn Q22 sperrt (3V3 fehlt)', src='neu')
 res('R246', '10k', '3V3', 'DAC_INT', 'INT Pull-up (open drain, VP-Domaene, 3V3 erlaubt)', src='neu')
 # I2C: DAC arbeitet mit VL = 1,8 V, der Bus der Platine mit 3,3 V -> PCA9306 als Pegelwandler
-add('U30', 'PCA9306DCUR', 'IC', 'Package_SO:VSSOP-8_2.3x2mm_P0.5mm', {'1': 'GND', '2': 'V1P8', '3': 'DAC_SCL', '4': 'DAC_SDA', '5': 'SDA', '6': 'SCL', '7': '3V3', '8': 'PCA_EN'}, 'neu',
+add('U30', 'PCA9306DCUR', 'IC', 'Package_SO:VSSOP-8_2.3x2mm_P0.5mm', {'1': 'GND', '2': 'V1P8', '3': 'DAC_SCL', '4': 'DAC_SDA', '5': 'SDA', '6': 'SCL', '7': 'PCA_EN', '8': 'PCA_EN'}, 'neu',
     names={'1': 'GND', '2': 'VREF1', '3': 'SCL1', '4': 'SDA1', '5': 'SDA2', '6': 'SCL2', '7': 'VREF2', '8': 'EN'}, mpn='PCA9306DCUR', mfr='Texas Instruments', pkg='VSSOP-8 2,3 x 2,0',
-    desc='I2C-Pegelwandler 1,8 V (DAC) <-> 3,3 V (Bus); EN ueber 200 k an VREF2 (Datenblatt)')
-res('R247', '200k', '3V3', 'PCA_EN', 'EN-Pull-up PCA9306 (200 k laut Datenblatt)', src='neu')
+    desc='I2C-Pegelwandler 1,8 V (DAC) <-> 3,3 V (Bus); VREF2 (Pin 7) und EN (Pin 8) zusammen ueber EINEN 200 k an 3V3 (Datenblatt PCA9306 8.1.2 / 9.2.2.1; Rev. 3b, Review B1)')
+res('R247', '200k', '3V3', 'PCA_EN', 'VREF2/EN-Pull-up PCA9306 (200 k laut Datenblatt, gemeinsamer Knoten PCA_EN)', src='neu')
+get('R247').update(mpn='0402WGF2003TCE', mfr='UNI-ROYAL')
 res('R248', '4.7k', 'V1P8', 'DAC_SDA', 'I2C-Pull-up 1,8-V-Seite', src='neu')
 res('R249', '4.7k', 'V1P8', 'DAC_SCL', 'I2C-Pull-up 1,8-V-Seite', src='neu')
-cap('C257', '100nF', '3V3', 'GND', 'PCA9306 VREF2', src='neu')
+cap('C257', '100pF', 'PCA_EN', 'GND', 'PCA9306 VREF2/EN nach GND (100 pF, Review B1)', src='neu', mpn='GRM1555C1H101JA01D')
 # I2S: die DAC-Pins arbeiten mit VL = 1,8 V -> SN74AXC1T45 je Signal (A = 1,8 V, B = 3,3 V)
 for ref, a, b, dirn, d in (('U31', 'I2S_BCLK_1V8', 'I2S_BCLK', 'V1P8', 'BCLK: DAC (Master) -> S31'), ('U32', 'I2S_LRCK_1V8', 'I2S_LRCK', 'V1P8', 'LRCK: DAC -> S31'),
                            ('U33', 'I2S_DIN_1V8', 'I2S_DOUT', 'GND', 'Daten: S31 -> DAC')):
@@ -205,8 +215,10 @@ tg('U3', netmap={'Net-(C17-Pad2)': 'HPOUTA', 'Net-(C19-Pad2)': 'HPOUTB'}, desc='
 # ======================================================================================================== Power (Tangara)
 tg('J6', names={'A1_B12': 'GND', 'B1_A12': 'GND', 'A4_B9': 'VBUS', 'B4_A9': 'VBUS', 'A5': 'CC1', 'B5': 'CC2', 'A6': 'DP', 'B6': 'DP', 'A7': 'DN', 'B7': 'DN', 'A8': 'SBU1', 'B8': 'SBU2'})
 tg('U10')
-for ref in ['C24', 'C25', 'C27', 'R34', 'R35', 'R37', 'R38', 'R39', 'R41', 'R1', 'TP7', 'Q1', 'C37', 'R7', 'D4']:
+for ref in ['C24', 'C25', 'C27', 'R34', 'R35', 'R37', 'R38', 'R41', 'TP7', 'Q1', 'C37', 'R7', 'D4']:
     tg(ref)
+tg('R39', value='2.7k', mpn='AC0603FR-072K7L', src='angepasst', desc='PROG1 2,7 k = ca. 370 mA Ladestrom (1000 V / R) fuer eine Zelle von ca. 450-550 mAh = ca. 0,7-0,8 C; Tangara 1 k = 1 A (Review B3)')
+tg('R1', value='10k', src='angepasst', dnp=True, desc='NUR bestuecken, wenn die Zelle KEINEN eigenen 10-k-NTC hat (Zelle ohne NTC-Ader): parallel zum NTC einer 3-adrigen Zelle wuerde R1 die Heiss-Schwelle ausloesen (Review H7)')
 tg('C29', src='Tangara')
 tg('U5')
 # Akku: 3 Loetpads fuer die Litzen des Pouch-Akkus (Stecker waere zu hoch fuer 3,3 mm Rueckzone neben dem Akku)
@@ -222,9 +234,9 @@ tg('R4', value='10k', mpn='AC0603JR-0710KL', src='angepasst', desc='Taster-Vorwi
 add('R200', '100k', 'R', R603, {'1': 'KEY_LOCK', '2': 'GND'}, 'neu', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603', desc='KEY_LOCK Pull-down (Taster offen = low)')
 add('R201', '10k', 'R', R603, {'1': 'KEY_LOCK', '2': 'KEY_LOCK_MCU'}, 'neu', mpn='AC0603JR-0710KL', mfr='Yageo', pkg='0603', desc='Serienwiderstand zum S31-GPIO (SYS_POWER bis 5 V, GPIO 3,3 V)')
 add('R202', '100k', 'R', R603, {'1': 'SYS_PWR_EN', '2': 'GND'}, 'neu', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603', desc='SYS_PWR_EN Pull-down (Latch faellt, wenn S31 aus)')
-add('R36', '100k', 'R', R603, {'1': '3V3', '2': 'CHG_PROG2'}, 'angepasst', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603',
-    desc='PROG2 hoch = USB-Eingangslimit 500 mA (Tangara: Pin vom SAMD21 gesteuert); hier Pull-up an 3V3, S31 kann ueberschreiben')
-add('R43', '10k', 'R', R603, {'1': '3V3', '2': 'CHG_SEL'}, 'angepasst', mpn='AC0603JR-0710KL', mfr='Yageo', pkg='0603', desc='SEL hoch = USB-Eingang (Tangara Rev. 4)')
+add('R36', '100k', 'R', R603, {'1': 'VBUS_SW', '2': 'CHG_PROG2'}, 'angepasst', mpn='AC0603FR-07100KL', mfr='Yageo', pkg='0603',
+    desc='PROG2 fest hoch = USB-Eingangslimit 500 mA (SEL = GND, USB-Modus); Pull-up an VBUS_SW (auch bei ausgeschaltetem Geraet vorhanden), ohne GPIO (Review B3)')
+add('R43', '10k', 'R', R603, {'1': 'GND', '2': 'CHG_SEL'}, 'angepasst', mpn='AC0603JR-0710KL', mfr='Yageo', pkg='0603', desc='SEL fest nach GND = USB-Modus (SEL hoch waere AC-Adapter-Modus mit 1,5 A Eingangsgrenze; Review B3), ohne GPIO')
 
 # ======================================================================================================== Peripherie (Tangara)
 add('J4', 'microSD', 'CONN', 'Connector_Card:microSD_HC_Molex_104031-0811',
@@ -233,7 +245,8 @@ add('J4', 'microSD', 'CONN', 'Connector_Card:microSD_HC_Molex_104031-0811',
     mpn='104031-0811', mfr='Molex', dk='WM6357DKR-ND', pkg='microSD Push-Push',
     desc='microSD statt Vollformat-SD (Tangara: Hirose DM1AA-SF-PEJ(82)); SDMMC 4 Bit direkt am S31 (IO35...IO40) statt SPI + Multiplexer')
 tg('U16', names={'1': 'IN', '2': 'GND', '3': 'ON', '4': 'NC', '5': 'FLT', '6': 'OUT'})
-for ref in ['R9', 'R11', 'R12', 'R57', 'R61', 'C42']: tg(ref)
+for ref in ['R9', 'R11', 'R12', 'R61', 'C42']: tg(ref)
+tg('R57', src='angepasst', dnp=True, desc='NICHT bestuecken: IO36 ist Strapping-Pin (VDD_SPI), SD_VDD ist beim Reset aus -> undefinierter Pegel; das Modul hat bereits 10 k nach 3V3 an IO36 (Review B2)')
 for ref in ['C30', 'C32', 'C34', 'C35', 'C23']: tg(ref)
 
 # ======================================================================================================== Espressif-Beschaltung
@@ -250,6 +263,11 @@ for ref, net, nm in [('TP10', 'UART_TX0', 'TX0'), ('TP11', 'UART_RX0', 'RX0'), (
                      ('TP14', 'ESP_EN', 'EN (gegen TP16 kurzschliessen = Reset)'), ('TP15', 'BOOT', 'BOOT (gegen TP17 kurzschliessen = Download-Modus)'),
                      ('TP16', 'GND', 'GND neben EN'), ('TP17', 'GND', 'GND neben BOOT')]:
     add(ref, nm, 'TP', 'TestPoint:TestPoint_Pad_D1.0mm', {'1': net}, 'Espressif', nobom=True, desc='Testpunkt Programmierung/Debug')
+# Rev. 3b (Review H8): BOOT- und EN-Taster auf der Rueckseite (wie SW1 von der Rueckseite zu druecken; Loecher in der Rueckwand noetig, siehe README)
+add('SW2', 'B3U-3000P', 'SW', 'Button_Switch_SMD:SW_SPST_B3U-3000P', {'1': 'BOOT', '2': 'GND'}, 'neu', mpn='B3U-3000P', mfr='Omron', lcsc='C963349',
+    pkg='3,0 x 2,5 x 1,2', desc='BOOT-Taster (IO61 nach GND): gedrueckt halten und EN antippen (SW3) = Download-Modus; Rueckseite, linker Randstreifen')
+add('SW3', 'B3U-3000P', 'SW', 'Button_Switch_SMD:SW_SPST_B3U-3000P', {'1': 'ESP_EN', '2': 'GND'}, 'neu', mpn='B3U-3000P', mfr='Omron', lcsc='C963349',
+    pkg='3,0 x 2,5 x 1,2', desc='EN-Taster (Reset des S31): Rueckseite, linker Randstreifen')
 res('R120', '2.2k', '3V3', 'SDA', 'I2C Pull-up (Klickrad-Modul bestueckt keine)')
 res('R121', '2.2k', '3V3', 'SCL', 'I2C Pull-up')
 
@@ -307,9 +325,9 @@ FPC_PINS = {'1': 'GND', '2': 'GND', '3': 'SCL', '4': 'LCD_SCK', '5': 'SDA', '6':
 FPC_NAMES = {'1': 'GND', '2': 'GND', '3': 'TP_SCL', '4': 'QSPI_SCL', '5': 'TP_SDA', '6': 'LCD_CS', '7': 'TP_INT', '8': 'QSPI_SIO3', '9': 'TP_RESET', '10': 'QSPI_SIO2',
              '11': 'TP_VDD', '12': 'QSPI_SIO1', '13': 'NC', '14': 'QSPI_SIO0', '15': 'IM1', '16': 'GND', '17': 'IM0', '18': 'MIPI_CLKP', '19': 'LCD_RESET', '20': 'MIPI_CLKN',
              '21': 'DSI_PWR_EN', '22': 'NC', '23': 'VCI', '24': 'MIPI_D0P', '25': 'VDDIO', '26': 'MIPI_D0N', '27': 'LCD_TE', '28': 'NC', '29': '3V3', '30': '3V3', 'MP': 'SHIELD'}
-add('J20', 'FH12-30S-0.5SH(55)', 'CONN', 'Connector_FFC-FPC:Hirose_FH12-30S-0.5SH_1x30-1MP_P0.50mm_Horizontal', FPC_PINS, 'neu', names=FPC_NAMES,
-    mpn='FH12-30S-0.5SH(55)', mfr='Hirose', pkg='FPC 30 Pin 0,5 mm, 1,0 mm hoch',
-    desc='Display-FPC-Stecker, 30 Pin 0,5 mm (Waveshare 2,06"-Board J3); Typ (Kontaktseite oben/unten, FPC-Dicke) gegen das gekaufte Panel pruefen')
+add('J20', '503480-3000', 'CONN', 'Hauptplatine:Molex_503480-3000', FPC_PINS, 'neu', names=FPC_NAMES,
+    mpn='5034803000', mfr='Molex', dk='5034803000 (Digi-Key-Artikelseite 15710893)', pkg='FFC 30 Pin 0,5 mm, Dual Contact, 1,0 mm hoch',
+    desc='Display-FPC-Stecker, 30 Pin 0,5 mm, Molex Easy-On BackFlip, Dual Contact (Kontakte oben UND unten), 1,0 mm hoch (Digi-Key: Height Above Board 1,00 mm; Waveshare 2,06"-Board J3). Rev. 3b: ersetzt Hirose FH12-30S-0.5SH(55), das laut Digi-Key 2,00 mm hoch ist (Review H4); Footprint aus der 503480-0600-Familie, Nagelpads UNGEPRUEFT')
 res('R130', '10k', '3V3', 'LCD_IM1', 'Display IM1 = 1 (Waveshare R27)')
 res('R131', '10k', 'LCD_IM0', 'GND', 'Display IM0 = 0 (Waveshare R28)')
 res('R132', '10k', '3V3', 'TP_RST', 'Touch-Reset hoch (immer aus dem Reset; Waveshare: GPIO9)')

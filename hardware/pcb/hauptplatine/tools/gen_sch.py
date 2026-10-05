@@ -166,9 +166,9 @@ def props_of(p):
 GROUP = {}
 def grp(name, refs):
     for r in refs: GROUP[r] = name
-grp('mcu', ['U15', 'R100', 'C100', 'C101', 'C102', 'R101', 'C103', 'R102', 'R103', 'TP10', 'TP11', 'TP12', 'TP13', 'TP14', 'TP15', 'TP16', 'TP17', 'C30', 'C32', 'C34', 'C35', 'R120', 'R121'])
+grp('mcu', ['U15', 'R100', 'C100', 'C101', 'C102', 'R101', 'C103', 'R102', 'R103', 'TP10', 'TP11', 'TP12', 'TP13', 'TP14', 'TP15', 'TP16', 'TP17', 'SW2', 'SW3', 'C30', 'C32', 'C34', 'C35', 'R120', 'R121'])
 grp('display', ['J20', 'R130', 'R131', 'R132', 'R134', 'R135', 'C130', 'C131', 'C132', 'C133'])
-grp('audio', ['U17', 'U3', 'J1', 'FB1', 'X1', 'X2', 'R240', 'R241', 'R242', 'R243', 'Q20', 'R244', 'R245', 'R246', 'U30', 'R247', 'R248', 'R249', 'C257', 'U31', 'U32', 'U33', 'C258', 'C259',
+grp('audio', ['U17', 'U3', 'J1', 'FB1', 'X1', 'X2', 'R240', 'R241', 'R242', 'R243', 'Q20', 'Q21', 'Q22', 'R250', 'R244', 'R245', 'R246', 'U30', 'R247', 'R248', 'R249', 'C257', 'U31', 'U32', 'U33', 'C258', 'C259',
               'U34', 'C260', 'C261', 'C262', 'NT1', 'NT2'] + ['C%d' % n for n in range(240, 257)])
 grp('power', ['BT1', 'U10', 'U4', 'C24', 'C25', 'C27', 'C29', 'R34', 'R35', 'R36', 'R37', 'R38', 'R39', 'R41', 'R43', 'R1', 'TP7', 'SW1', 'R4', 'R200', 'R201', 'R202', 'D4', 'R7', 'U22', 'C104', 'R122'])
 grp('usb', ['J6', 'U5', 'U12', 'Q1', 'Q10', 'Q11', 'D10', 'C37', 'R110', 'R111', 'R112', 'R113', 'R114', 'R115', 'C110', 'U20', 'L20', 'U21', 'R116', 'R117', 'R118', 'R119', 'C111', 'C112', 'C113', 'C114'])
@@ -186,7 +186,7 @@ w('\t(generator "eeschema")')
 w('\t(generator_version "9.0")')
 w(f'\t(uuid "{ROOT_UUID}")')
 w('\t(paper "A1")')
-w('\t(title_block (title "Hauptplatine Nano-Player (Endgeraet), Rev. 2") (date "2026-10-04") (rev "2") (company "Nano-Player (Hobbyprojekt)")')
+w('\t(title_block (title "Hauptplatine Nano-Player (Endgeraet), Rev. 3b") (date "2026-10-05") (rev "3b") (company "Nano-Player (Hobbyprojekt)")')
 w('\t\t(comment 1 "Audio-, Power- und Peripherieteile abgeleitet von Tangara (cool tech zone / jacqueline, CERN-OHL-S-2.0, codeberg.org/cool-tech-zone/tangara-hw)")')
 w('\t\t(comment 2 "ESP32-S31-WROOM-1-Beschaltung nach Espressif-Datenblatt v0.5; Audio CS43131 nach Cirrus DS1155F2; USB-C-Rollenumschaltung und Host-VBUS: eigene Entwicklung, ungeprueft")')
 w('\t\t(comment 3 "Lizenz dieses Designs: CERN-OHL-S-2.0 (abgeleitetes Werk). Nicht an Hardware getestet - vor Bestellung menschlicher Review noetig"))')

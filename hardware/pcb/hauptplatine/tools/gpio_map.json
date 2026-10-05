@@ -23,8 +23,6 @@
  "CHG_STAT1": "IO13",
  "CHG_STAT2": "IO16",
  "CHG_PG": "IO17",
- "CHG_SEL": "IO15",
- "CHG_PROG2": "IO14",
  "TUSB_ID": "IO3",
  "TUSB_INT": "IO18",
  "HOST_EN": "IO2",

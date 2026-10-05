@@ -28,7 +28,7 @@ FIXED = {
     'U17': (-12.0, -27.5, 0, 'B'),     # DAC mittig im Analogbereich, rundum Platz fuer Entkopplung
     'J1': (-7.825, -45.75, 0, 'B'),    # Klinke, Mundloch an der Unterkante, Achse bei x = -12
     'J6': (9.0, -46.9, 0, 'B'),        # USB-C an der Unterkante, Achse bei x = +9
-    'J20': (0.0, -0.5, 0, 'T'),        # Display-FPC (Mundloch nach unten, FPC kommt von der Displayunterkante zurueckgefaltet)
+    'J20': (0.0, -0.65, 0, 'T'),       # Display-FPC, Molex 503480-3000 (Rev. 3b; vorher Hirose FH12 bei y = -0,5): Signalpads bleiben bei y = +1,35
     'J21': (0.0, -46.2, 0, 'T'),       # Klickrad-FFC, Vorderseite, Muendung (Pads) oben, genau unter dem Klickrad-Stecker (x = 0)
 }
 OVERHANG = {'U15'}

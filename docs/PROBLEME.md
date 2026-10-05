@@ -7,7 +7,7 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 | Nr | Problem | Status | Prüfung am Ende |
 |---|---|---|---|
 | A1 | Hauptplatine war nicht geroutet | erledigt: 41 × 97 mm, 4 Lagen, DRC/ERC 0, 0 offene Verbindungen; nicht bestellbereit bis A2 | Alte Datei `NICHT_BESTELLEN_ungeroutet_gerber.zip` entfernt? |
-| A2 | Kein Opus-Design-Review der Hauptplatine (Schaltplan gegen Datenblatt-Pins, Einschaltreihenfolge, ungetestete S31-Teile) | offen | Review-Bericht in `docs/`, Befunde abgearbeitet |
+| A2 | Opus-Design-Review der Hauptplatine: erfolgt (`docs/REVIEW-HAUPTPLATINE.md`, 4 Blocker, 10 Hoch); in **Rev. 3b** B1–B3 und die meisten Hoch-Funde behoben (Abschnitt 7 dort); **offen: B4 (Modul nicht lieferbar), H2, H10, Rest H3/H5/H6, Opus-Zweitreview der Änderungen** | offen | Zweitreview-Bericht in `docs/`, B4 geklärt |
 | A3 | Klickrad-Platine v2 (AT42QT2120, 0,8 mm, Molex-FFC) | erledigt (ERC/DRC 0 Fehler, Gerber/BOM vorhanden); Restpunkte siehe A7–A10 | v1 nur noch in der Git-Historie |
 | A4 | Nichts davon wurde je auf Hardware getestet (Firmware, Platinen, Haptik) | offen | Messprotokoll nach Phase 1 |
 | A5 | Unbelegte Teile: LCSC-Nummern, Jack-Höhe/STEP-Ursprung, WROOM-1-Pinbelegung, Auflösung des 2,06"-Displays (Listing widersprüchlich) | offen | Je Teil Datenblatt oder Händlerseite verlinkt |
@@ -18,9 +18,9 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 | A10 | Klickrad: SCL von Hand gezogen, Pin 6 offen, Exposed Pad von U1 auf GND (Tangara lässt es offen), C5 und 10-µF am DRV2605L entfallen | offen | Review gegen Datenblatt (Teil von A2) |
 | A11 | Klickrad-Stecker: FFC-Pin 1 auf Pin 1 ungeprüft (Kurzschlussgefahr), vor Einschalten durchklingeln | offen | Durchgangsprüfung am Kabel |
 | A12 | `TEILE.md` hatte Klickrad-Widersprüche (4 Lagen/MPR121-Angaben); jetzt Abschnitt „Klickrad v2 (Stand)“, Rest oben noch v1-Text; CAD und Firmware-Wheel-Konvention müssen angepasst werden | offen | Angaben bereinigt, CAD/Firmware angepasst |
-| A13 | Hauptplatine: Molex-Footprint ungeprüft (Nagelpads geschätzt 0,8 × 1,0 gegen 1,0 × 0,3 im Zeichnungstext) | offen | Gegen Molex-Zeichnung geprüft (gleich wie A7) |
-| A14 | Hauptplatine 1,0 mm: Passen SJ-43504 und USB4510 bei 1,0 statt 0,8 mm? | offen | Datenblatt geprüft |
-| A15 | USB-HS nicht als 90-Ω-Paar geführt (DP 89,1 mm/6 Vias, DN 90,0 mm/4 Vias); Risiko bei 480 Mbit/s | offen | Impedanz bei PCBWay anfragen oder Paar neu routen; USB-Test |
+| A13 | Hauptplatine: Molex-Footprint ungeprüft (Nagelpads geschätzt 0,8 × 1,0 gegen 1,0 × 0,3 im Zeichnungstext); Rev. 3b: J20 jetzt Molex 503480-30 mit demselben Landmuster-Ansatz; J21 und Klickrad-J1 bleiben uneins, **J1 muss an J21 angeglichen werden** (Hauptplatine-README, Abschnitt Klickrad-Anschluss) | offen | Gegen Molex-Zeichnung geprüft (gleich wie A7), beide Platinen gemeinsam |
+| A14 | Hauptplatine 1,0 mm: Passen SJ-43504 und USB4510 bei 1,0 statt 0,8 mm? USB4510: Datenblatt nennt 0,80 mm (Review H10); Rev. 3b ändert die Dicke nicht | offen | GCT-Anfrage oder 0,8-mm-Platine entscheiden (`KONZEPT.md`) |
+| A15 | USB-HS: in Rev. 3b ca. 72 mm gekoppelt auf F.Cu über In1 (0,20/0,15 mm, Längenunterschied 0,5 mm, Gesamtlänge DP 91,0 mm / DN 90,5 mm, 3/2 Vias), Lagenaufbau in der Platinendatei hinterlegt; **Impedanz unbestätigt** | teilweise erledigt | Aufbau/Breite bei PCBWay bestätigen lassen; USB-Test am Aufbau |
 | A16 | Akku nur ca. 450–550 mAh (32 × 38,5 mm), Ziel 600 mAh; bei 10 mm Gerätedicke Zelle höchstens ca. 3,7 mm | offen | Zelle gewählt, Kapazität bestätigt |
 | A17 | Display-Zone: Vorderseitenteile ≤ 1,0 mm unter dem Display brauchen ≥ 1,1 mm Luft; CAD-Stand 0,25 mm | offen | CAD angepasst |
 | A18 | Hauptplatine: Schaltungsfunktion, CPL-Drehungen und LCSC-Nummern nicht verifiziert; Routing nicht per Knopfdruck reproduzierbar (Skripte, Mini-Router, Zwischenstände in `tools/routing/`) | offen | Opus-Review (A2), Vorschau bei Fertiger |
@@ -98,4 +98,4 @@ Hoch: DAC-RESET geht ohne 3V3 auf high (Sequenz verletzt); I²S/DAC in Domäne V
 Dazu 12 Mittel, 9 Niedrig, Abschnitt Klickrad v2. Ohne Befund: WROOM-1-Pins, Boot, CS43131-Pins, Quarz, TUSB320LAI, TPS2553/TPS61023/TLV757P, MAX17048, I²C-Adressen, SJ-43504.
 Nicht prüfbar: Molex-Zeichnung, VDDPST_SD-Default, PCBWay-Lagenaufbau, CPL-Unterseite, Display-FPC, CS43131-Reset-Schwellen.
 
-Status: A1/A2 so lange offen, bis die Blocker E1–E4 behoben sind. A13–A15 gegen das Review abzugleichen.
+Stand **Rev. 3b (2026-10-05)** (Details je Fund: `docs/REVIEW-HAUPTPLATINE.md`, Abschnitt 7): **behoben** B1 (PCA9306 VREF2 = EN), B2 (R57 nicht bestückt), B3 (SEL = GND, PROG2 fest, R39 2,7 k), H1 (Reset-Sicherung Q21/Q22/R250), H4 (J20 = Molex 5034803000, 1,0 mm), H7 (R1 DNP), H8 (BOOT/EN-Taster SW2/SW3); **teilweise** H3 (Leistungsnetze verbreitert, BOOST_SW-Engpass und 47-µF-Bulk offen), H5 (USB-Paar gekoppelt, Impedanz offen), H6 (Klickrad-J1 muss geändert werden, nicht geändert); **offen** B4 (Modul nicht lieferbar), H2 (VDDPST_SD-Default), H9 (CS43131-Verfügbarkeit), H10 (USB4510 0,8 mm). ERC 0, DRC 0, 0 unverbundene Verbindungen; nicht auf Hardware getestet. **Bestellbereit: nein** (B4, Opus-Zweitreview der Änderungen).

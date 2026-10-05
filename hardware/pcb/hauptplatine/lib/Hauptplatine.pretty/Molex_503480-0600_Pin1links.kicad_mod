@@ -1,4 +1,4 @@
-(footprint "Molex_503480-0600"
+(footprint "Molex_503480-0600_Pin1links"
 	(version 20241229)
 	(generator "tangara_make_lib")
 	(generator_version "9.0")
@@ -15,7 +15,7 @@
 			)
 		)
 	)
-	(property "Value" "Molex_503480-0600"
+	(property "Value" "Molex_503480-0600_Pin1links"
 		(at 0 -3.4 0)
 		(layer "F.Fab")
 		(effects
@@ -27,32 +27,32 @@
 	)
 	(attr smd)
 	(pad "1" smd rect
-		(at 1.25 -2.0)
+		(at -1.25 -2.0)
 		(size 0.3 0.7)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 	)
 	(pad "2" smd rect
-		(at 0.75 -2.0)
-		(size 0.3 0.7)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-	)
-	(pad "3" smd rect
-		(at 0.25 -2.0)
-		(size 0.3 0.7)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-	)
-	(pad "4" smd rect
-		(at -0.25 -2.0)
-		(size 0.3 0.7)
-		(layers "F.Cu" "F.Mask" "F.Paste")
-	)
-	(pad "5" smd rect
 		(at -0.75 -2.0)
 		(size 0.3 0.7)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 	)
+	(pad "3" smd rect
+		(at -0.25 -2.0)
+		(size 0.3 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+	)
+	(pad "4" smd rect
+		(at 0.25 -2.0)
+		(size 0.3 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+	)
+	(pad "5" smd rect
+		(at 0.75 -2.0)
+		(size 0.3 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+	)
 	(pad "6" smd rect
-		(at -1.25 -2.0)
+		(at 1.25 -2.0)
 		(size 0.3 0.7)
 		(layers "F.Cu" "F.Mask" "F.Paste")
 	)
@@ -148,7 +148,7 @@
 		(layer "F.SilkS")
 	)
 	(fp_text user "1"
-		(at 1.25 -3.1 0)
+		(at -1.25 -3.1 0)
 		(layer "F.SilkS")
 		(effects
 			(font

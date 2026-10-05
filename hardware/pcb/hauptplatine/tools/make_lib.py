@@ -103,17 +103,26 @@ def hole18():
     return s
 
 
-# ---------------------------------------------------------------- Molex 503480-0600 (FFC/FPC 0,5 mm, 6 pol., Dual Contact, 1,0 mm hoch)
-def molex6():
-    s = HEAD % ('Molex_503480-0600', 'Molex 503480-0600 Easy-On BackFlip FFC/FPC 6 pol. 0,5 mm, Dual Contact, 1,0 mm hoch, Koerper 4,0 mm tief. Signalpads (0,3 x 0,7) an der Kabelmuendung (+y_fp-Seite ist hinten!): Muendung zeigt nach -y_fp. Nagelpads an den hinteren Ecken. Aus Zeichnungstext SD-503480-001 und Produktfoto abgeleitet; Nagelpad-Form und -Lage UNGEPRUEFT (Zeichnungstext nennt Maskenoeffnung 1,0 x 0,3)', 'molex 503480 ffc fpc 0.5mm')
-    s += prop('Reference', 'REF**', 0, 3.2, 'F.SilkS', size=0.8) + prop('Value', 'Molex_503480-0600', 0, -3.4, 'F.Fab', size=0.8)
+# ---------------------------------------------------------------- Molex 503480-xx00 (FFC/FPC 0,5 mm, Dual Contact, 1,0 mm hoch)
+def molex(n, pin1_right, suffix=''):
+    """Landmuster aus dem Zeichnungstext SD-503480-001 (Maße je Polzahl: B = (n-1)*0,5; Koerperlaenge A = B + 2,2; Nagelpads bei +-(B/2 + 0,79)).
+    Signalpads 0,3 x 0,7, Muendung nach -y_fp. UNGEPRUEFT: Nagelpad-Form und -Lage in Y (Zeichnungsgrafik war nicht lesbar)."""
+    name = 'Molex_503480-%02d00' % n + suffix
+    B = (n - 1) * 0.5; hx = B / 2 + 0.795; ha = B / 2 + 1.1
+    s = HEAD % (name, 'Molex 503480-%s Easy-On BackFlip FFC/FPC %d pol. 0,5 mm, Dual Contact, 1,0 mm hoch, Koerper 4,0 mm tief. Signalpads (0,3 x 0,7) an der Kabelmuendung (+y_fp-Seite ist hinten!): Muendung zeigt nach -y_fp. Nagelpads an den hinteren Ecken (x +-%.3f). Aus Zeichnungstext SD-503480-001 und Produktfoto abgeleitet; Nagelpad-Form und -Lage UNGEPRUEFT (Zeichnungstext nennt Maskenoeffnung 1,0 x 0,3)' % ('%02d00' % n, n, hx), 'molex 503480 ffc fpc 0.5mm')
+    s += prop('Reference', 'REF**', 0, 3.2, 'F.SilkS', size=0.8) + prop('Value', name, 0, -3.4, 'F.Fab', size=0.8)
     s += '\t(attr smd)\n'
-    for i in range(6): s += pad(i + 1, round(1.25 - 0.5 * i, 3), -2.0, 0.3, 0.7, 'rect')     # Pin 1 rechts (x = +1,25) wie J1 des Klickrad-Moduls
-    for sx in (-1, 1): s += pad('MP', sx * 2.045, 1.2, 0.8, 1.0, 'rect')
-    s += rect(-2.35, -2.3, 2.35, 1.7, 'F.Fab', 0.1) + rect(-2.75, -2.7, 2.75, 2.0, 'F.CrtYd', 0.05)
-    s += line(-2.6, -2.7, -2.6, -1.6, 'F.SilkS', 0.12) + text('1', 1.25, -3.1, 'F.SilkS', 0.8)
+    for i in range(n):
+        x = (B / 2 - 0.5 * i) if pin1_right else (-B / 2 + 0.5 * i)
+        s += pad(i + 1, round(x, 3), -2.0, 0.3, 0.7, 'rect')
+    for sx in (-1, 1): s += pad('MP', round(sx * hx, 3), 1.2, 0.8, 1.0, 'rect')
+    s += rect(-ha, -2.3, ha, 1.7, 'F.Fab', 0.1) + rect(-ha - 0.4, -2.7, ha + 0.4, 2.0, 'F.CrtYd', 0.05)
+    s += line(-ha - 0.25, -2.7, -ha - 0.25, -1.6, 'F.SilkS', 0.12) + text('1', (B / 2 if pin1_right else -B / 2), -3.1, 'F.SilkS', 0.8)
     s += ')\n'
     return s
+def molex6(): return molex(6, True)
+def molex30(): return molex(30, False)
+def molex6_links(): return molex(6, False, '_Pin1links')   # fuer die Klickrad-Platine (Rueckseite, Pin 1 im Footprint links); siehe README, Abschnitt Klickrad-Anschluss
 
 # ---------------------------------------------------------------- Klinke SJ-43504-SMT-TR (Tangara-Bibliothek, angepasst)
 def jack():
@@ -127,7 +136,7 @@ def jack():
     t = re.sub(r'\(pad "([1-6])" smd rect \(at ([-0-9.]+) ([-0-9.]+)\) \(size 1\.75 2\)', fix, t)
     return t
 
-for name, fn in (('X2QFN-12-RWB', x2qfn), ('ESP32-S31-WROOM-1', wroom1), ('BATT_PADS_3', battpads), ('MountingHole_1.8mm', hole18), ('CUI_SJ-43504-SMT-TR', jack), ('Molex_503480-0600', molex6)):
+for name, fn in (('X2QFN-12-RWB', x2qfn), ('ESP32-S31-WROOM-1', wroom1), ('BATT_PADS_3', battpads), ('MountingHole_1.8mm', hole18), ('CUI_SJ-43504-SMT-TR', jack), ('Molex_503480-0600', molex6), ('Molex_503480-3000', molex30), ('Molex_503480-0600_Pin1links', molex6_links)):
     with open(os.path.join(OUT, name + '.kicad_mod'), 'w') as f:
         f.write(fn())
 for fn in ('GCT_USB4510-03-1-A_REVA', 'SOT65P210X110-6N'):

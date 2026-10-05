@@ -31,7 +31,7 @@ src_count = collections.Counter(p['src'] for p in netlist.parts() if not p.get('
 DESC = {'LCD_CS': 'Display QSPI CS', 'LCD_SCK': 'Display QSPI SCK', 'LCD_D0': 'Display QSPI D0', 'LCD_D1': 'Display QSPI D1', 'LCD_D2': 'Display QSPI D2', 'LCD_D3': 'Display QSPI D3',
         'LCD_RST': 'Display Reset', 'LCD_TE': 'Display Tearing-Effect', 'SDA': 'I2C SDA (Display-Touch, Klickrad, MAX17048, TUSB320, CS43131 ueber PCA9306)', 'SCL': 'I2C SCL',
         'TP_INT': 'Touch-Interrupt Display', 'WHEEL_INT': 'Klickrad CHANGE, Weckquelle (LP-GPIO)', 'I2S_BCLK': 'I2S Bitclock vom DAC (S31 = Slave) ueber Pegelwandler U31',
-        'I2S_LRCK': 'I2S Wordclock vom DAC ueber Pegelwandler U32', 'I2S_DOUT': 'I2S Daten S31 -> DAC ueber Pegelwandler U33', 'DAC_RESET': 'CS43131 RESET (1 = Betrieb, ueber Q20)',
+        'I2S_LRCK': 'I2S Wordclock vom DAC ueber Pegelwandler U32', 'I2S_DOUT': 'I2S Daten S31 -> DAC ueber Pegelwandler U33', 'DAC_RESET': 'CS43131 RESET (Gate von Q20 mit Pull-up an 3V3: Pin offen/high = Reset, low = RESET freigegeben; Q21/Q22 halten RESET ohne 3V3 low)',
         'DAC_INT': 'CS43131 INT (aktiv low, 10 k Pull-up)', 'SD_CD': 'microSD Karte erkannt', 'SD_VDD_EN': 'microSD Versorgung (TPS22948 ON)',
         'SYS_PWR_EN': 'Power-Latch: haelt die Versorgung (LP-GPIO)', 'KEY_LOCK_MCU': 'Ein/Aus-Taster lesen (LP-GPIO, Weckquelle)', 'CHG_STAT1': 'MCP73871 STAT1',
         'CHG_STAT2': 'MCP73871 STAT2', 'CHG_PG': 'MCP73871 PG', 'CHG_SEL': 'MCP73871 SEL (hoch = USB), Pull-up 10 k', 'CHG_PROG2': 'MCP73871 PROG2 (USB-Strom), Pull-up 100 k',
@@ -41,8 +41,8 @@ for s, io in sorted(gm.items(), key=lambda kv: int(kv[1][2:])):
     rows.append('| %s | %s | %s | %s |' % (s, io, pad_of[io], DESC.get(s, '')))
 fixed_rows = ['| SD_D0 ... SD_D3, SD_CLK, SD_CMD | IO35 ... IO40 | 12, 21 ... 25 | SDMMC-Slot 2 (feste Pads laut Datenblatt: SD2_CDATA0 ... SD2_CCMD) |',
               '| USB_HS_DP / USB_HS_DM | DP / DM | 55 / 54 | USB-2.0-HS-OTG, ueber R102/R103 zur USB-C-Buchse |',
-              '| BOOT | IO61 | 27 | Download-Modus: nach GND kurzschliessen (TP15 gegen TP17) |',
-              '| ESP_EN | EN | 3 | Reset: RC 10 k / 1 uF, TP14 gegen TP16 kurzschliessen |',
+              '| BOOT | IO61 | 27 | Download-Modus: Taster SW2 (Rückseite) gedrückt halten, dabei EN antippen (SW3); alternativ TP15 gegen TP17 kurzschliessen |',
+              '| ESP_EN | EN | 3 | Reset: RC 10 k / 1 uF, Taster SW3 (Rückseite); alternativ TP14 gegen TP16 kurzschliessen |',
               '| UART_TX0 / UART_RX0 | TX0 / RX0 | 37 / 36 | Testpunkte TP10 / TP11 |',
               '| USBJ_DP / USBJ_DM | IO34 / IO33 | 14 / 13 | USB-Serial/JTAG, Testpunkte TP12 / TP13 |']
 
