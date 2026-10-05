@@ -15,7 +15,7 @@ Details: `docs/EINKAUFSLISTE.md`.
 
 | Posten | Schätzung | Hinweis |
 |---|---|---|
-| ESP32-S31-DevKitC-1 (Bluetooth-Test vor der Platinenbestellung) | 20–40 € | empfohlen |
+| ESP32-S31-Function-CoreBoard-1 (mit WROOM-3; Bluetooth-Test vor der Platinenbestellung; Mouser ca. 17 €, Lager 0, Stand 2026-10-05; ein „DevKitC-1“ existiert nicht, siehe `docs/MODUL-ALTERNATIVEN.md`) | 17–20 € | empfohlen |
 | Hauptplatine, 5 Stück, 4 Lagen, 0,8 mm, ENIG (PCBWay) | 40–60 € | ohne Bestückung |
 | Bestückung (PCBA) Hauptplatine: Einrichtung | 30–50 € | einmalig |
 | Bauteile Hauptplatine je Gerät | ca. 35–40 € | davon CS43131 allein ca. 17 €, S31-Modul ca. 5–7 € |
