@@ -90,3 +90,12 @@ Alle bekannten Probleme und Lücken, damit am Ende geprüft werden kann, ob sie 
 |---|---|---|---|
 | F1 | Freerouting unzuverlässig (ignoriert Zeitlimits, kein Ergebnis bei SIGTERM) | bekannt | Alternativer Router oder manuelle Nacharbeit dokumentiert |
 | F2 | Router-/Agentenläufe können Dateien überschreiben (Klickrad v1 → v2) | bekannt | v1 per Git-Historie auffindbar |
+
+## E. Ergebnis Opus-Review (2026-10-05, `docs/REVIEW-HAUPTPLATINE.md`): nicht bestellbereit
+
+Blocker: **E1** PCA9306 (U30) VREF2 direkt an 3V3, 1,8-V-Schiene steigt auf ca. 2,7 V, CS43131 verträgt max. 2,33 V (Fix: VREF2 mit EN verbinden, 200 k an 3V3). **E2** Strapping-Pin IO36: R57 an SD_VDD (beim Reset aus), Pegel ca. 1,65 V undefiniert, Flash bekommt evtl. 1,8 V (Fix: R57 nicht bestücken oder an 3V3). **E3** MCP73871: SEL hoch = AC-Modus, nicht USB; R39 = 1 k lädt mit 1 A in ca. 500 mAh (2 C). **E4** ESP32-S31-WROOM-1-N16R16V bei Digi-Key/Mouser nicht lieferbar (21 Wochen bzw. März 2027).
+Hoch: DAC-RESET geht ohne 3V3 auf high (Sequenz verletzt); I²S/DAC in Domäne VDDPST_SD, Default nicht bekannt; Leistungsnetze teils 0,25 mm auf In2 (BOOST_SW 0,127 mm); J20 2,0 mm hoch statt 1,0; USB-HS kein Paar, kein Lagenaufbau hinterlegt; Klickrad J1 und Hauptplatine J21 verschiedene Footprints für denselben Molex; R1 parallel zum Akku-NTC löst Heiß-Abschaltung aus; BOOT/EN nur Testpunkte; CS43131 bei Mouser ab 4000 Stück; USB4510 für 0,8 mm ausgelegt, Platine 1,0 mm (klärt A14: passt nicht ohne Weiteres).
+Dazu 12 Mittel, 9 Niedrig, Abschnitt Klickrad v2. Ohne Befund: WROOM-1-Pins, Boot, CS43131-Pins, Quarz, TUSB320LAI, TPS2553/TPS61023/TLV757P, MAX17048, I²C-Adressen, SJ-43504.
+Nicht prüfbar: Molex-Zeichnung, VDDPST_SD-Default, PCBWay-Lagenaufbau, CPL-Unterseite, Display-FPC, CS43131-Reset-Schwellen.
+
+Status: A1/A2 so lange offen, bis die Blocker E1–E4 behoben sind. A13–A15 gegen das Review abzugleichen.
