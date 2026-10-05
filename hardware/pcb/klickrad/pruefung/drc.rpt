@@ -1,28 +1,28 @@
 ** Drc report for klickrad.kicad_pcb **
-** Created on 2026-10-04T19:23:48+0000 **
+** Created on 2026-10-05T15:13:30+0000 **
 ** Report includes: Errors, Warnings, Exclusions **
 
 ** Found 5 DRC violations **
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; warning
+    @(97.4000 mm, 106.3000 mm): Footprint R8
+    @(98.6900 mm, 106.3000 mm): Footprint R9
+[courtyards_overlap]: Courtyards overlap
+    Rule: board setup constraints courtyard; warning
+    @(101.9000 mm, 99.0500 mm): Footprint R4
+    @(100.0000 mm, 101.5000 mm): Footprint U1
 [courtyards_overlap]: Courtyards overlap
     Rule: board setup constraints courtyard; warning
     @(102.6000 mm, 103.7400 mm): Footprint C2
     @(102.6000 mm, 105.0000 mm): Footprint C1
 [courtyards_overlap]: Courtyards overlap
     Rule: board setup constraints courtyard; warning
-    @(97.4000 mm, 99.7000 mm): Footprint R5
-    @(100.0000 mm, 101.5000 mm): Footprint U1
-[courtyards_overlap]: Courtyards overlap
-    Rule: board setup constraints courtyard; warning
-    @(100.0000 mm, 101.5000 mm): Footprint U1
     @(102.9000 mm, 100.0000 mm): Footprint R3
+    @(100.0000 mm, 101.5000 mm): Footprint U1
 [courtyards_overlap]: Courtyards overlap
     Rule: board setup constraints courtyard; warning
     @(100.0000 mm, 101.5000 mm): Footprint U1
-    @(101.9000 mm, 99.0500 mm): Footprint R4
-[courtyards_overlap]: Courtyards overlap
-    Rule: board setup constraints courtyard; warning
-    @(97.4000 mm, 106.3000 mm): Footprint R8
-    @(98.6900 mm, 106.3000 mm): Footprint R9
+    @(97.4000 mm, 99.7000 mm): Footprint R5
 
 ** Found 0 unconnected pads **
 

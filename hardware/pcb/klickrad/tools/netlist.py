@@ -36,7 +36,7 @@ def parts():
     add('SW1', 'BUTTON', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-button', {'1': 'EB'}, nobom=True, desc='Kapazitive Mitteltaste (Tangara SW1)')
     add('SW2', 'WHEEL', 'Connector_Generic:Conn_01x03', 'Klickrad:qtouch-wheel', {'1': 'E0', '2': 'E1', '3': 'E2'}, nobom=True, desc='Touch-Wheel, 3 Elektroden (Tangara SW2)')
     add('SW3', 'GUARD', 'Connector_Generic:Conn_01x01', 'Klickrad:qtouch-guard', {'1': 'EG'}, nobom=True, desc='Guard-Kanal (Tangara SW3)')
-    add('J1', '503480-0600', 'Connector_Generic:Conn_01x06', 'Klickrad:Molex_503480-0600_1x06-1MP_P0.50mm_Horizontal',
+    add('J1', '503480-0600', 'Connector_Generic:Conn_01x06', 'Klickrad:Molex_503480-0600_Hauptplatine',
         {'1': '3V3', '2': 'GND', '3': 'SDA', '4': 'SCL', '5': 'CHANGE', '6': None}, mpn='503480-0600', mfr='Molex', desc='FFC/FPC 6-pol., 0,5 mm, Easy-On, Dual Contact, Bauhöhe 1,0 mm; Pin 6 = Reserve (BTN)')
     add('TP1', 'LRA+', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_P'}, desc='Loetpad LRA Litze +', nobom=True)
     add('TP2', 'LRA-', 'Connector:TestPoint', 'Connector_Wire:SolderWirePad_1x01_SMD_1x2mm', {'1': 'LRA_N'}, desc='Loetpad LRA Litze -', nobom=True)

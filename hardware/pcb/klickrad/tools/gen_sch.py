@@ -163,7 +163,7 @@ place('SW3', (260.0, 215.0)); conn_pins('SW3', (260.0, 215.0))
 text('Kupferflaechen vorn (Lackschicht geschlossen): Wheel (3 Elektroden), Mitteltaste, Guard (3 Boegen, ein Netz)', 195, 205, 1.27, True)
 # ---- Stecker
 jpos = (40.0, 105.0); place('J1', jpos); conn_pins('J1', jpos)
-text('J1 FFC 6-pol. (SM06B-SRSS-TB): Pin 6 = BTN (Reserve, nicht beschaltet)', 18, 86, 1.27, True)
+text('J1 FFC 6-pol. (Molex 503480-0600): Pin 6 = Reserve (nicht beschaltet)', 18, 86, 1.27, True)
 # ---- DRV2605L
 place('U2', (215.0, 105.0)); conn_pins('U2', (215.0, 105.0))
 text('U2 DRV2605L (VSSOP-10): I2C 0x5A, LRA-Modus, IN/TRIG an GND, EN ueber 10k an 3V3 (wie Tangara)', 188, 62, 1.5, True)

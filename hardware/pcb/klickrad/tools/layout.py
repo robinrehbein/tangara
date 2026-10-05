@@ -2,7 +2,7 @@
 PARTS = {p['ref']: p for p in netlist.parts()}
 TMP = os.environ.get('TMPDIR_PCB', '/tmp/w')
 VIAS = json.load(open(os.path.join(ROOT, 'tools', 'vias_touch.json')))
-LRA = (-8.0, 3.0, 8.0, 9.0)      # Option B (12 x 6 x 2,0); Option A (10 x 10 x 1,0, Mitte y = +6) wird unten zusätzlich gesperrt           # Freifläche LRA (Rückseite, nur Bauteile gesperrt)
+LRA = (-7.0, 3.0, 7.0, 9.0)      # Freifläche LRA 14 x 6 (Rückseite, nur Bauteile gesperrt); passt in den Ausschnitt 14 x 10 der Hauptplatine (Mitte y = -19 dort = +6 hier)
 if MODE == 'place':
     # ---- Entwurfsregeln (JLCPCB/PCBWay 2 Lagen, 1,0 mm)
     ds = board.GetDesignSettings()
@@ -49,7 +49,7 @@ if MODE == 'place':
     for net_, x_, y_ in PRE_VIAS: via(net_, x_, y_)
 
     # ---- Zonen: GND als Gitter (Tangara-Werte) auf B.Cu, LRA-Freifläche als Bauteil-Sperrzone, Randzone ohne Leiterbahnen
-    zone(B_CU, [(-8, 3), (8, 3), (8, 9), (-8, 9)], '', 0, keepout=True)
+    zone(B_CU, [(LRA[0], LRA[1]), (LRA[2], LRA[1]), (LRA[2], LRA[3]), (LRA[0], LRA[3])], '', 0, keepout=True)
     # (Rand- und Vorderseiten-Sperrzonen entfallen: Specctra kennt keine Löcher in Sperrflächen; Prüfung per DRC und tools/pruefe_vorderseite.py)
     board.Save(os.path.join(TMP, 'pre.kicad_pcb'))
 else:

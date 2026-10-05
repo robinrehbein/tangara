@@ -1,5 +1,5 @@
 Referenzen,Anzahl,Wert,Footprint,Hersteller,Herstellerteilenummer,LCSC,Bestückung,Höhe_mm,Hinweis
-J1,1,503480-0600,Molex_503480-0600_1x06-1MP_P0.50mm_Horizontal,Molex,503480-0600,,ja,"1,0","FFC/FPC 6-pol., 0,5 mm, Easy-On, Dual Contact (Kabel Typ A und B), Bauhöhe 1,0 mm; DigiKey 5034800600 (2356622), Mouser, Newark; LCSC-Nummer NICHT geprüft"
+J1,1,503480-0600,Molex_503480-0600_Hauptplatine,Molex,503480-0600,,ja,"1,0","FFC/FPC 6-pol., 0,5 mm, Easy-On, Dual Contact (Kabel Typ A und B), Bauhöhe 1,0 mm; DigiKey 5034800600 (2356622), Mouser, Newark; LCSC-Nummer NICHT geprüft"
 U1,1,AT42QT2120,VQFN-20-1EP_3x3mm_P0.45mm_EP1.55x1.55mm,Microchip,AT42QT2120-MMH,C617900,ja,"0,85","VQFN-20 3x3 mm, 0,45 mm; Nummer bestätigt, bei LCSC am 2026-10-04 NICHT auf Lager -> Mouser/DigiKey (ca. 5 USD)"
 U2,1,DRV2605LDGSR,VSSOP-10_3x3mm_P0.5mm,Texas Instruments,DRV2605LDGSR,C527464,ja,"ca. 1,1",VSSOP-10
 C1,1,0.1uF,C_0402_1005Metric,Samsung,CL05B104KO5NNNC,C1525,ja,"0,5","X7R 16 V, 0402"
